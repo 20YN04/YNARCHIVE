@@ -5,15 +5,16 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
   standalone: true,
   template: `
     <section class="pt-10">
-      <div class="overflow-hidden text-center">
-        <h1 class="hero-title font-area-normal text-6xl font-bold uppercase tracking-[0.18em] sm:text-7xl md:text-8xl lg:text-9xl">
+      <div class="flex items-center justify-between text-[11px] uppercase tracking-[0.32em] text-[#1a1a1a]/60">
+        <span>01</span>
+        <span>Portfolio</span>
+      </div>
+      <div class="mt-6 overflow-hidden">
+        <h1 class="hero-title font-area-normal text-[clamp(3.5rem,10vw,9rem)] font-semibold uppercase tracking-[0.14em]">
           YNARCHIVE
         </h1>
       </div>
-      <figure
-        #heroFigure
-        class="hero-figure mx-auto mt-12 h-[55vh] w-full max-w-[1200px]"
-      >
+      <figure #heroFigure class="hero-figure mt-12 h-[58vh] w-full">
         <div class="hero-media h-full w-full"></div>
       </figure>
     </section>
@@ -21,12 +22,14 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
   styles: [
     `
       .hero-title {
-        transform: translateY(100%);
-        animation: hero-rise 1.5s ease forwards;
+        transform: translateY(110%);
+        filter: blur(6px);
+        animation: hero-rise 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
 
       @keyframes hero-rise {
         to {
+          filter: blur(0);
           transform: translateY(0);
         }
       }

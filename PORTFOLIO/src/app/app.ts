@@ -14,10 +14,9 @@ import { PreloaderComponent } from './preloader';
 })
 export class App {
   protected readonly title = signal('PORTFOLIO');
-  readonly showPreloader = signal(!sessionStorage.getItem('preloaderSeen'));
+  readonly showPreloader = signal(true);
 
   onPreloaderDone(): void {
-    sessionStorage.setItem('preloaderSeen', 'true');
     this.showPreloader.set(false);
   }
 }
