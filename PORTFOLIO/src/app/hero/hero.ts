@@ -4,15 +4,23 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
   selector: 'app-hero',
   standalone: true,
   template: `
-    <section class="pt-10">
-      <div class="flex items-center justify-between text-[11px] uppercase tracking-[0.32em] text-[#1a1a1a]/60">
-        <span>01</span>
-        <span>Portfolio</span>
-      </div>
-      <div class="mt-6 overflow-hidden">
-        <h1 class="hero-title font-area-normal text-[clamp(3.5rem,10vw,9rem)] font-semibold uppercase tracking-[0.14em]">
-          YNARCHIVE
-        </h1>
+    <section class="pt-0">
+      <div class="hero-band overflow-hidden bg-black text-white">
+        <div class="mx-auto w-full px-[clamp(1.25rem,4vw,3.5rem)]">
+          <div class="flex items-center justify-between text-[11px] uppercase tracking-[0.32em] text-white/60">
+            <span>01</span>
+            <span>Portfolio</span>
+          </div>
+          <h1
+            class="hero-title mt-6 w-full text-center font-area-normal text-[clamp(3.5rem,10vw,9rem)] font-semibold uppercase tracking-[0.14em]"
+            data-hero-title
+          >
+            YNARCHIVE
+          </h1>
+          <div class="mt-6 flex justify-end text-[11px] uppercase tracking-[0.32em] text-white/80">
+            <a class="hover:opacity-70" href="#">Menu</a>
+          </div>
+        </div>
       </div>
       <figure #heroFigure class="hero-figure mt-12 h-[58vh] w-full">
         <div class="hero-media h-full w-full"></div>
@@ -25,6 +33,28 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
         transform: translateY(110%);
         filter: blur(6px);
         animation: hero-rise 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        transition: opacity 0.2s ease;
+      }
+
+      .hero-band {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding-block: clamp(2rem, 8vw, 5rem);
+      }
+
+      :host-context(.preloading) .hero-title {
+        opacity: 0;
+        transform: translateY(0);
+        filter: none;
+        animation: none;
+      }
+
+      :host-context(.handoff-complete) .hero-title {
+        opacity: 1;
+        transform: translateY(0);
+        filter: none;
+        animation: none;
       }
 
       @keyframes hero-rise {
