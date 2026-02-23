@@ -1,3 +1,7 @@
+@if (showPreloader()) {
+  <app-preloader (done)="onPreloaderDone()"></app-preloader>
+}
+
 <app-layout>
   <app-hero></app-hero>
   <app-project-grid></app-project-grid>
