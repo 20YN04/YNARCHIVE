@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { gsap } from 'gsap';
@@ -10,9 +10,9 @@ import { NavBarComponent } from '../navbar/navbar';
   imports: [CommonModule, ReactiveFormsModule, NavBarComponent],
   template: `
     <div id="contact" class="min-h-screen bg-[#d1d3d0] text-black font-sans" #container>
-      <app-navbar></app-navbar>
+      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="contact"></app-navbar>
 
-      <div class="px-6 lg:px-12 pt-28 lg:pt-36 pb-16 lg:pb-20">
+      <div class="px-6 lg:px-12 pt-8 lg:pt-12 pb-16 lg:pb-20">
         <div class="mx-auto w-full max-w-375 grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)] gap-12 lg:gap-24 items-start">
           <div class="left-col">
             <h1 class="text-[2.2rem] md:text-[3.2rem] lg:text-[4.1rem] leading-[1.02] font-medium tracking-tight max-w-[20ch]">

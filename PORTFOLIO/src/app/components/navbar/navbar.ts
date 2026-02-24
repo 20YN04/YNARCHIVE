@@ -1,24 +1,30 @@
-import { Component, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
 	selector: 'app-navbar',
 	standalone: true,
 	template: `
-		<nav class="hero-nav" data-nav-bar>
+		<nav
+			class="hero-nav"
+			[class.hero-nav-visible]="alwaysVisible"
+			[class.hero-nav-solid]="solidBackground"
+			[class.hero-nav-static]="!fixed"
+			data-nav-bar
+		>
 			<div class="nav-left">
 				<a href="/" data-nav-link data-page="home" class="nav-brand" data-nav-brand>YNARCHIVE</a>
 			</div>
 			<div class="nav-center">
-				<a href="/" class="nav-link" data-nav-link data-page="home">Work,</a>
-				<a href="/" class="nav-link" data-nav-link data-page="home">Process,</a>
-				<a href="/" class="nav-link" data-nav-link data-page="home">Studio</a>
+				<a href="/" class="nav-link" [class.nav-link-active]="activePage === 'home'" data-nav-link data-page="home">Work,</a>
+				<a href="/" class="nav-link" [class.nav-link-active]="activePage === 'home'" data-nav-link data-page="home">Process,</a>
+				<a href="/" class="nav-link" [class.nav-link-active]="activePage === 'home'" data-nav-link data-page="home">Studio</a>
 			</div>
 			<div class="nav-right">
 				<span class="nav-clock">
 					<span>{{ timeHour() }}</span><span class="clock-colon">:</span><span>{{ timeMinute() }}</span>
 					<span class="clock-period">{{ timePeriod() }}</span>
 				</span>
-				<a href="/contact" class="nav-link" data-nav-link data-page="contact">Contact</a>
+				<a href="/contact" class="nav-link" [class.nav-link-active]="activePage === 'contact'" data-nav-link data-page="contact">Contact</a>
 			</div>
 		</nav>
 	`,
@@ -40,6 +46,26 @@ import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 				opacity: 0;
 				pointer-events: none;
 				transform: translateY(-10px);
+			}
+			.hero-nav-visible {
+				opacity: 1;
+				pointer-events: auto;
+				transform: translateY(0);
+			}
+			.hero-nav-static {
+				position: relative;
+				top: auto;
+				left: auto;
+				right: auto;
+				transform: none;
+				opacity: 1;
+				pointer-events: auto;
+				z-index: 2;
+			}
+			.hero-nav-solid {
+				background: rgba(209, 211, 208, 0.95);
+				backdrop-filter: blur(6px);
+				border-bottom: 1px solid rgba(10, 10, 10, 0.1);
 			}
 			.nav-left, .nav-right {
 				display: flex;
@@ -74,6 +100,9 @@ import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 			.nav-link:hover {
 				opacity: 0.5;
 			}
+			.nav-link-active {
+				opacity: 1;
+			}
 			.nav-clock {
 				font-family: 'area-normal', sans-serif;
 				font-size: 12px;
@@ -101,6 +130,11 @@ import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 	]
 })
 export class NavBarComponent implements OnInit, OnDestroy {
+	@Input() fixed = true;
+	@Input() alwaysVisible = false;
+	@Input() solidBackground = false;
+	@Input() activePage: 'home' | 'contact' | null = null;
+
 	readonly timeHour = signal('00');
 	readonly timeMinute = signal('00');
 	readonly timePeriod = signal('AM');

@@ -135,6 +135,38 @@ export class App implements AfterViewInit, OnDestroy {
         currentPage = 'home';
       }
       await runPaperOut();
+
+      if (name === 'home') {
+        requestAnimationFrame(() => {
+          const dynamicNavBar = document.querySelector('[data-nav-bar]') as HTMLElement | null;
+          const dynamicMegaTitle = document.querySelector('[data-hero-mega-title]') as HTMLElement | null;
+          if (!dynamicNavBar || !dynamicMegaTitle) return;
+
+          const existing = ScrollTrigger.getById('dynamic-home-nav-handoff');
+          if (existing) existing.kill();
+
+          gsap.set(dynamicNavBar, { opacity: 0, y: -10 });
+          dynamicNavBar.style.pointerEvents = 'none';
+
+          ScrollTrigger.create({
+            id: 'dynamic-home-nav-handoff',
+            trigger: dynamicMegaTitle,
+            start: 'top top',
+            end: '+=320',
+            onUpdate: (self) => {
+              const progress = self.progress;
+              const reveal = progress < 0.28 ? 0 : Math.min(1, (progress - 0.28) / 0.72);
+              gsap.set(dynamicNavBar, {
+                opacity: reveal,
+                y: -10 + reveal * 10,
+              });
+              dynamicNavBar.style.pointerEvents = progress > 0.85 ? 'auto' : 'none';
+            },
+          });
+
+          ScrollTrigger.refresh();
+        });
+      }
     };
 
     // initialize current page
