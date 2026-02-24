@@ -1,8 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
+import { NavBarComponent } from '../components/navbar/navbar';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
+  imports: [NavBarComponent],
   template: `
     <section class="hero-section" data-hero-section>
       <!-- MEGA TITLE — YNARCHIVE, flush at top, compresses into nav on scroll -->
@@ -10,24 +12,7 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         <span class="mega-title-text" data-hero-mega-text>YNARCHIVE</span>
       </div>
 
-      <!-- NAVIGATION — fixed, hidden initially, appears when mega title scrolls out -->
-      <nav class="hero-nav" data-nav-bar>
-        <div class="nav-left">
-          <a href="/" data-nav-link data-page="home" class="nav-brand" data-nav-brand>YNARCHIVE</a>
-        </div>
-        <div class="nav-center">
-          <a href="/" class="nav-link" data-nav-link data-page="home">Work,</a>
-          <a href="/" class="nav-link" data-nav-link data-page="home">Process,</a>
-          <a href="/" class="nav-link" data-nav-link data-page="home">Studio</a>
-        </div>
-        <div class="nav-right">
-          <span class="nav-clock">
-            <span>{{ timeHour() }}</span><span class="clock-colon">:</span><span>{{ timeMinute() }}</span>
-            <span class="clock-period">{{ timePeriod() }}</span>
-          </span>
-          <a href="/contact" class="nav-link" data-nav-link data-page="contact">Contact</a>
-        </div>
-      </nav>
+      <app-navbar></app-navbar>
 
       <!-- HERO TITLE — large text with staggered line-reveal -->
       <div class="hero-title-block" data-hero-title-block>
@@ -332,27 +317,8 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
     `
   ]
 })
-export class HeroComponent implements AfterViewInit, OnDestroy {
-  readonly timeHour = signal('00');
-  readonly timeMinute = signal('00');
-  readonly timePeriod = signal('AM');
-  private clockTimer = window.setInterval(() => this.updateTime(), 1000);
-
+export class HeroComponent implements AfterViewInit {
   ngAfterViewInit(): void {
-    this.updateTime();
-  }
-
-  ngOnDestroy(): void {
-    window.clearInterval(this.clockTimer);
-  }
-
-  private updateTime(): void {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const hour12 = hours % 12 || 12;
-    this.timeHour.set(String(hour12).padStart(2, '0'));
-    this.timeMinute.set(String(minutes).padStart(2, '0'));
-    this.timePeriod.set(hours >= 12 ? 'PM' : 'AM');
+    // ...existing code...
   }
 }
