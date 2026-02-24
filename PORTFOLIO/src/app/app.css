@@ -19,95 +19,80 @@ body {
   color: #0a0a0a;
 }
 
-/* Preloader active state */
-body.preloader-active {
-  overflow: hidden;
-}
-
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Selection color matching site theme */
 ::selection {
   background: #0a0a0a;
   color: #fff;
 }
 
 /* ═══════════════════════════════════════════
-   1. CURTAIN PANELS
-   White panels that cover the page, then shrink away
+   THICK BORDER BARS — frame the viewport
+   Start at ~40px, animate down to 1px via GSAP
    ═══════════════════════════════════════════ */
-.curtain-panel {
+.bar-top {
   position: absolute;
   top: 0;
-  height: 100%;
-  background: #fff;
-  will-change: transform;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: #0a0a0a;
+  will-change: height;
+}
+
+.bar-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: #0a0a0a;
+  will-change: height;
+}
+
+.bar-left {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  background: #0a0a0a;
+  will-change: width;
+}
+
+.bar-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  background: #0a0a0a;
+  will-change: width;
 }
 
 /* ═══════════════════════════════════════════
-   2. ARCHITECTURAL GRID
-   Thin skeleton lines + outer border frame
+   ARCHITECTURAL GRID — thin column guides
    ═══════════════════════════════════════════ */
 .grid-line-v {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(10, 10, 10, 0.08);
+  background: rgba(10, 10, 10, 0.06);
   will-change: transform;
 }
 
-/* Border frame — thin black outline around the viewport */
-.grid-border-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: rgba(10, 10, 10, 0.15);
-}
-
-.grid-border-bottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: rgba(10, 10, 10, 0.15);
-}
-
-.grid-border-left {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 1px;
-  background: rgba(10, 10, 10, 0.15);
-}
-
-.grid-border-right {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: 1px;
-  background: rgba(10, 10, 10, 0.15);
-}
-
 /* ═══════════════════════════════════════════
-   5. FOOTER TRANSITION
-   Closing frame that reforms the grid
+   FOOTER
    ═══════════════════════════════════════════ */
-.footer-transition {
+.footer-section {
   position: relative;
   background: #0a0a0a;
   color: #fff;
   padding: 4rem 2.5rem;
-  margin-top: 0;
-  border-top: 2px solid #0a0a0a;
+  border-top: 1px solid rgba(10, 10, 10, 0.1);
 }
 
 .footer-inner {
