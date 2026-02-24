@@ -60,6 +60,7 @@ export class App implements AfterViewInit, OnDestroy {
     // ── Query elements ──
     const preloader = document.querySelector('[data-preloader]') as HTMLElement;
     const letters = document.querySelectorAll('[data-letter]');
+    const preloaderInfos = document.querySelectorAll('[data-preloader-info]');
 
     const barTop = document.querySelector('[data-bar-top]') as HTMLElement;
     const barBottom = document.querySelector('[data-bar-bottom]') as HTMLElement;
@@ -124,6 +125,11 @@ export class App implements AfterViewInit, OnDestroy {
     const tl = this.timeline;
 
     // ─── ACT 1: SLIDE-CLOCK LETTERS (0s → 2.6s) ───
+    // Preloader info fades in
+    tl.to(preloaderInfos, {
+      opacity: 1, duration: 0.8, ease: 'power2.out', stagger: 0.1,
+    }, 0.2);
+
     // Letters slide up into view with stagger
     tl.to(letters, {
       y: '0%',
@@ -131,6 +137,11 @@ export class App implements AfterViewInit, OnDestroy {
       ease: 'power4.out',
       stagger: { each: 0.06, from: 'start' },
     }, 0.3);
+
+    // Preloader info fades out
+    tl.to(preloaderInfos, {
+      opacity: 0, duration: 0.3, ease: 'power2.in',
+    }, 1.8);
 
     // Hold for a beat, then letters slide up and out
     tl.to(letters, {
@@ -254,47 +265,40 @@ export class App implements AfterViewInit, OnDestroy {
       opacity: 0,
     });
 
-    // Mega title compresses on scroll — text shrinks & fades
+    // Mega title compresses on scroll — simple scale + fade
     if (megaTitle && megaTitleText) {
+      // Text shrinks & fades as you scroll
       gsap.to(megaTitleText, {
         scrollTrigger: {
           trigger: megaTitle,
-          start: 'top 60px',
-          end: 'center 60px',
+          start: 'top top',
+          end: 'bottom top',
           scrub: 0.3,
         },
-        scale: 0.15,
+        scale: 0.4,
         opacity: 0,
         ease: 'none',
       });
 
-      // Mega title height collapses
+      // Mega title height collapses to 0
       gsap.to(megaTitle, {
         scrollTrigger: {
           trigger: megaTitle,
-          start: 'top 60px',
-          end: 'bottom 60px',
+          start: 'top top',
+          end: 'bottom top',
           scrub: 0.4,
         },
         height: 0,
         ease: 'none',
       });
 
-      // Nav appears exactly when mega title finishes collapsing
+      // Nav appears when mega title is mostly gone
       if (navBar) {
         ScrollTrigger.create({
           trigger: megaTitle,
-          start: 'center 60px',
+          start: '70% top',
           onEnter: () => navBar.classList.add('nav-visible'),
           onLeaveBack: () => navBar.classList.remove('nav-visible'),
-        });
-
-        // Nav switches to white once mega title is fully gone
-        ScrollTrigger.create({
-          trigger: megaTitle,
-          start: 'bottom 60px',
-          onEnter: () => navBar.classList.add('nav-scrolled'),
-          onLeaveBack: () => navBar.classList.remove('nav-scrolled'),
         });
       }
     }

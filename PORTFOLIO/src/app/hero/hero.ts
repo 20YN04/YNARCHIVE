@@ -5,7 +5,12 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
   standalone: true,
   template: `
     <section class="hero-section" data-hero-section>
-      <!-- NAVIGATION — starts boxed (inside thick border frame), transitions to sticky minimal -->
+      <!-- MEGA TITLE — YNARCHIVE, flush at top, compresses into nav on scroll -->
+      <div class="hero-mega-title" data-hero-mega-title>
+        <span class="mega-title-text" data-hero-mega-text>YNARCHIVE</span>
+      </div>
+
+      <!-- NAVIGATION — fixed, hidden initially, appears when mega title scrolls out -->
       <nav class="hero-nav" data-nav-bar>
         <div class="nav-left">
           <span class="nav-brand" data-nav-brand>YNARCHIVE</span>
@@ -23,11 +28,6 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
           <a href="#contact" class="nav-link" data-nav-link>Contact</a>
         </div>
       </nav>
-
-      <!-- MEGA TITLE — YNARCHIVE, compresses into nav on scroll -->
-      <div class="hero-mega-title" data-hero-mega-title>
-        <span class="mega-title-text" data-hero-mega-text>YNARCHIVE</span>
-      </div>
 
       <!-- HERO TITLE — large text with staggered line-reveal -->
       <div class="hero-title-block" data-hero-title-block>
@@ -82,34 +82,56 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         background: #fff;
       }
 
-      /* ═══ NAVIGATION — starts invisible, appears when mega title scrolls out ═══ */
+      /* ═══ MEGA TITLE — flush at very top ═══ */
+      .hero-mega-title {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        height: clamp(140px, 22vw, 220px);
+        background: #0a0a0a;
+        will-change: height;
+      }
+
+      .mega-title-text {
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(4rem, 14vw, 15rem);
+        font-weight: 700;
+        line-height: 0.9;
+        letter-spacing: -0.03em;
+        text-transform: uppercase;
+        color: #fff;
+        white-space: nowrap;
+        will-change: transform, opacity;
+      }
+
+      /* ═══ NAVIGATION — fixed, transparent, just text ═══ */
       .hero-nav {
-        position: sticky;
+        position: fixed;
         top: 0;
-        z-index: 50;
+        left: 0;
+        right: 0;
+        z-index: 100;
         display: flex;
         align-items: center;
         justify-content: space-between;
         height: 60px;
         padding: 0 2.5rem;
-        background: #0a0a0a;
-        color: #fff;
+        background: transparent;
+        color: #0a0a0a;
         opacity: 0;
         pointer-events: none;
-        transition: background 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
+        transform: translateY(-10px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
       }
 
-      /* When nav becomes visible after scroll */
+      /* When nav becomes visible */
       .hero-nav.nav-visible {
         opacity: 1;
         pointer-events: auto;
-      }
-
-      /* When scrolled further, nav becomes minimal white bar */
-      .hero-nav.nav-scrolled {
-        background: #fff;
-        color: #0a0a0a;
-        box-shadow: 0 1px 0 rgba(10, 10, 10, 0.08);
+        transform: translateY(0);
       }
 
       .nav-left, .nav-right {
@@ -167,30 +189,7 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         50% { opacity: 0; }
       }
 
-      /* ═══ MEGA TITLE — YNARCHIVE banner ═══ */
-      .hero-mega-title {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        height: clamp(120px, 18vw, 200px);
-        background: #0a0a0a;
-        will-change: height;
-      }
-
-      .mega-title-text {
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(4rem, 14vw, 15rem);
-        font-weight: 700;
-        line-height: 0.9;
-        letter-spacing: -0.03em;
-        text-transform: uppercase;
-        color: #fff;
-        white-space: nowrap;
-        will-change: transform, opacity;
-      }
+      /* (mega title styles are above, before nav) */
 
       /* ═══ HERO TITLE — staggered line-reveal ═══ */
       .hero-title-block {
@@ -302,7 +301,7 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
       /* ═══ Responsive ═══ */
       @media (max-width: 768px) {
         .hero-mega-title {
-          height: clamp(80px, 14vw, 120px);
+          height: clamp(80px, 15vw, 120px);
         }
         .hero-nav {
           padding: 0 1.5rem;

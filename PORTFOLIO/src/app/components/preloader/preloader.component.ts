@@ -5,6 +5,12 @@ import { Component } from '@angular/core';
   standalone: true,
   template: `
     <div class="preloader" data-preloader>
+      <!-- Left info -->
+      <div class="preloader-info preloader-left" data-preloader-info>
+        <p class="info-line">YENTL NERINCKX</p>
+        <p class="info-line info-sub">FULL STACK DEVELOPER</p>
+      </div>
+
       <!-- Slide-clock YNARCHIVE letters -->
       <div class="slide-clock" data-slide-clock>
         <div class="letter-mask"><span class="letter" data-letter>Y</span></div>
@@ -16,6 +22,12 @@ import { Component } from '@angular/core';
         <div class="letter-mask"><span class="letter" data-letter>I</span></div>
         <div class="letter-mask"><span class="letter" data-letter>V</span></div>
         <div class="letter-mask"><span class="letter" data-letter>E</span></div>
+      </div>
+
+      <!-- Right info -->
+      <div class="preloader-info preloader-right" data-preloader-info>
+        <p class="info-line">TESSENDERLO</p>
+        <p class="info-line info-sub">BEL</p>
       </div>
     </div>
   `,
@@ -37,6 +49,40 @@ import { Component } from '@angular/core';
         align-items: center;
         justify-content: center;
         will-change: transform;
+      }
+
+      .preloader-info {
+        position: absolute;
+        bottom: 2.5rem;
+        opacity: 0;
+        will-change: opacity;
+      }
+
+      .preloader-left {
+        left: 2.5rem;
+      }
+
+      .preloader-right {
+        right: 2.5rem;
+        text-align: right;
+      }
+
+      .info-line {
+        margin: 0;
+        font-family: 'area-normal', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #fff;
+        line-height: 1.6;
+      }
+
+      .info-sub {
+        font-weight: 400;
+        opacity: 0.5;
+        font-size: 11px;
+        letter-spacing: 0.2em;
       }
 
       .slide-clock {
