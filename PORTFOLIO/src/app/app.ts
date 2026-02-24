@@ -16,7 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
     <app-preloader />
 
     <!-- THICK BORDER BARS — frame the viewport, shrink to thin 1px lines -->
-    <div class="fixed inset-0 z-[90] pointer-events-none" data-frame-container>
+    <div class="fixed inset-0 z-90 pointer-events-none" data-frame-container>
       <div class="bar-top" data-bar-top></div>
       <div class="bar-bottom" data-bar-bottom></div>
       <div class="bar-left" data-bar-left></div>
@@ -24,7 +24,7 @@ gsap.registerPlugin(ScrollTrigger);
     </div>
 
     <!-- ARCHITECTURAL GRID — thin vertical column guides (5 lines = 6 cols) -->
-    <div class="fixed inset-0 z-[85] pointer-events-none" data-grid-container>
+    <div class="fixed inset-0 z-85 pointer-events-none" data-grid-container>
       <div class="grid-line-v" style="left:16.666%" data-grid-line></div>
       <div class="grid-line-v" style="left:33.333%" data-grid-line></div>
       <div class="grid-line-v" style="left:50%" data-grid-line></div>
