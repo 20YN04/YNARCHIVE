@@ -48,7 +48,8 @@ import { Component } from '@angular/core';
         display: flex;
         align-items: center;
         justify-content: center;
-        will-change: transform;
+        will-change: height, opacity;
+        overflow: hidden;
       }
 
       .preloader-info {

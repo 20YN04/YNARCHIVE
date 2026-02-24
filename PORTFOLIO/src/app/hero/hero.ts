@@ -92,7 +92,8 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         overflow: hidden;
         height: clamp(140px, 22vw, 220px);
         background: #0a0a0a;
-        will-change: height;
+        clip-path: inset(0 0 0 0);
+        will-change: clip-path;
       }
 
       .mega-title-text {
@@ -124,14 +125,6 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         opacity: 0;
         pointer-events: none;
         transform: translateY(-10px);
-        transition: opacity 0.4s ease, transform 0.4s ease;
-      }
-
-      /* When nav becomes visible */
-      .hero-nav.nav-visible {
-        opacity: 1;
-        pointer-events: auto;
-        transform: translateY(0);
       }
 
       .nav-left, .nav-right {

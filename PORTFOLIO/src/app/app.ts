@@ -105,8 +105,8 @@ export class App implements AfterViewInit, OnDestroy {
 
     // Hero elements — hidden
     // Nav starts completely hidden (CSS handles initial opacity:0 + pointer-events:none)
-    if (megaTitle) gsap.set(megaTitle, { opacity: 0 });
-    if (megaTitleText) gsap.set(megaTitleText, { y: '110%' });
+    // Mega title visible from the start (preloader covers it, then morphs into it)
+    if (megaTitleText) gsap.set(megaTitleText, { opacity: 0 });
     gsap.set(titleLines, { y: '110%' });
     if (heroImage) gsap.set(heroImage, { clipPath: 'inset(100% 0 0 0)' });
     if (heroImg) gsap.set(heroImg, { scale: 1.1, y: '5%' });
@@ -151,12 +151,23 @@ export class App implements AfterViewInit, OnDestroy {
       stagger: { each: 0.04, from: 'end' },
     }, 2.0);
 
-    // Preloader background wipes up
+    // Preloader compresses into the mega title black box
+    // Get mega title dimensions to know the target height
+    const megaHeight = megaTitle ? megaTitle.offsetHeight : 200;
     tl.to(preloader, {
-      clipPath: 'inset(0 0 100% 0)',
-      duration: 0.9,
+      height: megaHeight,
+      top: 0,
+      borderRadius: 0,
+      duration: 1.2,
       ease: 'power4.inOut',
     }, 2.4);
+
+    // Fade out preloader completely once it matches mega title
+    tl.to(preloader, {
+      opacity: 0,
+      duration: 0.3,
+      ease: 'power2.in',
+    }, 3.5);
 
     // ─── ACT 2: THICK BARS → THIN LINES (2.6s → 3.8s) ───
     // Side bars shrink from 40px to 1px
@@ -191,16 +202,13 @@ export class App implements AfterViewInit, OnDestroy {
     // ─── ACT 3: HERO REVEAL (3.2s → 5.0s) ───
     // NOTE: Nav stays hidden — it only appears via ScrollTrigger when mega title scrolls out
 
-    // Mega title reveals (this is the top element the user sees after preloader)
-    if (megaTitle) {
-      tl.to(megaTitle, {
-        opacity: 1, duration: 0.6, ease: 'power2.out',
-      }, 3.4);
-    }
+    // Mega title text fades in as preloader settles into position
     if (megaTitleText) {
       tl.to(megaTitleText, {
-        y: '0%', duration: 1.0, ease: 'power4.out',
-      }, 3.5);
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power2.out',
+      }, 3.2);
     }
 
     // Title lines stagger reveal (each line slides up from its mask)
@@ -265,22 +273,21 @@ export class App implements AfterViewInit, OnDestroy {
       opacity: 0,
     });
 
-    // Mega title compresses on scroll — simple scale + fade
+    // Mega title compresses on scroll — clip from bottom, text fades
     if (megaTitle && megaTitleText) {
-      // Text shrinks & fades as you scroll
+      // Text fades as you scroll
       gsap.to(megaTitleText, {
         scrollTrigger: {
           trigger: megaTitle,
           start: 'top top',
-          end: 'bottom top',
+          end: '80% top',
           scrub: 0.3,
         },
-        scale: 0.4,
         opacity: 0,
         ease: 'none',
       });
 
-      // Mega title height collapses to 0
+      // Mega title clips from bottom (preserves text position on scroll-back)
       gsap.to(megaTitle, {
         scrollTrigger: {
           trigger: megaTitle,
@@ -288,17 +295,23 @@ export class App implements AfterViewInit, OnDestroy {
           end: 'bottom top',
           scrub: 0.4,
         },
-        height: 0,
+        clipPath: 'inset(0 0 100% 0)',
         ease: 'none',
       });
 
-      // Nav appears when mega title is mostly gone
+      // Nav fades in smoothly via scrub (synced with mega title exit)
       if (navBar) {
-        ScrollTrigger.create({
-          trigger: megaTitle,
-          start: '70% top',
-          onEnter: () => navBar.classList.add('nav-visible'),
-          onLeaveBack: () => navBar.classList.remove('nav-visible'),
+        gsap.to(navBar, {
+          scrollTrigger: {
+            trigger: megaTitle,
+            start: '50% top',
+            end: 'bottom top',
+            scrub: 0.3,
+          },
+          opacity: 1,
+          y: 0,
+          pointerEvents: 'auto',
+          ease: 'none',
         });
       }
     }
