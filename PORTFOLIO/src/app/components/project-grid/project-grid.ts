@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 
 interface Project {
   title: string;
@@ -14,25 +14,29 @@ interface Project {
   selector: 'app-project-grid',
   standalone: true,
   template: `
-    <section class="py-16">
-      <div class="columns-1 gap-8 md:columns-2">
+    <section class="py-20">
+      <div class="flex items-center justify-between text-[11px] uppercase tracking-[0.32em] text-[#1a1a1a]/60">
+        <span>02</span>
+        <span>Selected Works</span>
+      </div>
+      <div class="mt-10 columns-1 gap-10 md:columns-2">
         @for (project of projects(); track project.title) {
-          <article class="group mb-8 break-inside-avoid">
-            <figure class="relative overflow-hidden border border-[#1a1a1a]">
+          <article class="group mb-10 break-inside-avoid">
+            <figure class="relative overflow-hidden border border-[#1a1a1a] bg-[#efefef]">
               <img
-                class="h-full w-full object-cover transition duration-300 group-hover:opacity-70"
+                class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02] group-hover:opacity-80"
                 [src]="project.imageUrl"
                 [alt]="project.title"
                 loading="lazy"
               />
               <figcaption
-                class="pointer-events-none absolute bottom-0 left-0 right-0 flex items-end justify-between bg-black/60 px-4 py-3 font-area-normal text-xs uppercase tracking-[0.18em] text-white opacity-0 transition duration-300 group-hover:opacity-100"
+                class="pointer-events-none absolute bottom-0 left-0 right-0 flex items-end justify-between bg-black/70 px-4 py-3 font-area-normal text-[11px] uppercase tracking-[0.28em] text-white opacity-0 transition duration-300 group-hover:opacity-100"
               >
                 <span>{{ project.title }}</span>
                 <span>{{ project.year }}</span>
               </figcaption>
             </figure>
-            <p class="mt-2 text-[11px] uppercase tracking-[0.2em] text-[#1a1a1a]/60">
+            <p class="mt-3 text-[11px] uppercase tracking-[0.28em] text-[#1a1a1a]/60">
               {{ project.category }}
             </p>
           </article>
