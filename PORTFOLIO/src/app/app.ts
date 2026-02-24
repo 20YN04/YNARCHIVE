@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy } from '@angular/core';
-import { HeroComponent } from './pages/hero/hero';
+import { HeroComponent } from './hero/hero';
 import { ProjectGridComponent } from './components/project-grid/project-grid';
 import { LayoutComponent } from './components/layout/layout';
 import { PreloaderComponent } from './components/preloader/preloader.component';

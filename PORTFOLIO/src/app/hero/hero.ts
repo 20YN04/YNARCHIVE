@@ -4,34 +4,34 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
   selector: 'app-hero',
   standalone: true,
   template: `
-    <section class="hero hero-root">
+    <section class="relative min-h-screen w-full bg-white">
       <!-- MEGA TITLE BAR -->
-      <div class="mega-title-bar">
-        <h1 class="hero-title" data-hero-title>YNARCHIVE</h1>
+      <div class="relative z-1 flex h-50 items-center justify-center overflow-hidden bg-black">
+        <h1 class="m-0 w-full px-[1vw] text-center font-['area-normal',sans-serif] text-[clamp(4.5rem,15.8vw,17rem)] leading-none font-bold uppercase tracking-[-0.03em] text-white opacity-100" data-hero-title style="padding-bottom: 40px;">YNARCHIVE</h1>
       </div>
       
       <!-- NAVIGATION BAR -->
-      <nav class="nav-bar" data-nav-bar>
-        <div class="nav-links">
-          <a href="#work">Work,</a>
-          <a href="#process">Process,</a>
-          <a href="#studio">Studio</a>
+      <nav class="relative z-1 flex h-17.5 items-center justify-between border-b border-[#f0f0f0] bg-white px-10" data-nav-bar>
+        <div class="text-[15px]">
+          <a class="mr-1 text-black no-underline transition-opacity duration-300 hover:opacity-60" href="#work">Work,</a>
+          <a class="mr-1 text-black no-underline transition-opacity duration-300 hover:opacity-60" href="#process">Process,</a>
+          <a class="text-black no-underline transition-opacity duration-300 hover:opacity-60" href="#studio">Studio</a>
         </div>
-        <div class="nav-clock">
+        <div class="flex items-center gap-1 font-mono text-sm">
           <span>{{ timeHour() }}</span><span class="time-colon">:</span><span>{{ timeMinute() }}</span>
           <span class="ml-2">{{ timePeriod() }}</span>
-          <span class="location">Tessenderlo, BEL</span>
+          <span class="ml-2 font-['area-normal',sans-serif] text-black">TESSENDERLO, BEL</span>
         </div>
-        <div class="nav-contact">
-          <a href="#contact">Contact</a>
+        <div>
+          <a class="text-[15px] text-black no-underline transition-opacity duration-300 hover:opacity-60" href="#contact">Contact</a>
         </div>
       </nav>
       
       <!-- HERO IMAGE -->
-      <section class="hero-image-container">
-        <figure class="hero-image-wrapper" data-hero-image>
+      <section class="relative bg-white px-10 py-20">
+        <figure class="relative mx-auto aspect-4/3 w-[60%] min-w-160 max-w-225 overflow-hidden" data-hero-image>
           <img
-            class="hero-img"
+            class="h-full w-full object-cover will-change-transform"
             [style.transform]="'translateY(' + parallaxY() + 'px)'"
             src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1800&q=80"
             alt="Architectural project"
@@ -40,9 +40,9 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
       </section>
       
       <!-- BOTTOM ELEMENTS -->
-      <div class="hero-bottom">
-        <span class="scroll-indicator">[Scroll down]</span>
-        <p class="tagline">Driven by History, Centered on Context, Embracing Culture</p>
+      <div class="relative h-25 bg-white px-10">
+        <span class="scroll-indicator absolute bottom-10 left-10 text-[13px] text-[#ccc]">[Scroll down]</span>
+        <p class="absolute right-10 bottom-10 m-0 max-w-87.5 text-left text-[20px] leading-[1.4] text-black">Driven by History, Centered on Context, Embracing Culture</p>
       </div>
     </section>
   `,
@@ -51,71 +51,7 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
       :host {
         display: block;
       }
-      
-      .hero-root {
-        position: relative;
-        width: 100%;
-        min-height: 100vh;
-        background: #fff;
-      }
-      
-      /* MEGA TITLE BAR */
-      .mega-title-bar {
-        background: #000;
-        height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        position: relative;
-        z-index: 1;
-      }
-      
-      .hero-title {
-        color: #fff;
-        font-size: 18vw;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: -0.02em;
-        white-space: nowrap;
-        margin: 0;
-        line-height: 1;
-        opacity: 1;
-      }
-      
-      /* NAVIGATION BAR */
-      .nav-bar {
-        height: 70px;
-        background: #fff;
-        border-bottom: 1px solid #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 40px;
-        position: relative;
-        z-index: 1;
-      }
-      
-      .nav-links a {
-        color: #000;
-        text-decoration: none;
-        font-size: 15px;
-        margin-right: 2px;
-        transition: opacity 0.3s;
-      }
-      
-      .nav-links a:hover {
-        opacity: 0.6;
-      }
-      
-      .nav-clock {
-        font-family: monospace;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-      
+
       .time-colon {
         animation: blink 1s steps(1, end) infinite;
       }
@@ -123,83 +59,14 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
       @keyframes blink {
         50% { opacity: 0; }
       }
-      
-      .location {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        color: #000;
-        margin-left: 8px;
-      }
-      
-      .ml-2 {
-        margin-left: 8px;
-      }
-      
-      .nav-contact a {
-        color: #000;
-        text-decoration: none;
-        font-size: 15px;
-        transition: opacity 0.3s;
-      }
-      
-      .nav-contact a:hover {
-        opacity: 0.6;
-      }
-      
-      /* HERO IMAGE */
-      .hero-image-container {
-        padding: 80px 40px;
-        position: relative;
-        background: #fff;
-      }
-      
-      .hero-image-wrapper {
-        width: 60%;
-        max-width: 900px;
-        margin: 0 auto;
-        aspect-ratio: 4/3;
-        overflow: hidden;
-        position: relative;
-      }
-      
-      .hero-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        will-change: transform;
-      }
-      
-      /* BOTTOM ELEMENTS */
-      .hero-bottom {
-        position: relative;
-        height: 100px;
-        padding: 0 40px;
-        background: #fff;
-      }
-      
+
       .scroll-indicator {
-        position: absolute;
-        left: 40px;
-        bottom: 40px;
-        font-size: 13px;
-        color: #ccc;
         animation: bounce 2s infinite;
       }
       
       @keyframes bounce {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(5px); }
-      }
-      
-      .tagline {
-        position: absolute;
-        right: 40px;
-        bottom: 40px;
-        max-width: 350px;
-        font-size: 20px;
-        line-height: 1.4;
-        color: #000;
-        text-align: left;
-        margin: 0;
       }
     `
   ]
