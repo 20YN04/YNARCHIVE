@@ -13,19 +13,19 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
       <!-- NAVIGATION — fixed, hidden initially, appears when mega title scrolls out -->
       <nav class="hero-nav" data-nav-bar>
         <div class="nav-left">
-          <span class="nav-brand" data-nav-brand>YNARCHIVE</span>
+          <a href="/" data-nav-link data-page="home" class="nav-brand" data-nav-brand>YNARCHIVE</a>
         </div>
         <div class="nav-center">
-          <a href="#work" class="nav-link" data-nav-link>Work,</a>
-          <a href="#process" class="nav-link" data-nav-link>Process,</a>
-          <a href="#studio" class="nav-link" data-nav-link>Studio</a>
+          <a href="/" class="nav-link" data-nav-link data-page="home">Work,</a>
+          <a href="/" class="nav-link" data-nav-link data-page="home">Process,</a>
+          <a href="/" class="nav-link" data-nav-link data-page="home">Studio</a>
         </div>
         <div class="nav-right">
           <span class="nav-clock">
             <span>{{ timeHour() }}</span><span class="clock-colon">:</span><span>{{ timeMinute() }}</span>
             <span class="clock-period">{{ timePeriod() }}</span>
           </span>
-          <a href="#contact" class="nav-link" data-nav-link data-page="contact">Contact</a>
+          <a href="/contact" class="nav-link" data-nav-link data-page="contact">Contact</a>
         </div>
       </nav>
 
@@ -121,11 +121,11 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         top: 0;
         left: 0;
         right: 0;
-        z-index: 100;
+        z-index: 140;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 60px;
+        height: 64px;
         padding: 0 2.5rem;
         background: transparent;
         color: #0a0a0a;
@@ -140,12 +140,18 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         gap: 1rem;
       }
 
+      .nav-right {
+        gap: 1rem;
+      }
+
       .nav-brand {
         font-family: 'area-normal', sans-serif;
         font-size: 14px;
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        color: inherit;
+        text-decoration: none;
       }
 
       .nav-center {
@@ -305,9 +311,6 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         }
         .hero-nav {
           padding: 0 1.5rem;
-        }
-        .nav-clock {
-          display: none;
         }
         .hero-title-block {
           padding: 2.5rem 1.5rem 2rem;

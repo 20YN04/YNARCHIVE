@@ -1,8 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 import { HomeComponent } from './pages/home/home';
-import { HeroComponent } from './hero/hero';
-import { ProjectGridComponent } from './components/project-grid/project-grid';
-import { LayoutComponent } from './components/layout/layout';
 import { PreloaderComponent } from './components/preloader/preloader.component';
 import { ContactComponent } from './components/contact/contact';
 import { gsap } from 'gsap';
@@ -12,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 @Component({
   selector: 'app-root',
-  imports: [HeroComponent, LayoutComponent, PreloaderComponent, ProjectGridComponent, ContactComponent, HomeComponent],
+  imports: [PreloaderComponent],
   template: `
     <!-- Preloader — slide-clock letters on black overlay -->
     <app-preloader />
@@ -39,14 +36,19 @@ gsap.registerPlugin(ScrollTrigger);
       <ng-template #pageContainer></ng-template>
     </div>
 
-    <!-- Page overlay for layer transitions -->
-    <div class="page-overlay" data-page-overlay style="pointer-events:none; position:fixed; inset:0; z-index:200; background:#0a0a0a; clip-path: inset(100% 0 0 0);"></div>
+    <!-- Page overlays for layered paper transition -->
+    <div class="page-overlay page-overlay-back" data-page-overlay-back></div>
+    <div class="page-overlay page-overlay-front" data-page-overlay-front></div>
 
     <!-- Footer -->
     <section class="footer-section" data-footer-section>
       <div class="footer-inner" data-footer-inner>
-        <span class="footer-label">YNARCHIVE</span>
-        <span class="footer-year">&copy; 2025</span>
+        <a href="/" data-nav-link data-page="home" class="footer-brand">YNARCHIVE</a>
+        <div class="footer-links">
+          <a href="/" data-nav-link data-page="home" class="footer-link">Home</a>
+          <a href="/contact" data-nav-link data-page="contact" class="footer-link">Contact</a>
+        </div>
+        <span class="footer-year">&copy; 2026</span>
       </div>
     </section>
   `,
@@ -54,6 +56,8 @@ gsap.registerPlugin(ScrollTrigger);
 })
 export class App implements AfterViewInit, OnDestroy {
   private timeline?: gsap.core.Timeline;
+  private navClickHandler?: (event: Event) => void;
+  private popStateHandler?: (event: PopStateEvent) => void;
   @ViewChild('pageContainer', { read: ViewContainerRef, static: true }) pageContainer!: ViewContainerRef;
 
   ngAfterViewInit(): void {
@@ -63,30 +67,91 @@ export class App implements AfterViewInit, OnDestroy {
 
   private initAnimations(): void {
     // Helper: render a page component with overlay transition
-    const pageOverlay = document.querySelector('[data-page-overlay]') as HTMLElement;
+    const pageOverlayFront = document.querySelector('[data-page-overlay-front]') as HTMLElement | null;
+    const pageOverlayBack = document.querySelector('[data-page-overlay-back]') as HTMLElement | null;
+    let currentPage: 'home' | 'contact' = window.location.pathname === '/contact' ? 'contact' : 'home';
+
+    const runPaperIn = async () => {
+      if (!pageOverlayFront || !pageOverlayBack) return;
+
+      gsap.set(pageOverlayBack, { clipPath: 'inset(100% 0 0 0)', y: 40, rotate: 0.6, opacity: 0.92 });
+      gsap.set(pageOverlayFront, { clipPath: 'inset(100% 0 0 0)', y: 88, rotate: -0.8, opacity: 1 });
+
+      const inTl = gsap.timeline();
+      inTl
+        .to(pageOverlayBack, {
+          clipPath: 'inset(0% 0 0 0)',
+          y: 0,
+          rotate: 0,
+          duration: 0.42,
+          ease: 'power3.out',
+        }, 0)
+        .to(pageOverlayFront, {
+          clipPath: 'inset(0% 0 0 0)',
+          y: 0,
+          rotate: 0,
+          duration: 0.52,
+          ease: 'power4.out',
+        }, 0.06);
+
+      await inTl.then();
+    };
+
+    const runPaperOut = async () => {
+      if (!pageOverlayFront || !pageOverlayBack) return;
+
+      const outTl = gsap.timeline();
+      outTl
+        .to(pageOverlayFront, {
+          clipPath: 'inset(0 0 100% 0)',
+          y: -70,
+          rotate: 0.7,
+          duration: 0.5,
+          ease: 'power3.inOut',
+        }, 0)
+        .to(pageOverlayBack, {
+          clipPath: 'inset(0 0 100% 0)',
+          y: -45,
+          rotate: -0.5,
+          duration: 0.44,
+          ease: 'power2.inOut',
+        }, 0.05);
+
+      await outTl.then();
+    };
+
     const showPage = async (name: string) => {
-      // animate overlay in
-      await gsap.to(pageOverlay, { clipPath: 'inset(0 0 0 0)', duration: 0.45, ease: 'power2.out' }).then();
+      if ((name === 'home' || name === 'contact') && currentPage === name) {
+        return;
+      }
+      await runPaperIn();
       // swap content
       this.pageContainer.clear();
       if (name === 'contact') {
         this.pageContainer.createComponent(ContactComponent);
+        currentPage = 'contact';
       } else {
         this.pageContainer.createComponent(HomeComponent);
+        currentPage = 'home';
       }
-      // animate overlay out
-      await gsap.to(pageOverlay, { clipPath: 'inset(100% 0 0 0)', duration: 0.55, ease: 'power3.inOut' }).then();
+      await runPaperOut();
     };
 
-    // initialize to home
+    // initialize current page
     this.pageContainer.clear();
-    this.pageContainer.createComponent(HomeComponent);
+    if (currentPage === 'contact') {
+      this.pageContainer.createComponent(ContactComponent);
+    } else {
+      this.pageContainer.createComponent(HomeComponent);
+    }
+    history.replaceState({ page: currentPage }, '', currentPage === 'contact' ? '/contact' : '/');
 
     // handle browser back/forward
-    window.addEventListener('popstate', (ev) => {
+    this.popStateHandler = (ev: PopStateEvent) => {
       const state = (ev.state && (ev.state as any).page) || 'home';
       showPage(state === 'contact' ? 'contact' : 'home');
-    });
+    };
+    window.addEventListener('popstate', this.popStateHandler);
 
     // ── Query elements ──
     const preloader = document.querySelector('[data-preloader]') as HTMLElement;
@@ -100,7 +165,7 @@ export class App implements AfterViewInit, OnDestroy {
 
     const gridLines = document.querySelectorAll('[data-grid-line]');
 
-    const navBar = document.querySelector('[data-nav-bar]') as HTMLElement;
+    const navBar = document.querySelector('[data-nav-bar]') as HTMLElement | null;
     const megaTitle = document.querySelector('[data-hero-mega-title]') as HTMLElement;
     const megaTitleText = document.querySelector('[data-hero-mega-text]') as HTMLElement;
     const titleLines = document.querySelectorAll('[data-hero-title-line]');
@@ -111,34 +176,33 @@ export class App implements AfterViewInit, OnDestroy {
 
     const footerSection = document.querySelector('[data-footer-section]');
 
-    // Nav links: if `data-page` is present do a page transition; otherwise fall back to anchor smooth-scroll
-    const navLinks = document.querySelectorAll('[data-nav-link]') as NodeListOf<HTMLAnchorElement>;
-    if (navLinks && navLinks.length) {
-      navLinks.forEach((link) => {
-        link.addEventListener('click', (ev) => {
-          const page = link.getAttribute('data-page');
-          if (page) {
-            ev.preventDefault();
-            // push history state
-            history.pushState({ page }, '', page === 'contact' ? '/contact' : '/');
-            showPage(page);
-            return;
-          }
+    // Delegated nav clicks so links in dynamically rendered pages always work
+    this.navClickHandler = (event: Event) => {
+      const target = event.target as HTMLElement | null;
+      const link = target?.closest('[data-nav-link]') as HTMLAnchorElement | null;
+      if (!link) return;
 
-          const href = link.getAttribute('href');
-          if (href && href.startsWith('#')) {
-            ev.preventDefault();
-            const id = href.slice(1);
-            const target = document.getElementById(id);
-            if (target) {
-              const navHeight = navBar ? navBar.offsetHeight : 60;
-              const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 8;
-              window.scrollTo({ top, behavior: 'smooth' });
-            }
-          }
-        });
-      });
-    }
+      const page = link.getAttribute('data-page');
+      if (page === 'home' || page === 'contact') {
+        event.preventDefault();
+        history.pushState({ page }, '', page === 'contact' ? '/contact' : '/');
+        showPage(page);
+        return;
+      }
+
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        event.preventDefault();
+        const id = href.slice(1);
+        const anchorTarget = document.getElementById(id);
+        if (anchorTarget) {
+          const navHeight = navBar ? navBar.offsetHeight : 60;
+          const top = anchorTarget.getBoundingClientRect().top + window.scrollY - navHeight - 8;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      }
+    };
+    document.addEventListener('click', this.navClickHandler);
 
     if (!preloader || letters.length === 0) {
       console.error('Missing critical animation elements');
@@ -354,12 +418,15 @@ export class App implements AfterViewInit, OnDestroy {
         .to(megaTitle, {
           clipPath: 'inset(0 0 100% 0)',
           ease: 'none',
-        }, 0)
-        .to(navBar, {
+        }, 0);
+
+      if (navBar) {
+        handoffTl.to(navBar, {
           opacity: 1,
           y: 0,
           ease: 'none',
         }, 0.28);
+      }
 
       if (navBar) {
         ScrollTrigger.create({
@@ -433,6 +500,12 @@ export class App implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.navClickHandler) {
+      document.removeEventListener('click', this.navClickHandler);
+    }
+    if (this.popStateHandler) {
+      window.removeEventListener('popstate', this.popStateHandler);
+    }
     ScrollTrigger.getAll().forEach(t => t.kill());
     this.timeline?.kill();
     document.body.style.overflow = '';

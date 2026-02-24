@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { gsap } from 'gsap';
@@ -8,74 +8,175 @@ import { gsap } from 'gsap';
   standalone: true, 
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div id="contact" class="min-h-screen bg-[#d1d3d0] text-black px-6 lg:px-12 pt-20 pb-16 font-sans" #container>
-
-      <div class="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-
-        <!-- Left: heading + form -->
-        <div class="left-col">
-          <h1 class="text-[2.2rem] lg:text-[3.2rem] leading-[1.03] font-medium tracking-tight mb-8">
-            Based in Belgium but available for your projects in
-            <br class="hidden lg:block" />
-            <span class="inline-block text-black/60 h-[1.1em] align-bottom overflow-hidden">
-              <span #flipText class="block">the rest of the world</span>
-            </span>
-          </h1>
-
-          <div class="w-full lg:max-w-[90%]">
-            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-6">
-              <div>
-                <label class="sr-only">Name</label>
-                <input type="text" formControlName="name" placeholder="Name"
-                       class="w-full bg-transparent border-0 border-b border-black/20 py-3 text-lg text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors" />
-              </div>
-
-              <div>
-                <label class="sr-only">Email</label>
-                <input type="email" formControlName="email" placeholder="Email"
-                       class="w-full bg-transparent border-0 border-b border-black/20 py-3 text-lg text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors" />
-              </div>
-
-              <div>
-                <label class="sr-only">Message</label>
-                <textarea formControlName="message" placeholder="Message" rows="6"
-                          class="w-full bg-transparent border-0 border-b border-black/20 py-3 text-lg text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors resize-y min-h-[120px]"></textarea>
-              </div>
-
-              <div>
-                <button type="submit" [disabled]="contactForm.invalid"
-                        class="bg-transparent border-none p-0 text-lg lg:text-xl cursor-pointer underline underline-offset-[6px] opacity-80 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity font-medium">
-                  Send Message
-                </button>
-              </div>
-            </form>
-          </div>
+    <div id="contact" class="min-h-screen bg-[#d1d3d0] text-black font-sans" #container>
+      <nav class="contact-nav" data-nav-bar>
+        <div class="nav-left">
+          <a href="/" data-nav-link data-page="home" class="nav-brand">YNARCHIVE</a>
         </div>
+        <div class="nav-center">
+          <a href="/" data-nav-link data-page="home" class="nav-link">Work,</a>
+          <a href="/" data-nav-link data-page="home" class="nav-link">Process,</a>
+          <a href="/" data-nav-link data-page="home" class="nav-link">Studio</a>
+        </div>
+        <div class="nav-right">
+          <span class="nav-clock">
+            <span>{{ timeHour() }}</span><span class="clock-colon">:</span><span>{{ timeMinute() }}</span>
+            <span class="clock-period">{{ timePeriod() }}</span>
+          </span>
+          <span class="nav-link nav-link-active">Contact</span>
+        </div>
+      </nav>
 
-        <!-- Right: contact details + image -->
-        <div class="right-col flex flex-col justify-between">
-          <div class="contact-details space-y-8">
-            <div class="grid grid-cols-[120px_1fr] items-start gap-x-6">
-              <span class="text-xs uppercase tracking-widest mt-2 font-medium">BUSINESS</span>
-              <span class="text-xl lg:text-2xl hover:underline underline-offset-[6px] cursor-pointer tracking-tight">
-                <a href="mailto:yentl.nerinckx@icloud.com">yentl.nerinckx@icloud.com</a>
+      <div class="px-6 lg:px-12 pt-28 lg:pt-36 pb-16 lg:pb-20">
+        <div class="mx-auto w-full max-w-[1500px] grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)] gap-12 lg:gap-24 items-start">
+          <div class="left-col">
+            <h1 class="text-[2.2rem] md:text-[3.2rem] lg:text-[4.1rem] leading-[1.02] font-medium tracking-tight max-w-[20ch]">
+              <span class="relative z-20">Based in Belgium but available for your projects in</span>
+              <span class="relative block h-[1.08em] mt-[-0.08em] overflow-hidden">
+                <span #flipText class="absolute inset-0 z-10 block text-black/40">the rest of the world</span>
               </span>
-            </div>
+            </h1>
 
-            <div class="grid grid-cols-[120px_1fr] items-start gap-x-6">
-              <span class="text-xs uppercase tracking-widest mt-2 font-medium">PHONE</span>
-              <span class="text-xl lg:text-2xl hover:underline underline-offset-[6px] cursor-pointer tracking-tight">
-                <a href="tel:+32475451358">+32 475 45 13 58</a>
-              </span>
+            <div class="mt-10 lg:mt-14 w-full max-w-190">
+              <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-7">
+                <div>
+                  <label class="sr-only">Name</label>
+                  <input type="text" formControlName="name" placeholder="Name"
+                         class="w-full bg-transparent border-0 border-b border-black/20 py-3 lg:py-4 text-lg lg:text-xl text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors rounded-none" />
+                </div>
+
+                <div>
+                  <label class="sr-only">Email</label>
+                  <input type="email" formControlName="email" placeholder="Email"
+                         class="w-full bg-transparent border-0 border-b border-black/20 py-3 lg:py-4 text-lg lg:text-xl text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors rounded-none" />
+                </div>
+
+                <div>
+                  <label class="sr-only">Message</label>
+                  <textarea formControlName="message" placeholder="Message" rows="5"
+                            class="w-full bg-transparent border-0 border-b border-black/20 py-3 lg:py-4 text-lg lg:text-xl text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors resize-y min-h-[130px] rounded-none"></textarea>
+                </div>
+
+                <div class="pt-1">
+                  <button type="submit" [disabled]="contactForm.invalid"
+                          class="bg-transparent border-none p-0 text-lg lg:text-xl cursor-pointer underline underline-offset-[8px] decoration-1 opacity-80 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity font-medium">
+                    Send Message
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
 
-        </div>
+          <div class="right-col pt-2 lg:pt-5">
+            <div class="space-y-9 lg:space-y-10">
+              <div class="grid grid-cols-[120px_1fr] lg:grid-cols-[150px_1fr] items-start gap-x-6">
+                <span class="text-xs uppercase tracking-widest mt-2 font-medium">Business</span>
+                <span class="text-xl lg:text-[1.6rem] leading-tight tracking-tight">
+                  <a href="mailto:yentl.nerinckx@icloud.com" class="hover:underline underline-offset-[6px] decoration-1">yentl.nerinckx&#64;icloud.com</a>
+                </span>
+              </div>
 
+              <div class="grid grid-cols-[120px_1fr] lg:grid-cols-[150px_1fr] items-start gap-x-6">
+                <span class="text-xs uppercase tracking-widest mt-2 font-medium">Phone</span>
+                <span class="text-xl lg:text-[1.6rem] leading-tight tracking-tight">
+                  <a href="tel:+32475451358" class="hover:underline underline-offset-[6px] decoration-1">+32 475 45 13 58</a>
+                </span>
+              </div>
+
+              <div class="grid grid-cols-[120px_1fr] lg:grid-cols-[150px_1fr] items-start gap-x-6">
+                <span class="text-xs uppercase tracking-widest mt-2 font-medium">Address</span>
+                <span class="text-xl lg:text-[1.6rem] leading-snug tracking-tight">Tessenderlo<br>Belgium</span>
+              </div>
+            </div>
+
+            <div class="mt-12 lg:mt-16 flex items-center gap-2 text-base font-medium tracking-tight">
+              <a href="VUL_HIER_JE_LINK_IN" target="_blank" class="hover:underline underline-offset-[4px] decoration-1 cursor-pointer">Instagram</a>,
+              <a href="VUL_HIER_JE_LINK_IN" target="_blank" class="hover:underline underline-offset-[4px] decoration-1 cursor-pointer">LinkedIn</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   `,
   styles: [`
+    .contact-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 140;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      padding: 0 2.5rem;
+      background: rgba(209, 211, 208, 0.95);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+      color: #0a0a0a;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-center {
+      display: flex;
+      gap: 3px;
+    }
+
+    .nav-brand {
+      font-family: 'area-normal', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .nav-link {
+      font-family: 'area-normal', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: inherit;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-link:hover {
+      opacity: 0.5;
+    }
+
+    .nav-link-active {
+      opacity: 1;
+    }
+
+    .nav-clock {
+      font-family: 'area-normal', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      opacity: 0.6;
+    }
+
+    .clock-colon {
+      animation: blink 1s steps(1, end) infinite;
+    }
+
+    .clock-period {
+      margin-left: 4px;
+      font-size: 10px;
+      opacity: 0.5;
+      text-transform: uppercase;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
     input:-webkit-autofill,
     input:-webkit-autofill:hover, 
     input:-webkit-autofill:focus, 
@@ -85,15 +186,28 @@ import { gsap } from 'gsap';
       -webkit-text-fill-color: black !important;
       transition: background-color 5000s ease-in-out 0s;
     }
+
+    @media (max-width: 768px) {
+      .contact-nav {
+        padding: 0 1.5rem;
+      }
+
+      .nav-clock {
+        display: none;
+      }
+    }
   `]
 })
-export class ContactComponent implements OnInit {
+export class ContactComponent implements OnInit, AfterViewInit, OnDestroy {
   contactForm: FormGroup;
+  readonly timeHour = signal('00');
+  readonly timeMinute = signal('00');
+  readonly timePeriod = signal('AM');
+  private clockTimer = window.setInterval(() => this.updateTime(), 1000);
   
   @ViewChild('container', { static: true }) container!: ElementRef;
   @ViewChild('flipText', { static: true }) flipText!: ElementRef;
 
-  // De woorden die door de rotatie gaan
   locations = [
     'the rest of the world',
     'France',
@@ -114,39 +228,36 @@ export class ContactComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 1. De initiële fade-in van de hele pagina
     gsap.fromTo(this.container.nativeElement.children, 
       { y: 60, opacity: 0 },
       { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.2 }
     );
 
-    // 2. Start de tekst-rotatie
     this.startTextAnimation();
+  }
+
+  ngAfterViewInit(): void {
+    this.updateTime();
+  }
+
+  ngOnDestroy(): void {
+    window.clearInterval(this.clockTimer);
   }
 
   startTextAnimation(): void {
     let currentIndex = 0;
     const el = this.flipText.nativeElement;
 
-    // Elke 2.5 seconden wisselt het woord. Dit is snel genoeg voor dynamiek, maar traag genoeg om te lezen.
     setInterval(() => {
-      
-      // Animatie UIT: schuif omhoog en verdwijn
       gsap.to(el, { 
         yPercent: -100, 
         opacity: 0, 
         duration: 0.4, 
         ease: "power2.in", 
         onComplete: () => {
-          
-          // Verander de tekst achter de schermen
           currentIndex = (currentIndex + 1) % this.locations.length;
           el.innerText = this.locations[currentIndex];
-
-          // Zet het element stiekem beneden klaar
           gsap.set(el, { yPercent: 100 });
-
-          // Animatie IN: schuif omhoog naar de normale positie
           gsap.to(el, { 
             yPercent: 0, 
             opacity: 1, 
@@ -163,5 +274,16 @@ export class ContactComponent implements OnInit {
       console.log('Formulier Data:', this.contactForm.value);
       this.contactForm.reset();
     }
+  }
+
+  private updateTime(): void {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const hour12 = hours % 12 || 12;
+
+    this.timeHour.set(hour12.toString().padStart(2, '0'));
+    this.timeMinute.set(minutes.toString().padStart(2, '0'));
+    this.timePeriod.set(hours >= 12 ? 'PM' : 'AM');
   }
 }
