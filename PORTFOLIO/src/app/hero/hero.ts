@@ -13,7 +13,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, signal } fr
           YNARCHIVE
         </h1>
       </div>
-      <nav class="hero-nav flex h-[70px] items-center justify-between bg-white px-10 text-[15px] text-black">
+      <nav class="hero-nav flex h-[70px] items-center justify-between bg-white px-10 text-[15px] text-black" data-nav-bar>
         <div class="hidden items-center gap-2 md:flex">
           <a class="nav-link" href="#">Work</a>
           <span>,</span>
@@ -32,7 +32,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, signal } fr
         <button class="md:hidden" type="button">Menu</button>
       </nav>
       <section class="hero-image-area bg-white px-10 pt-16">
-        <figure #heroFigure class="hero-figure mx-auto w-[calc(100%-40px)] max-w-[900px] md:w-[68vw]">
+        <figure #heroFigure class="hero-figure mx-auto w-[calc(100%-40px)] max-w-[900px] md:w-[68vw]" data-hero-image>
           <img
             class="h-full w-full object-cover"
             [style.transform]="'translateY(' + parallaxY() + 'px)'"
@@ -53,8 +53,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, signal } fr
   styles: [
     `
       .hero-title {
-        opacity: 0;
-        transition: opacity 0.2s ease;
+        opacity: 1;
       }
 
       .hero-band {
@@ -111,18 +110,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, signal } fr
       }
 
       :host-context(.preloading) .hero-title {
-        opacity: 0;
-        animation: none;
-      }
-
-      :host-context(.handoff-complete) .hero-title {
-        animation: hero-fade 0.6s ease forwards;
-      }
-
-      @keyframes hero-fade {
-        to {
-          opacity: 1;
-        }
+        opacity: 1;
       }
 
       @keyframes hero-rise {
