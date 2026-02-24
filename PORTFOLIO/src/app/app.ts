@@ -71,6 +71,51 @@ export class App implements AfterViewInit, OnDestroy {
     const pageOverlayBack = document.querySelector('[data-page-overlay-back]') as HTMLElement | null;
     let currentPage: 'home' | 'contact' = window.location.pathname === '/contact' ? 'contact' : 'home';
 
+    const registerHomeHandoff = () => {
+      const nav = document.querySelector('[data-nav-bar]') as HTMLElement | null;
+      const mega = document.querySelector('[data-hero-mega-title]') as HTMLElement | null;
+      const megaText = document.querySelector('[data-hero-mega-text]') as HTMLElement | null;
+      if (!nav || !mega || !megaText) return;
+
+      const existingMain = ScrollTrigger.getById('home-nav-handoff');
+      if (existingMain) existingMain.kill();
+      const existingDynamic = ScrollTrigger.getById('dynamic-home-nav-handoff');
+      if (existingDynamic) existingDynamic.kill();
+
+      gsap.set(nav, { opacity: 0, y: -10 });
+      nav.style.pointerEvents = 'none';
+
+      const handoffTrigger = ScrollTrigger.create({
+        id: 'home-nav-handoff',
+        trigger: mega,
+        start: 'top top',
+        end: '+=320',
+        onUpdate: (self) => {
+          const progress = self.progress;
+          const reveal = progress < 0.28 ? 0 : Math.min(1, (progress - 0.28) / 0.72);
+
+          gsap.set(megaText, {
+            opacity: 1 - progress,
+            yPercent: -22 * progress,
+            scale: 1 - 0.08 * progress,
+          });
+
+          gsap.set(mega, {
+            clipPath: `inset(0 0 ${progress * 100}% 0)`,
+          });
+
+          gsap.set(nav, {
+            opacity: reveal,
+            y: -10 + reveal * 10,
+          });
+
+          nav.style.pointerEvents = progress > 0.85 ? 'auto' : 'none';
+        },
+      });
+
+      handoffTrigger.update();
+    };
+
     const runPaperIn = async () => {
       if (!pageOverlayFront || !pageOverlayBack) return;
 
@@ -138,32 +183,7 @@ export class App implements AfterViewInit, OnDestroy {
 
       if (name === 'home') {
         requestAnimationFrame(() => {
-          const dynamicNavBar = document.querySelector('[data-nav-bar]') as HTMLElement | null;
-          const dynamicMegaTitle = document.querySelector('[data-hero-mega-title]') as HTMLElement | null;
-          if (!dynamicNavBar || !dynamicMegaTitle) return;
-
-          const existing = ScrollTrigger.getById('dynamic-home-nav-handoff');
-          if (existing) existing.kill();
-
-          gsap.set(dynamicNavBar, { opacity: 0, y: -10 });
-          dynamicNavBar.style.pointerEvents = 'none';
-
-          ScrollTrigger.create({
-            id: 'dynamic-home-nav-handoff',
-            trigger: dynamicMegaTitle,
-            start: 'top top',
-            end: '+=320',
-            onUpdate: (self) => {
-              const progress = self.progress;
-              const reveal = progress < 0.28 ? 0 : Math.min(1, (progress - 0.28) / 0.72);
-              gsap.set(dynamicNavBar, {
-                opacity: reveal,
-                y: -10 + reveal * 10,
-              });
-              dynamicNavBar.style.pointerEvents = progress > 0.85 ? 'auto' : 'none';
-            },
-          });
-
+          registerHomeHandoff();
           ScrollTrigger.refresh();
         });
       }
@@ -276,6 +296,10 @@ export class App implements AfterViewInit, OnDestroy {
       onComplete: () => {
         document.body.style.overflow = '';
         preloader.style.display = 'none';
+        if (currentPage === 'home') {
+          registerHomeHandoff();
+          ScrollTrigger.refresh();
+        }
       }
     });
     const tl = this.timeline;
@@ -429,47 +453,8 @@ export class App implements AfterViewInit, OnDestroy {
       opacity: 0,
     });
 
-    // Mega title -> nav handoff (single scrub timeline for smooth transition)
-    if (megaTitle && megaTitleText) {
-      const handoffTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: megaTitle,
-          start: 'top top',
-          end: '+=320',
-          scrub: 1,
-        },
-      });
-
-      handoffTl
-        .to(megaTitleText, {
-          opacity: 0,
-          yPercent: -22,
-          scale: 0.92,
-          ease: 'none',
-        }, 0)
-        .to(megaTitle, {
-          clipPath: 'inset(0 0 100% 0)',
-          ease: 'none',
-        }, 0);
-
-      if (navBar) {
-        handoffTl.to(navBar, {
-          opacity: 1,
-          y: 0,
-          ease: 'none',
-        }, 0.28);
-      }
-
-      if (navBar) {
-        ScrollTrigger.create({
-          trigger: megaTitle,
-          start: 'top top',
-          end: '+=320',
-          onUpdate: (self) => {
-            navBar.style.pointerEvents = self.progress > 0.85 ? 'auto' : 'none';
-          },
-        });
-      }
+    if (currentPage !== 'home') {
+      registerHomeHandoff();
     }
 
     // Hero image parallax — counter-movement for depth
