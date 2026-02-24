@@ -1,8 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
+import { NavBarComponent } from '../components/navbar/navbar';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
+  imports: [NavBarComponent],
   template: `
     <section class="hero-section" data-hero-section>
       <!-- MEGA TITLE — YNARCHIVE, flush at top, compresses into nav on scroll -->
@@ -10,24 +12,7 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         <span class="mega-title-text" data-hero-mega-text>YNARCHIVE</span>
       </div>
 
-      <!-- NAVIGATION — fixed, hidden initially, appears when mega title scrolls out -->
-      <nav class="hero-nav" data-nav-bar>
-        <div class="nav-left">
-          <span class="nav-brand" data-nav-brand>YNARCHIVE</span>
-        </div>
-        <div class="nav-center">
-          <a href="#work" class="nav-link" data-nav-link>Work,</a>
-          <a href="#process" class="nav-link" data-nav-link>Process,</a>
-          <a href="#studio" class="nav-link" data-nav-link>Studio</a>
-        </div>
-        <div class="nav-right">
-          <span class="nav-clock">
-            <span>{{ timeHour() }}</span><span class="clock-colon">:</span><span>{{ timeMinute() }}</span>
-            <span class="clock-period">{{ timePeriod() }}</span>
-          </span>
-          <a href="#contact" class="nav-link" data-nav-link>Contact</a>
-        </div>
-      </nav>
+      <app-navbar></app-navbar>
 
       <!-- HERO TITLE — large text with staggered line-reveal -->
       <div class="hero-title-block" data-hero-title-block>
@@ -121,11 +106,11 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         top: 0;
         left: 0;
         right: 0;
-        z-index: 100;
+        z-index: 140;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 60px;
+        height: 64px;
         padding: 0 2.5rem;
         background: transparent;
         color: #0a0a0a;
@@ -140,12 +125,18 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         gap: 1rem;
       }
 
+      .nav-right {
+        gap: 1rem;
+      }
+
       .nav-brand {
         font-family: 'area-normal', sans-serif;
         font-size: 14px;
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        color: inherit;
+        text-decoration: none;
       }
 
       .nav-center {
@@ -306,9 +297,6 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         .hero-nav {
           padding: 0 1.5rem;
         }
-        .nav-clock {
-          display: none;
-        }
         .hero-title-block {
           padding: 2.5rem 1.5rem 2rem;
         }
@@ -329,27 +317,8 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
     `
   ]
 })
-export class HeroComponent implements AfterViewInit, OnDestroy {
-  readonly timeHour = signal('00');
-  readonly timeMinute = signal('00');
-  readonly timePeriod = signal('AM');
-  private clockTimer = window.setInterval(() => this.updateTime(), 1000);
-
+export class HeroComponent implements AfterViewInit {
   ngAfterViewInit(): void {
-    this.updateTime();
-  }
-
-  ngOnDestroy(): void {
-    window.clearInterval(this.clockTimer);
-  }
-
-  private updateTime(): void {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const hour12 = hours % 12 || 12;
-    this.timeHour.set(String(hour12).padStart(2, '0'));
-    this.timeMinute.set(String(minutes).padStart(2, '0'));
-    this.timePeriod.set(hours >= 12 ? 'PM' : 'AM');
+    // ...existing code...
   }
 }
