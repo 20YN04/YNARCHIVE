@@ -25,7 +25,7 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
             <span>{{ timeHour() }}</span><span class="clock-colon">:</span><span>{{ timeMinute() }}</span>
             <span class="clock-period">{{ timePeriod() }}</span>
           </span>
-          <a href="#contact" class="nav-link" data-nav-link>Contact</a>
+          <a href="#contact" class="nav-link" data-nav-link data-page="contact">Contact</a>
         </div>
       </nav>
 

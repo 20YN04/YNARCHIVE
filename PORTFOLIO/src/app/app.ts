@@ -1,8 +1,10 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
+import { HomeComponent } from './pages/home/home';
 import { HeroComponent } from './hero/hero';
 import { ProjectGridComponent } from './components/project-grid/project-grid';
 import { LayoutComponent } from './components/layout/layout';
 import { PreloaderComponent } from './components/preloader/preloader.component';
+import { ContactComponent } from './components/contact/contact';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -10,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 @Component({
   selector: 'app-root',
-  imports: [HeroComponent, LayoutComponent, PreloaderComponent, ProjectGridComponent],
+  imports: [HeroComponent, LayoutComponent, PreloaderComponent, ProjectGridComponent, ContactComponent, HomeComponent],
   template: `
     <!-- Preloader — slide-clock letters on black overlay -->
     <app-preloader />
@@ -32,11 +34,13 @@ gsap.registerPlugin(ScrollTrigger);
       <div class="grid-line-v" style="left:83.333%" data-grid-line></div>
     </div>
 
-    <!-- Main content -->
-    <app-hero />
-    <app-layout>
-      <app-project-grid />
-    </app-layout>
+    <!-- Main content rendered into the page container (dynamic pages) -->
+    <div id="page-root">
+      <ng-template #pageContainer></ng-template>
+    </div>
+
+    <!-- Page overlay for layer transitions -->
+    <div class="page-overlay" data-page-overlay style="pointer-events:none; position:fixed; inset:0; z-index:200; background:#0a0a0a; clip-path: inset(100% 0 0 0);"></div>
 
     <!-- Footer -->
     <section class="footer-section" data-footer-section>
@@ -50,6 +54,7 @@ gsap.registerPlugin(ScrollTrigger);
 })
 export class App implements AfterViewInit, OnDestroy {
   private timeline?: gsap.core.Timeline;
+  @ViewChild('pageContainer', { read: ViewContainerRef, static: true }) pageContainer!: ViewContainerRef;
 
   ngAfterViewInit(): void {
     document.body.style.overflow = 'hidden';
@@ -57,6 +62,32 @@ export class App implements AfterViewInit, OnDestroy {
   }
 
   private initAnimations(): void {
+    // Helper: render a page component with overlay transition
+    const pageOverlay = document.querySelector('[data-page-overlay]') as HTMLElement;
+    const showPage = async (name: string) => {
+      // animate overlay in
+      await gsap.to(pageOverlay, { clipPath: 'inset(0 0 0 0)', duration: 0.45, ease: 'power2.out' }).then();
+      // swap content
+      this.pageContainer.clear();
+      if (name === 'contact') {
+        this.pageContainer.createComponent(ContactComponent);
+      } else {
+        this.pageContainer.createComponent(HomeComponent);
+      }
+      // animate overlay out
+      await gsap.to(pageOverlay, { clipPath: 'inset(100% 0 0 0)', duration: 0.55, ease: 'power3.inOut' }).then();
+    };
+
+    // initialize to home
+    this.pageContainer.clear();
+    this.pageContainer.createComponent(HomeComponent);
+
+    // handle browser back/forward
+    window.addEventListener('popstate', (ev) => {
+      const state = (ev.state && (ev.state as any).page) || 'home';
+      showPage(state === 'contact' ? 'contact' : 'home');
+    });
+
     // ── Query elements ──
     const preloader = document.querySelector('[data-preloader]') as HTMLElement;
     const letters = document.querySelectorAll('[data-letter]');
@@ -79,6 +110,35 @@ export class App implements AfterViewInit, OnDestroy {
     const scrollHint = document.querySelector('[data-scroll-hint]') as HTMLElement;
 
     const footerSection = document.querySelector('[data-footer-section]');
+
+    // Nav links: if `data-page` is present do a page transition; otherwise fall back to anchor smooth-scroll
+    const navLinks = document.querySelectorAll('[data-nav-link]') as NodeListOf<HTMLAnchorElement>;
+    if (navLinks && navLinks.length) {
+      navLinks.forEach((link) => {
+        link.addEventListener('click', (ev) => {
+          const page = link.getAttribute('data-page');
+          if (page) {
+            ev.preventDefault();
+            // push history state
+            history.pushState({ page }, '', page === 'contact' ? '/contact' : '/');
+            showPage(page);
+            return;
+          }
+
+          const href = link.getAttribute('href');
+          if (href && href.startsWith('#')) {
+            ev.preventDefault();
+            const id = href.slice(1);
+            const target = document.getElementById(id);
+            if (target) {
+              const navHeight = navBar ? navBar.offsetHeight : 60;
+              const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 8;
+              window.scrollTo({ top, behavior: 'smooth' });
+            }
+          }
+        });
+      });
+    }
 
     if (!preloader || letters.length === 0) {
       console.error('Missing critical animation elements');
