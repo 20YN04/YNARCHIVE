@@ -97,10 +97,17 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
       }
 
       .mega-title-text {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 40px;
+        text-align: center;
         font-family: 'area-normal', sans-serif;
         font-size: clamp(4rem, 14vw, 15rem);
         font-weight: 700;
-        line-height: 0.9;
+        line-height: 1;
         letter-spacing: -0.03em;
         text-transform: uppercase;
         color: #fff;

@@ -273,45 +273,42 @@ export class App implements AfterViewInit, OnDestroy {
       opacity: 0,
     });
 
-    // Mega title compresses on scroll — clip from bottom, text fades
+    // Mega title -> nav handoff (single scrub timeline for smooth transition)
     if (megaTitle && megaTitleText) {
-      // Text fades as you scroll
-      gsap.to(megaTitleText, {
+      const handoffTl = gsap.timeline({
         scrollTrigger: {
           trigger: megaTitle,
           start: 'top top',
-          end: '80% top',
-          scrub: 0.3,
+          end: '+=320',
+          scrub: 1,
         },
-        opacity: 0,
-        ease: 'none',
       });
 
-      // Mega title clips from bottom (preserves text position on scroll-back)
-      gsap.to(megaTitle, {
-        scrollTrigger: {
-          trigger: megaTitle,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 0.4,
-        },
-        clipPath: 'inset(0 0 100% 0)',
-        ease: 'none',
-      });
-
-      // Nav fades in smoothly via scrub (synced with mega title exit)
-      if (navBar) {
-        gsap.to(navBar, {
-          scrollTrigger: {
-            trigger: megaTitle,
-            start: '50% top',
-            end: 'bottom top',
-            scrub: 0.3,
-          },
+      handoffTl
+        .to(megaTitleText, {
+          opacity: 0,
+          yPercent: -22,
+          scale: 0.92,
+          ease: 'none',
+        }, 0)
+        .to(megaTitle, {
+          clipPath: 'inset(0 0 100% 0)',
+          ease: 'none',
+        }, 0)
+        .to(navBar, {
           opacity: 1,
           y: 0,
-          pointerEvents: 'auto',
           ease: 'none',
+        }, 0.28);
+
+      if (navBar) {
+        ScrollTrigger.create({
+          trigger: megaTitle,
+          start: 'top top',
+          end: '+=320',
+          onUpdate: (self) => {
+            navBar.style.pointerEvents = self.progress > 0.85 ? 'auto' : 'none';
+          },
         });
       }
     }
