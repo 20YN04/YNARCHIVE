@@ -4,20 +4,30 @@ import { Component } from '@angular/core';
   selector: 'app-preloader',
   standalone: true,
   template: `
-    <div class="fixed top-0 left-0 z-100 h-screen w-screen bg-black will-change-transform" data-preloader>
-      <h1 class="pointer-events-none absolute top-1/2 left-1/2 m-0 w-full -translate-x-1/2 -translate-y-1/2 px-[1vw] text-center font-['area-normal',sans-serif] text-[clamp(4.5rem,15.8vw,17rem)] leading-none font-bold uppercase tracking-[-0.03em] text-white">
-        YNARCHIVE
-      </h1>
-      <div class="relative z-10 flex h-full items-start justify-between px-20 pt-14">
-        <div>
-          <p class="mb-2 text-sm uppercase tracking-widest text-white">FULL STACK DEVELOPER</p>
-          <p class="mb-2 text-sm uppercase tracking-widest text-white">TESSENDERLO</p>
-          <p class="m-0 text-sm uppercase tracking-widest text-white">BELGIUM</p>
-        </div>
-        <div class="text-right">
-          <div class="mb-2.5 text-xs uppercase tracking-[0.2em] text-white">Loading</div>
-          <div class="text-5xl font-bold text-white" data-preloader-counter>0%</div>
-        </div>
+    <div class="preloader" data-preloader>
+      <!-- Left info -->
+      <div class="preloader-info preloader-left" data-preloader-info>
+        <p class="info-line">YENTL NERINCKX</p>
+        <p class="info-line info-sub">FULL STACK DEVELOPER</p>
+      </div>
+
+      <!-- Slide-clock YNARCHIVE letters -->
+      <div class="slide-clock" data-slide-clock>
+        <div class="letter-mask"><span class="letter" data-letter>Y</span></div>
+        <div class="letter-mask"><span class="letter" data-letter>N</span></div>
+        <div class="letter-mask"><span class="letter" data-letter>A</span></div>
+        <div class="letter-mask"><span class="letter" data-letter>R</span></div>
+        <div class="letter-mask"><span class="letter" data-letter>C</span></div>
+        <div class="letter-mask"><span class="letter" data-letter>H</span></div>
+        <div class="letter-mask"><span class="letter" data-letter>I</span></div>
+        <div class="letter-mask"><span class="letter" data-letter>V</span></div>
+        <div class="letter-mask"><span class="letter" data-letter>E</span></div>
+      </div>
+
+      <!-- Right info -->
+      <div class="preloader-info preloader-right" data-preloader-info>
+        <p class="info-line">TESSENDERLO</p>
+        <p class="info-line info-sub">BEL</p>
       </div>
     </div>
   `,
@@ -25,6 +35,82 @@ import { Component } from '@angular/core';
     `
       :host {
         display: block;
+      }
+
+      .preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #0a0a0a;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        will-change: height, opacity;
+        overflow: hidden;
+      }
+
+      .preloader-info {
+        position: absolute;
+        bottom: 2.5rem;
+        opacity: 0;
+        will-change: opacity;
+      }
+
+      .preloader-left {
+        left: 2.5rem;
+      }
+
+      .preloader-right {
+        right: 2.5rem;
+        text-align: right;
+      }
+
+      .info-line {
+        margin: 0;
+        font-family: 'area-normal', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #fff;
+        line-height: 1.6;
+      }
+
+      .info-sub {
+        font-weight: 400;
+        opacity: 0.5;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+      }
+
+      .slide-clock {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+      }
+
+      .letter-mask {
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+      }
+
+      .letter {
+        display: inline-block;
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(3.5rem, 12vw, 12rem);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: -0.03em;
+        color: #fff;
+        line-height: 1;
+        transform: translateY(110%);
+        will-change: transform;
       }
     `
   ]

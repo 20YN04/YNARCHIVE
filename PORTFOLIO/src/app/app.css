@@ -12,18 +12,109 @@ html, body {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'area-normal', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #fff;
+  color: #0a0a0a;
 }
 
-/* Preloader active state */
-body.preloader-active {
-  overflow: hidden;
-}
-
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+::selection {
+  background: #0a0a0a;
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════
+   THICK BORDER BARS — frame the viewport
+   Start at ~40px, animate down to 1px via GSAP
+   ═══════════════════════════════════════════ */
+.bar-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: #0a0a0a;
+  will-change: height;
+}
+
+.bar-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: #0a0a0a;
+  will-change: height;
+}
+
+.bar-left {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  background: #0a0a0a;
+  will-change: width;
+}
+
+.bar-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  background: #0a0a0a;
+  will-change: width;
+}
+
+/* ═══════════════════════════════════════════
+   ARCHITECTURAL GRID — thin column guides
+   ═══════════════════════════════════════════ */
+.grid-line-v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(10, 10, 10, 0.06);
+  will-change: transform;
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+.footer-section {
+  position: relative;
+  background: #0a0a0a;
+  color: #fff;
+  padding: 4rem 2.5rem;
+  border-top: 1px solid rgba(10, 10, 10, 0.1);
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.footer-label {
+  font-family: 'area-normal', sans-serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.footer-year {
+  font-family: 'area-normal', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
 }
