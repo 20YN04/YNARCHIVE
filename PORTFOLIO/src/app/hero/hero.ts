@@ -5,32 +5,40 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
   standalone: true,
   template: `
     <section class="hero-section" data-hero-section>
-      <!-- MEGA TITLE BAR -->
-      <div class="hero-title-wrapper" data-hero-title-mask>
-        <h1 class="hero-title" data-hero-title>YNARCHIVE</h1>
-      </div>
-
-      <!-- NAVIGATION BAR -->
+      <!-- NAVIGATION — starts boxed (inside thick border frame), transitions to sticky minimal -->
       <nav class="hero-nav" data-nav-bar>
-        <div class="nav-links">
-          <a href="#work" class="nav-link">Work,</a>
-          <a href="#process" class="nav-link">Process,</a>
-          <a href="#studio" class="nav-link">Studio</a>
+        <div class="nav-left">
+          <span class="nav-brand" data-nav-brand>YNARCHIVE</span>
         </div>
-        <div class="nav-clock">
-          <span class="clock-time">{{ timeHour() }}</span>
-          <span class="clock-colon">:</span>
-          <span class="clock-time">{{ timeMinute() }}</span>
-          <span class="clock-period">{{ timePeriod() }}</span>
-          <span class="clock-location">TESSENDERLO, BEL</span>
+        <div class="nav-center">
+          <a href="#work" class="nav-link" data-nav-link>Work,</a>
+          <a href="#process" class="nav-link" data-nav-link>Process,</a>
+          <a href="#studio" class="nav-link" data-nav-link>Studio</a>
         </div>
-        <div>
-          <a href="#contact" class="nav-link">Contact</a>
+        <div class="nav-right">
+          <span class="nav-clock">
+            <span>{{ timeHour() }}</span><span class="clock-colon">:</span><span>{{ timeMinute() }}</span>
+            <span class="clock-period">{{ timePeriod() }}</span>
+          </span>
+          <a href="#contact" class="nav-link" data-nav-link>Contact</a>
         </div>
       </nav>
 
-      <!-- HERO IMAGE -->
-      <div class="hero-image-section" data-hero-image-wrapper>
+      <!-- HERO TITLE — large text with staggered line-reveal -->
+      <div class="hero-title-block" data-hero-title-block>
+        <div class="title-line-mask">
+          <h1 class="hero-title-line" data-hero-title-line>Driven by Passion,</h1>
+        </div>
+        <div class="title-line-mask">
+          <h1 class="hero-title-line" data-hero-title-line>Centered on Code,</h1>
+        </div>
+        <div class="title-line-mask">
+          <h1 class="hero-title-line" data-hero-title-line>Embracing Craft</h1>
+        </div>
+      </div>
+
+      <!-- HERO IMAGE — parallax mask (container moves down, image moves up) -->
+      <div class="hero-image-outer" data-hero-image-outer>
         <figure class="hero-image-container" data-hero-image>
           <img
             class="hero-image"
@@ -41,16 +49,17 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         </figure>
       </div>
 
-      <!-- BOTTOM SECTION -->
+      <!-- BOTTOM — section number + scroll hint -->
       <div class="hero-bottom" data-hero-bottom>
         <div class="hero-bottom-left">
           <span class="section-number">01</span>
-          <span class="scroll-indicator" data-scroll-indicator>[Scroll]</span>
+          <span class="section-label">STUDIO</span>
+        </div>
+        <div class="hero-bottom-center">
+          <span class="scroll-hint" data-scroll-hint>[Scroll]</span>
         </div>
         <div class="hero-bottom-right">
-          <p class="hero-tagline" data-hero-tagline>
-            Driven by Passion, Centered on Code, Embracing Craft
-          </p>
+          <span class="location-label">Tessenderlo, Belgium</span>
         </div>
       </div>
     </section>
@@ -68,56 +77,52 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         background: #fff;
       }
 
-      /* TITLE */
-      .hero-title-wrapper {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: clamp(140px, 22vw, 220px);
-        overflow: hidden;
-        background: #0a0a0a;
-      }
-
-      .hero-title {
-        margin: 0;
-        width: 100%;
-        text-align: center;
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(4.5rem, 15.8vw, 17rem);
-        font-weight: 700;
-        line-height: 0.9;
-        letter-spacing: -0.03em;
-        text-transform: uppercase;
-        color: #fff;
-        padding-bottom: 10px;
-        will-change: transform;
-      }
-
-      /* NAV BAR */
+      /* ═══ NAVIGATION ═══ */
       .hero-nav {
-        position: relative;
-        z-index: 1;
+        position: sticky;
+        top: 0;
+        z-index: 50;
         display: flex;
         align-items: center;
         justify-content: space-between;
         height: 60px;
         padding: 0 2.5rem;
-        background: #fff;
-        border-bottom: 1px solid #e8e8e8;
+        background: #0a0a0a;
+        color: #fff;
+        transition: background 0.5s ease, box-shadow 0.5s ease;
       }
 
-      .nav-links {
+      /* When scrolled, nav becomes minimal white bar (class toggled by GSAP) */
+      .hero-nav.nav-scrolled {
+        background: #fff;
+        color: #0a0a0a;
+        box-shadow: 0 1px 0 rgba(10, 10, 10, 0.08);
+      }
+
+      .nav-left, .nav-right {
         display: flex;
-        gap: 2px;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .nav-brand {
+        font-family: 'area-normal', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .nav-center {
+        display: flex;
+        gap: 3px;
       }
 
       .nav-link {
         font-family: 'area-normal', sans-serif;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 400;
-        color: #0a0a0a;
+        color: inherit;
         text-decoration: none;
         transition: opacity 0.3s ease;
         letter-spacing: 0.01em;
@@ -128,78 +133,94 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
       }
 
       .nav-clock {
-        display: flex;
-        align-items: center;
-        gap: 2px;
         font-family: 'area-normal', sans-serif;
-        font-size: 13px;
-        color: #0a0a0a;
+        font-size: 12px;
         letter-spacing: 0.02em;
+        opacity: 0.6;
       }
 
       .clock-colon {
-        animation: colonBlink 1s steps(1, end) infinite;
+        animation: blink 1s steps(1, end) infinite;
       }
 
       .clock-period {
-        margin-left: 6px;
-        font-size: 11px;
+        margin-left: 4px;
+        font-size: 10px;
         opacity: 0.5;
         text-transform: uppercase;
       }
 
-      .clock-location {
-        margin-left: 14px;
-        font-size: 11px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        opacity: 0.4;
-      }
-
-      @keyframes colonBlink {
+      @keyframes blink {
         50% { opacity: 0; }
       }
 
-      /* HERO IMAGE */
-      .hero-image-section {
+      /* ═══ HERO TITLE — staggered line-reveal ═══ */
+      .hero-title-block {
+        padding: 4rem 2.5rem 3rem;
+      }
+
+      .title-line-mask {
+        overflow: hidden;
+        line-height: 1;
+      }
+
+      .hero-title-line {
+        margin: 0;
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(2.2rem, 5.5vw, 5rem);
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+        color: #0a0a0a;
+        transform: translateY(110%);
+        will-change: transform;
+      }
+
+      /* ═══ HERO IMAGE — parallax mask ═══ */
+      .hero-image-outer {
         position: relative;
-        padding: 3.5rem 2.5rem;
-        background: #fff;
+        padding: 0 2.5rem 2.5rem;
+        will-change: transform;
       }
 
       .hero-image-container {
         position: relative;
         margin: 0 auto;
-        width: 62%;
-        min-width: 320px;
-        max-width: 920px;
-        aspect-ratio: 4 / 3;
+        width: 100%;
+        max-width: 1100px;
+        aspect-ratio: 16 / 9;
         overflow: hidden;
       }
 
       .hero-image {
         width: 100%;
-        height: 100%;
+        height: 115%;
         object-fit: cover;
+        object-position: center;
         will-change: transform;
-        transform: scale(1.15);
+        transform: scale(1.1) translateY(5%);
       }
 
-      /* BOTTOM SECTION */
+      /* ═══ BOTTOM ═══ */
       .hero-bottom {
-        position: relative;
         display: flex;
-        align-items: flex-end;
+        align-items: center;
         justify-content: space-between;
-        padding: 0 2.5rem 2.5rem;
-        background: #fff;
-        min-height: 80px;
+        padding: 1.5rem 2.5rem 3rem;
       }
 
-      .hero-bottom-left {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+      .hero-bottom-left,
+      .hero-bottom-center,
+      .hero-bottom-right {
+        flex: 1;
+      }
+
+      .hero-bottom-center {
+        text-align: center;
+      }
+
+      .hero-bottom-right {
+        text-align: right;
       }
 
       .section-number {
@@ -207,64 +228,62 @@ import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
         font-size: 11px;
         letter-spacing: 0.3em;
         text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.35);
+        color: rgba(10, 10, 10, 0.3);
+        margin-right: 1rem;
       }
 
-      .scroll-indicator {
+      .section-label {
         font-family: 'area-normal', sans-serif;
-        font-size: 12px;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(10, 10, 10, 0.3);
+      }
+
+      .scroll-hint {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
         letter-spacing: 0.05em;
-        color: rgba(10, 10, 10, 0.25);
+        color: rgba(10, 10, 10, 0.2);
         animation: scrollBounce 2.5s ease-in-out infinite;
       }
 
       @keyframes scrollBounce {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(5px); }
+        50% { transform: translateY(4px); }
       }
 
-      .hero-bottom-right {
-        max-width: 380px;
-      }
-
-      .hero-tagline {
-        margin: 0;
+      .location-label {
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(16px, 1.4vw, 20px);
-        font-weight: 400;
-        line-height: 1.5;
-        color: #0a0a0a;
-        letter-spacing: -0.01em;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(10, 10, 10, 0.3);
       }
 
-      /* Responsive */
+      /* ═══ Responsive ═══ */
       @media (max-width: 768px) {
         .hero-nav {
           padding: 0 1.5rem;
         }
-
-        .hero-image-section {
-          padding: 2rem 1.5rem;
-        }
-
-        .hero-image-container {
-          width: 100%;
-          min-width: unset;
-        }
-
-        .hero-bottom {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 20px;
-          padding: 0 1.5rem 2rem;
-        }
-
-        .hero-bottom-right {
-          max-width: 100%;
-        }
-
         .nav-clock {
           display: none;
+        }
+        .hero-title-block {
+          padding: 2.5rem 1.5rem 2rem;
+        }
+        .hero-image-outer {
+          padding: 0 1.5rem 1.5rem;
+        }
+        .hero-bottom {
+          flex-direction: column;
+          gap: 12px;
+          padding: 1rem 1.5rem 2rem;
+          text-align: left;
+        }
+        .hero-bottom-center,
+        .hero-bottom-right {
+          text-align: left;
         }
       }
     `
