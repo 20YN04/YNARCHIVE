@@ -1,15 +1,14 @@
 import { AfterViewInit, Component, OnDestroy, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 
 import { HeroComponent } from './hero/hero';
 import { ProjectGridComponent } from './project-grid';
 import { LayoutComponent } from './layout/layout';
-import { PreloaderComponent } from './preloader';
+import { PreloaderComponent } from './preloader.component';
 import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-root',
-  imports: [HeroComponent, LayoutComponent, PreloaderComponent, ProjectGridComponent, RouterOutlet],
+  imports: [HeroComponent, LayoutComponent, PreloaderComponent, ProjectGridComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -20,6 +19,7 @@ export class App implements AfterViewInit, OnDestroy {
   private timeline?: gsap.core.Timeline;
 
   ngAfterViewInit(): void {
+    document.body.classList.add('preloader-active');
     const preloader = document.querySelector('[data-preloader]');
     const counter = document.querySelector('[data-preloader-counter]');
     const heroTitle = document.querySelector('[data-hero-title]');
@@ -27,6 +27,7 @@ export class App implements AfterViewInit, OnDestroy {
     const heroImage = document.querySelector('[data-hero-image]');
 
     if (!preloader || !counter || !heroTitle || !navBar || !heroImage) {
+      document.body.classList.remove('preloader-active');
       this.showPreloader.set(false);
       return;
     }
@@ -35,14 +36,15 @@ export class App implements AfterViewInit, OnDestroy {
       onComplete: () => this.onPreloaderDone()
     });
 
-    this.timeline.to(counter, {
-      innerText: 100,
+    const counterValue = { value: 0 };
+    const counterEl = counter as HTMLElement;
+
+    this.timeline.to(counterValue, {
+      value: 100,
       duration: 2.5,
-      snap: { innerText: 1 },
       ease: 'none',
-      onUpdate: function () {
-        const value = Math.round(Number(this.targets()[0].innerText));
-        this.targets()[0].innerText = `${value}%`;
+      onUpdate: () => {
+        counterEl.textContent = `${Math.round(counterValue.value)}%`;
       }
     });
 
@@ -87,6 +89,7 @@ export class App implements AfterViewInit, OnDestroy {
   }
 
   onPreloaderDone(): void {
+    document.body.classList.remove('preloader-active');
     this.showPreloader.set(false);
   }
 

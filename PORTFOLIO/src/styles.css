@@ -7,6 +7,8 @@
 }
 
 * {
+	margin: 0;
+	padding: 0;
 	box-sizing: border-box;
 }
 
@@ -36,4 +38,179 @@ h6 {
 
 img {
 	display: block;
+}
+
+.preloader {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: #000;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 80px;
+	will-change: transform;
+}
+
+.preloader-left p {
+	color: #fff;
+	font-size: 14px;
+	letter-spacing: 0.1em;
+	margin-bottom: 8px;
+}
+
+.preloader-right {
+	text-align: right;
+}
+
+.loading-text {
+	color: #fff;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	margin-bottom: 10px;
+}
+
+.counter {
+	color: #fff;
+	font-size: 48px;
+	font-weight: 700;
+}
+
+.hero {
+	width: 100%;
+	min-height: 100vh;
+	background: #fff;
+}
+
+.mega-title-bar {
+	background: #000;
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.mega-title-bar h1 {
+	color: #fff;
+	font-size: 18vw;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: -0.02em;
+	white-space: nowrap;
+	opacity: 1;
+	visibility: visible;
+	will-change: transform;
+}
+
+.nav-bar {
+	height: 70px;
+	background: #fff;
+	border-bottom: 1px solid #f0f0f0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 40px;
+	opacity: 1;
+	visibility: visible;
+	will-change: transform;
+}
+
+.nav-links a {
+	color: #000;
+	text-decoration: none;
+	font-size: 15px;
+	margin-right: 4px;
+	transition: opacity 0.3s;
+}
+
+.nav-links a:hover {
+	opacity: 0.6;
+}
+
+.nav-clock {
+	font-family: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
+		"Courier New", monospace;
+	font-size: 14px;
+}
+
+.nav-clock .location {
+	font-family: "area-normal", sans-serif;
+	color: #000;
+	margin-left: 8px;
+}
+
+.nav-contact a {
+	color: #000;
+	text-decoration: none;
+	font-size: 15px;
+	transition: opacity 0.3s;
+}
+
+.nav-contact a:hover {
+	opacity: 0.6;
+}
+
+.hero-image-container {
+	padding: 80px 40px;
+	position: relative;
+}
+
+.hero-image-wrapper {
+	width: 60%;
+	max-width: 900px;
+	margin: 0 auto;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+	will-change: transform;
+}
+
+.hero-image-wrapper img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.hero-bottom {
+	position: relative;
+	height: 100px;
+	padding: 0 40px;
+}
+
+.scroll-indicator {
+	position: absolute;
+	left: 40px;
+	bottom: 40px;
+	font-size: 13px;
+	color: #ccc;
+	animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(5px);
+	}
+}
+
+.tagline {
+	position: absolute;
+	right: 40px;
+	bottom: 40px;
+	max-width: 350px;
+	font-size: 20px;
+	line-height: 1.4;
+	color: #000;
+	text-align: left;
+}
+
+body.preloader-active {
+	overflow: hidden;
 }
