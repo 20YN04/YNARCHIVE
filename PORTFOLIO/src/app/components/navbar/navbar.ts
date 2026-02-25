@@ -15,7 +15,7 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 				<a href="/" data-nav-link data-page="home" class="nav-brand" data-nav-brand>YNARCHIVE</a>
 			</div>
 			<div class="nav-center">
-				<a href="/" class="nav-link" [class.nav-link-active]="activePage === 'home'" data-nav-link data-page="home">Work,</a>
+				<a href="/work" class="nav-link" [class.nav-link-active]="activePage === 'work'" data-nav-link data-page="work">Work,</a>
 				<a href="/" class="nav-link" [class.nav-link-active]="activePage === 'home'" data-nav-link data-page="home">Process,</a>
 				<a href="/" class="nav-link" [class.nav-link-active]="activePage === 'home'" data-nav-link data-page="home">Studio</a>
 			</div>
@@ -133,7 +133,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	@Input() fixed = true;
 	@Input() alwaysVisible = false;
 	@Input() solidBackground = false;
-	@Input() activePage: 'home' | 'contact' | null = null;
+	@Input() activePage: 'home' | 'work' | 'contact' | null = null;
 
 	readonly timeHour = signal('00');
 	readonly timeMinute = signal('00');
