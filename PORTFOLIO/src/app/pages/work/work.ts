@@ -8,14 +8,13 @@ import {
   signal,
   computed
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { NavBarComponent } from '../../components/navbar/navbar';
 
 gsap.registerPlugin(ScrollTrigger);
 
 type Category = 'E-commerce' | 'SaaS' | 'Landing Pages';
-type GalleryRowType = 'full' | 'split';
 
 interface WorkItem {
   id: string;
@@ -28,428 +27,154 @@ interface WorkItem {
 }
 
 interface GalleryRow {
-  type: GalleryRowType;
+  type: 'full' | 'split';
   items: WorkItem[];
 }
 
 @Component({
   selector: 'app-work',
-  imports: [CommonModule],
+  imports: [NavBarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="work-page min-h-screen bg-white text-[#0a0a0a]" #container>
-      <header class="work-header border-b border-black/10">
-        <div class="mx-auto max-w-350 px-[clamp(1.25rem,4vw,3.5rem)] h-16 flex items-center justify-between gap-6">
-          <a href="/" data-nav-link data-page="home" class="brand-link">YNARCHIVE</a>
-          <nav class="flex items-center gap-4 md:gap-6">
-            <a href="/work" data-nav-link data-page="work" class="nav-link nav-link-active">Work</a>
-            <a href="#about" class="nav-link">About</a>
-            <a href="/contact" data-nav-link data-page="contact" class="nav-link">Contact</a>
-          </nav>
+    <div class="min-h-screen bg-white text-[#0a0a0a]" #container>
+      <!-- Shared navbar — static, white solid bg -->
+      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="work"></app-navbar>
+
+      <!-- Hero title + filters -->
+      <div class="mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-14 pt-10 md:pt-14 lg:pt-16">
+        <h1 class="font-bold text-[clamp(4rem,16vw,14rem)] leading-[0.9] tracking-tighter uppercase">
+          PROJECTS
+        </h1>
+
+        <div class="mt-6 md:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-black/10 py-3.5">
+          @for (option of filterOptions; track option) {
+            <button
+              type="button"
+              class="text-xs uppercase tracking-[0.14em] bg-transparent border-none p-0 cursor-pointer transition-colors duration-200"
+              [style.color]="activeFilter() === option ? '#0a0a0a' : 'rgba(10,10,10,0.4)'"
+              (click)="setFilter(option)"
+            >
+              {{ option }}
+            </button>
+          }
         </div>
-      </header>
+      </div>
 
-      <main>
-        <section class="mx-auto max-w-350 px-[clamp(1.25rem,4vw,3.5rem)] pt-8 md:pt-12 lg:pt-14">
-          <h1 class="projects-title">PROJECTS</h1>
-
-          <div class="mt-6 md:mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-black/10 py-3">
-            @for (option of filterOptions; track option) {
-              <button
-                type="button"
-                class="filter-link"
-                [class.filter-link-active]="activeFilter() === option"
-                (click)="setFilter(option)"
-              >
-                {{ option }}
-              </button>
-            }
-          </div>
-        </section>
-
-        <section class="mx-auto max-w-350 px-[clamp(1.25rem,4vw,3.5rem)] pt-8 md:pt-10 lg:pt-12 pb-18">
-          <div class="flex flex-col gap-6 md:gap-8 lg:gap-10">
-            @for (row of galleryRows(); track $index) {
-              @if (row.type === 'full') {
-                <article class="project-card reveal-card" data-reveal-card>
-                  <a [href]="row.items[0].url" target="_blank" rel="noopener noreferrer" class="project-media" [attr.aria-label]="'View ' + row.items[0].title">
-                    <img
-                      class="project-image"
-                      [src]="row.items[0].imageUrl"
-                      [alt]="row.items[0].title"
-                      loading="lazy"
-                      data-parallax-image
-                    />
-                    <span class="project-hover-cta" aria-hidden="true">↗</span>
-                  </a>
-                  <div class="project-meta-row">
-                    <h2 class="project-title">{{ row.items[0].title }}</h2>
-                    <div class="meta-right">
-                      <span class="meta-year">{{ row.items[0].year }}</span>
-                      <div class="meta-tags">
-                        @for (tag of row.items[0].tags; track tag) {
-                          <span class="meta-tag">{{ tag }}</span>
-                        }
-                      </div>
+      <!-- Project gallery -->
+      <div class="mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-14 pt-8 md:pt-10 pb-20">
+        <div class="flex flex-col gap-8 md:gap-10 lg:gap-14">
+          @for (row of galleryRows(); track $index) {
+            @if (row.type === 'full') {
+              <article class="group" data-reveal-card>
+                <a [href]="row.items[0].url" target="_blank" rel="noopener noreferrer"
+                   class="relative block overflow-hidden bg-neutral-50 border border-black/6"
+                   [attr.aria-label]="'View ' + row.items[0].title">
+                  <img
+                    class="w-full h-auto block object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.6,0.2,1)] group-hover:scale-[1.03]"
+                    [src]="row.items[0].imageUrl"
+                    [alt]="row.items[0].title"
+                    loading="lazy"
+                    data-parallax-image
+                  />
+                  <span
+                    class="absolute right-4 bottom-4 size-14 rounded-full flex items-center justify-center bg-black/80 text-white text-xl opacity-0 scale-75 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 border border-white/40"
+                    aria-hidden="true">↗</span>
+                </a>
+                <div class="flex items-end justify-between gap-4 pt-3">
+                  <h2 class="text-[clamp(1.15rem,2.5vw,1.75rem)] tracking-tight leading-none">{{ row.items[0].title }}</h2>
+                  <div class="text-right shrink-0">
+                    <span class="block text-[11px] uppercase tracking-[0.18em] text-black/45">{{ row.items[0].year }}</span>
+                    <div class="flex flex-wrap gap-1.5 mt-1 justify-end">
+                      @for (tag of row.items[0].tags; track tag) {
+                        <span class="text-[10px] uppercase tracking-widest text-black/60">{{ tag }}</span>
+                      }
                     </div>
                   </div>
-                </article>
-              } @else {
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                  @for (item of row.items; track item.id) {
-                    <article class="project-card reveal-card" data-reveal-card>
-                      <a [href]="item.url" target="_blank" rel="noopener noreferrer" class="project-media" [attr.aria-label]="'View ' + item.title">
-                        <img
-                          class="project-image"
-                          [src]="item.imageUrl"
-                          [alt]="item.title"
-                          loading="lazy"
-                          data-parallax-image
-                        />
-                        <span class="project-hover-cta" aria-hidden="true">↗</span>
-                      </a>
-                      <div class="project-meta-row">
-                        <h2 class="project-title">{{ item.title }}</h2>
-                        <div class="meta-right">
-                          <span class="meta-year">{{ item.year }}</span>
-                          <div class="meta-tags">
-                            @for (tag of item.tags; track tag) {
-                              <span class="meta-tag">{{ tag }}</span>
-                            }
-                          </div>
+                </div>
+              </article>
+
+              <!-- Split row -->
+            } @else {
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+                @for (item of row.items; track item.id) {
+                  <article class="group" data-reveal-card>
+                    <a [href]="item.url" target="_blank" rel="noopener noreferrer"
+                       class="relative block overflow-hidden bg-neutral-50 border border-black/6"
+                       [attr.aria-label]="'View ' + item.title">
+                      <img
+                        class="w-full h-auto block object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.6,0.2,1)] group-hover:scale-[1.03]"
+                        [src]="item.imageUrl"
+                        [alt]="item.title"
+                        loading="lazy"
+                        data-parallax-image
+                      />
+                      <span
+                        class="absolute right-4 bottom-4 size-12 rounded-full flex items-center justify-center bg-black/80 text-white text-lg opacity-0 scale-75 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 border border-white/40"
+                        aria-hidden="true">↗</span>
+                    </a>
+                    <div class="flex items-end justify-between gap-3 pt-3">
+                      <h2 class="text-[clamp(1rem,2vw,1.4rem)] tracking-tight leading-none">{{ item.title }}</h2>
+                      <div class="text-right shrink-0">
+                        <span class="block text-[11px] uppercase tracking-[0.18em] text-black/45">{{ item.year }}</span>
+                        <div class="flex flex-wrap gap-1.5 mt-1 justify-end">
+                          @for (tag of item.tags; track tag) {
+                            <span class="text-[10px] uppercase tracking-widest text-black/60">{{ tag }}</span>
+                          }
                         </div>
                       </div>
-                    </article>
-                  }
-                </div>
-              }
+                    </div>
+                  </article>
+                }
+              </div>
             }
-          </div>
-        </section>
+          }
+        </div>
+      </div>
 
-        <section id="about" class="mx-auto max-w-350 px-[clamp(1.25rem,4vw,3.5rem)] pb-20">
-          <div class="border-t border-black/10 pt-9 md:pt-12">
-            <p class="text-[11px] uppercase tracking-[0.28em] text-black/45">About The Work</p>
-            <p class="mt-4 max-w-[68ch] text-base md:text-lg text-black/75 leading-relaxed">
-              This page is fully data-driven. Update the <span class="font-medium">workItems</span> list to add or remove projects,
-              categories, years, tags, and URLs without changing the gallery layout logic.
-            </p>
-          </div>
-        </section>
-      </main>
+      <!-- LET'S TALK footer -->
+      <footer class="border-t border-black/8 bg-neutral-50/80">
+        <div class="mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-14 py-14 md:py-20">
+          <h2 class="font-bold text-[clamp(3rem,10vw,9rem)] leading-[0.9] tracking-tighter uppercase">
+            LET'S TALK
+          </h2>
 
-      <footer class="border-t border-black/10 bg-neutral-100/70">
-        <div class="mx-auto max-w-350 px-[clamp(1.25rem,4vw,3.5rem)] py-12 md:py-16 lg:py-20">
-          <h2 class="talk-title">LET'S TALK</h2>
-
-          <div class="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-[1.2fr_1fr_auto] gap-8 md:gap-10 items-start">
+          <div class="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-[1.2fr_1fr_auto] gap-10 items-start">
             <div>
-              <p class="footer-label">Business</p>
-              <a href="mailto:yentl.nerinckx@icloud.com" class="footer-link-inline">yentl.nerinckx&#64;icloud.com</a>
+              <p class="text-[11px] uppercase tracking-[0.2em] text-black/40 m-0">Business</p>
+              <a href="mailto:yentl.nerinckx@icloud.com"
+                 class="mt-2 inline-block text-lg md:text-xl lg:text-2xl leading-tight hover:opacity-60 transition-opacity duration-200">
+                yentl.nerinckx&#64;icloud.com
+              </a>
             </div>
 
             <div>
-              <p class="footer-label">Location</p>
-              <p class="footer-value">Tessenderlo, Belgium</p>
-              <a href="/contact" data-nav-link data-page="contact" class="footer-link-inline mt-2 inline-block">Contact page</a>
+              <p class="text-[11px] uppercase tracking-[0.2em] text-black/40 m-0">Location</p>
+              <p class="mt-2 text-lg md:text-xl lg:text-2xl leading-tight m-0">Tessenderlo, Belgium</p>
+              <a href="/contact" data-nav-link data-page="contact"
+                 class="mt-3 inline-block text-sm underline underline-offset-4 decoration-1 hover:opacity-60 transition-opacity duration-200">
+                Contact page &#8594;
+              </a>
             </div>
 
-            <a href="/contact" data-nav-link data-page="contact" class="stamp" aria-label="Contact us">
-              <span class="stamp-ring">CONTACT US • CONTACT US • CONTACT US • </span>
-              <span class="stamp-center">↗</span>
+            <a href="/contact" data-nav-link data-page="contact"
+               class="stamp relative size-28 border border-black/25 rounded-full no-underline text-[#0a0a0a] inline-flex items-center justify-center overflow-hidden hover:border-black/50 transition-colors duration-300"
+               aria-label="Contact us">
+              <svg class="absolute inset-0 w-full h-full animate-[spin_9s_linear_infinite]" viewBox="0 0 100 100">
+                <defs>
+                  <path id="stampPath" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
+                </defs>
+                <text font-size="8" letter-spacing="3" fill="currentColor">
+                  <textPath href="#stampPath">CONTACT US · CONTACT US ·</textPath>
+                </text>
+              </svg>
+              <span class="text-xl relative z-10">↗</span>
             </a>
           </div>
         </div>
       </footer>
-    </section>
+    </div>
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-
-      .work-header {
-        position: sticky;
-        top: 0;
-        z-index: 30;
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(6px);
-      }
-
-      .brand-link {
-        font-family: 'area-normal', sans-serif;
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        text-decoration: none;
-        color: inherit;
-      }
-
-      .nav-link {
-        position: relative;
-        font-family: 'area-normal', sans-serif;
-        font-size: 13px;
-        text-decoration: none;
-        color: rgba(10, 10, 10, 0.74);
-        transition: color 0.25s ease;
-      }
-
-      .nav-link::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: -4px;
-        width: 100%;
-        height: 1px;
-        background: #0a0a0a;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.28s ease;
-      }
-
-      .nav-link:hover,
-      .nav-link-active {
-        color: #0a0a0a;
-      }
-
-      .nav-link:hover::after,
-      .nav-link-active::after {
-        transform: scaleX(1);
-      }
-
-      .projects-title {
-        margin: 0;
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(4.25rem, 18vw, 16rem);
-        font-weight: 700;
-        line-height: 0.9;
-        letter-spacing: -0.04em;
-        text-transform: uppercase;
-      }
-
-      .filter-link {
-        background: transparent;
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        position: relative;
-        font-family: 'area-normal', sans-serif;
-        font-size: 12px;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.55);
-        transition: color 0.25s ease;
-      }
-
-      .filter-link::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: -4px;
-        width: 100%;
-        height: 1px;
-        background: #0a0a0a;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.28s ease;
-      }
-
-      .filter-link:hover,
-      .filter-link-active {
-        color: #0a0a0a;
-      }
-
-      .filter-link:hover::after,
-      .filter-link-active::after {
-        transform: scaleX(1);
-      }
-
-      .project-media {
-        position: relative;
-        display: block;
-        overflow: hidden;
-        background: #f3f3f1;
-        border: 1px solid rgba(10, 10, 10, 0.1);
-      }
-
-      .project-image {
-        width: 100%;
-        height: auto;
-        display: block;
-        object-fit: cover;
-        transition: transform 0.7s cubic-bezier(0.2, 0.6, 0.2, 1);
-        will-change: transform;
-      }
-
-      .project-media:hover .project-image {
-        transform: scale(1.04);
-      }
-
-      .project-hover-cta {
-        position: absolute;
-        right: 1rem;
-        bottom: 1rem;
-        width: 56px;
-        height: 56px;
-        border-radius: 9999px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        background: rgba(10, 10, 10, 0.82);
-        color: #fff;
-        font-size: 1.3rem;
-        opacity: 0;
-        transform: scale(0.75);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-      }
-
-      .project-media:hover .project-hover-cta {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      .project-meta-row {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 1rem;
-        align-items: end;
-        padding-top: 0.8rem;
-      }
-
-      .project-title {
-        margin: 0;
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.2rem, 2.5vw, 2rem);
-        letter-spacing: -0.02em;
-      }
-
-      .meta-right {
-        text-align: right;
-      }
-
-      .meta-year {
-        display: block;
-        font-size: 11px;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.52);
-      }
-
-      .meta-tags {
-        display: flex;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-        gap: 0.3rem;
-        margin-top: 0.35rem;
-      }
-
-      .meta-tag {
-        font-size: 10px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.74);
-      }
-
-      .talk-title {
-        margin: 0;
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(3rem, 12vw, 10rem);
-        line-height: 0.9;
-        letter-spacing: -0.04em;
-        text-transform: uppercase;
-      }
-
-      .footer-label {
-        margin: 0;
-        font-size: 11px;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.44);
-      }
-
-      .footer-link-inline,
-      .footer-value {
-        margin-top: 0.45rem;
-        display: inline-block;
-        font-size: clamp(1.1rem, 2.2vw, 1.6rem);
-        line-height: 1.2;
-        color: #0a0a0a;
-        text-decoration: none;
-      }
-
-      .footer-link-inline {
-        position: relative;
-      }
-
-      .footer-link-inline::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: -3px;
-        width: 100%;
-        height: 1px;
-        background: #0a0a0a;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.28s ease;
-      }
-
-      .footer-link-inline:hover::after {
-        transform: scaleX(1);
-      }
-
-      .stamp {
-        position: relative;
-        width: 118px;
-        height: 118px;
-        border: 1px solid rgba(10, 10, 10, 0.35);
-        border-radius: 9999px;
-        text-decoration: none;
-        color: #0a0a0a;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-      }
-
-      .stamp-ring {
-        position: absolute;
-        width: 100%;
-        text-align: center;
-        font-size: 9px;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        white-space: nowrap;
-        animation: stamp-rotate 9s linear infinite;
-      }
-
-      .stamp-center {
-        font-size: 1.3rem;
-      }
-
-      @keyframes stamp-rotate {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      @media (max-width: 767px) {
-        .meta-right {
-          text-align: left;
-        }
-
-        .meta-tags {
-          justify-content: flex-start;
-        }
-      }
-    `
-  ]
+  styles: [`:host { display: block; }`]
 })
 export class WorkComponent implements AfterViewInit, OnDestroy {
   @ViewChild('container', { static: true }) container!: ElementRef<HTMLElement>;
@@ -565,16 +290,16 @@ export class WorkComponent implements AfterViewInit, OnDestroy {
     cards.forEach((card, index) => {
       gsap.fromTo(
         card,
-        { y: 26, opacity: 0 },
+        { y: 30, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.7,
+          duration: 0.8,
           ease: 'power2.out',
           scrollTrigger: {
             id: `work-reveal-${index}`,
             trigger: card,
-            start: 'top 86%'
+            start: 'top 88%'
           }
         }
       );
@@ -584,9 +309,9 @@ export class WorkComponent implements AfterViewInit, OnDestroy {
     images.forEach((image, index) => {
       gsap.fromTo(
         image,
-        { yPercent: -7 },
+        { yPercent: -5 },
         {
-          yPercent: 7,
+          yPercent: 5,
           ease: 'none',
           scrollTrigger: {
             id: `work-parallax-${index}`,

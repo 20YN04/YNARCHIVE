@@ -9,74 +9,77 @@ import { NavBarComponent } from '../navbar/navbar';
   standalone: true, 
   imports: [CommonModule, ReactiveFormsModule, NavBarComponent],
   template: `
-    <div id="contact" class="min-h-screen bg-[#d1d3d0] text-black font-sans" #container>
+    <div id="contact" class="min-h-screen bg-white text-[#0a0a0a]" #container>
       <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="contact"></app-navbar>
 
-      <div class="px-6 lg:px-12 pt-8 lg:pt-12 pb-16 lg:pb-20">
-        <div class="mx-auto w-full max-w-375 grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)] gap-12 lg:gap-24 items-start">
-          <div class="left-col">
-            <h1 class="text-[2.2rem] md:text-[3.2rem] lg:text-[4.1rem] leading-[1.02] font-medium tracking-tight max-w-[20ch]">
-              <span class="relative z-20">Based in Belgium but available for your projects in</span>
-              <span class="relative block h-[1.08em] mt-[-0.08em] overflow-hidden">
-                <span #flipText class="absolute inset-0 z-10 block text-black/40">the rest of the world</span>
-              </span>
-            </h1>
+      <div class="mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-14 pt-10 md:pt-14 lg:pt-16 pb-16 lg:pb-24">
+        <!-- Hero title -->
+        <h1 class="font-bold text-[clamp(3rem,12vw,10rem)] leading-[0.9] tracking-tighter uppercase">
+          GET IN TOUCH
+        </h1>
+        <p class="mt-4 md:mt-6 max-w-[46ch] text-base md:text-lg text-black/60 leading-relaxed">
+          <span>Based in Belgium but available for your projects in</span>
+          <span class="relative inline-block h-[1.2em] w-[12ch] overflow-hidden align-bottom">
+            <span #flipText class="absolute inset-0 text-black/40">the world</span>
+          </span>
+        </p>
 
-            <div class="mt-10 lg:mt-14 w-full max-w-190">
-              <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-7">
-                <div>
-                  <label class="sr-only">Name</label>
-                  <input type="text" formControlName="name" placeholder="Name"
-                         class="w-full bg-transparent border-0 border-b border-black/20 py-3 lg:py-4 text-lg lg:text-xl text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors rounded-none" />
-                </div>
-
-                <div>
-                  <label class="sr-only">Email</label>
-                  <input type="email" formControlName="email" placeholder="Email"
-                         class="w-full bg-transparent border-0 border-b border-black/20 py-3 lg:py-4 text-lg lg:text-xl text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors rounded-none" />
-                </div>
-
-                <div>
-                  <label class="sr-only">Message</label>
-                  <textarea formControlName="message" placeholder="Message" rows="5"
-                            class="w-full bg-transparent border-0 border-b border-black/20 py-3 lg:py-4 text-lg lg:text-xl text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors resize-y min-h-32.5 rounded-none"></textarea>
-                </div>
-
-                <div class="pt-1">
-                  <button type="submit" [disabled]="contactForm.invalid"
-                          class="bg-transparent border-none p-0 text-lg lg:text-xl cursor-pointer underline underline-offset-8px decoration-1 opacity-80 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity font-medium">
-                    Send Message
-                  </button>
-                </div>
-              </form>
-            </div>
+        <!-- Two-column layout -->
+        <div class="mt-12 md:mt-16 lg:mt-20 grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-start">
+          <!-- Left: Form -->
+          <div>
+            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
+              <div>
+                <label class="sr-only" for="contact-name">Name</label>
+                <input id="contact-name" type="text" formControlName="name" placeholder="Name"
+                       class="w-full bg-transparent border-0 border-b border-black/15 py-3 text-lg text-[#0a0a0a] outline-none placeholder:text-black/30 focus:border-black transition-colors duration-200 rounded-none" />
+              </div>
+              <div>
+                <label class="sr-only" for="contact-email">Email</label>
+                <input id="contact-email" type="email" formControlName="email" placeholder="Email"
+                       class="w-full bg-transparent border-0 border-b border-black/15 py-3 text-lg text-[#0a0a0a] outline-none placeholder:text-black/30 focus:border-black transition-colors duration-200 rounded-none" />
+              </div>
+              <div>
+                <label class="sr-only" for="contact-message">Message</label>
+                <textarea id="contact-message" formControlName="message" placeholder="Message" rows="5"
+                          class="w-full bg-transparent border-0 border-b border-black/15 py-3 text-lg text-[#0a0a0a] outline-none placeholder:text-black/30 focus:border-black transition-colors duration-200 resize-y min-h-32 rounded-none"></textarea>
+              </div>
+              <div>
+                <button type="submit" [disabled]="contactForm.invalid"
+                        class="bg-transparent border-none p-0 text-lg cursor-pointer underline underline-offset-8 decoration-1 text-[#0a0a0a] opacity-80 hover:opacity-100 disabled:opacity-25 disabled:cursor-not-allowed transition-opacity duration-200 font-medium">
+                  Send Message
+                </button>
+              </div>
+            </form>
           </div>
 
-          <div class="right-col pt-2 lg:pt-5">
-            <div class="space-y-9 lg:space-y-10">
-              <div class="grid grid-cols-[120px_1fr] lg:grid-cols-[150px_1fr] items-start gap-x-6">
-                <span class="text-xs uppercase tracking-widest mt-2 font-medium">Business</span>
-                <span class="text-xl lg:text-[1.6rem] leading-tight tracking-tight">
-                  <a href="mailto:yentl.nerinckx@icloud.com" class="hover:underline underline-offset-[6px] decoration-1">yentl.nerinckx&#64;icloud.com</a>
-                </span>
-              </div>
-
-              <div class="grid grid-cols-[120px_1fr] lg:grid-cols-[150px_1fr] items-start gap-x-6">
-                <span class="text-xs uppercase tracking-widest mt-2 font-medium">Phone</span>
-                <span class="text-xl lg:text-[1.6rem] leading-tight tracking-tight">
-                  <a href="tel:+32475451358" class="hover:underline underline-offset-[6px] decoration-1">+32 475 45 13 58</a>
-                </span>
-              </div>
-
-              <div class="grid grid-cols-[120px_1fr] lg:grid-cols-[150px_1fr] items-start gap-x-6">
-                <span class="text-xs uppercase tracking-widest mt-2 font-medium">Address</span>
-                <span class="text-xl lg:text-[1.6rem] leading-snug tracking-tight">Tessenderlo<br>Belgium</span>
-              </div>
+          <!-- Right: Info -->
+          <div class="flex flex-col gap-8">
+            <div class="border-b border-black/8 pb-6">
+              <p class="text-[11px] uppercase tracking-[0.2em] text-black/40">Business</p>
+              <a href="mailto:yentl.nerinckx@icloud.com"
+                 class="mt-2 block text-lg md:text-xl tracking-tight hover:opacity-60 transition-opacity duration-200">
+                yentl.nerinckx&#64;icloud.com
+              </a>
             </div>
 
-            <div class="mt-12 lg:mt-16 flex items-center gap-2 text-base font-medium tracking-tight">
-              <a href="VUL_HIER_JE_LINK_IN" target="_blank" class="hover:underline underline-offset-4 decoration-1 cursor-pointer">Instagram</a>,
-              <a href="VUL_HIER_JE_LINK_IN" target="_blank" class="hover:underline underline-offset-4 decoration-1 cursor-pointer">LinkedIn</a>
+            <div class="border-b border-black/8 pb-6">
+              <p class="text-[11px] uppercase tracking-[0.2em] text-black/40">Phone</p>
+              <a href="tel:+32475451358"
+                 class="mt-2 block text-lg md:text-xl tracking-tight hover:opacity-60 transition-opacity duration-200">
+                +32 475 45 13 58
+              </a>
+            </div>
+
+            <div class="border-b border-black/8 pb-6">
+              <p class="text-[11px] uppercase tracking-[0.2em] text-black/40">Address</p>
+              <p class="mt-2 text-lg md:text-xl tracking-tight leading-snug">Tessenderlo<br>Belgium</p>
+            </div>
+
+            <div class="flex items-center gap-3 text-sm tracking-tight">
+              <a href="VUL_HIER_JE_LINK_IN" target="_blank" class="underline underline-offset-4 decoration-1 hover:opacity-60 transition-opacity duration-200">Instagram</a>
+              <span class="text-black/20">·</span>
+              <a href="VUL_HIER_JE_LINK_IN" target="_blank" class="underline underline-offset-4 decoration-1 hover:opacity-60 transition-opacity duration-200">LinkedIn</a>
             </div>
           </div>
         </div>
@@ -89,7 +92,7 @@ import { NavBarComponent } from '../navbar/navbar';
     input:-webkit-autofill:focus, 
     input:-webkit-autofill:active,
     textarea:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0 30px #d1d3d0 inset !important;
+      -webkit-box-shadow: 0 0 0 30px #fff inset !important;
       -webkit-text-fill-color: black !important;
       transition: background-color 5000s ease-in-out 0s;
     }
