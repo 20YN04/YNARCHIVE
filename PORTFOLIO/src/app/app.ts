@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, ViewChild, ViewContainerRef } from
 import { HomeComponent } from './pages/home/home';
 import { PreloaderComponent } from './components/preloader/preloader.component';
 import { ContactComponent } from './components/contact/contact';
+import { WorkComponent } from './pages/work/work';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -46,6 +47,7 @@ gsap.registerPlugin(ScrollTrigger);
         <a href="/" data-nav-link data-page="home" class="footer-brand">YNARCHIVE</a>
         <div class="footer-links">
           <a href="/" data-nav-link data-page="home" class="footer-link">Home</a>
+          <a href="/work" data-nav-link data-page="work" class="footer-link">Work</a>
           <a href="/contact" data-nav-link data-page="contact" class="footer-link">Contact</a>
         </div>
         <span class="footer-year">&copy; 2026</span>
@@ -69,7 +71,24 @@ export class App implements AfterViewInit, OnDestroy {
     // Helper: render a page component with overlay transition
     const pageOverlayFront = document.querySelector('[data-page-overlay-front]') as HTMLElement | null;
     const pageOverlayBack = document.querySelector('[data-page-overlay-back]') as HTMLElement | null;
-    let currentPage: 'home' | 'contact' = window.location.pathname === '/contact' ? 'contact' : 'home';
+    const resolvePageFromPath = (pathname: string): 'home' | 'work' | 'contact' => {
+      if (pathname === '/contact') return 'contact';
+      if (pathname === '/work') return 'work';
+      return 'home';
+    };
+    const resolvePathFromPage = (page: 'home' | 'work' | 'contact'): string => {
+      if (page === 'contact') return '/contact';
+      if (page === 'work') return '/work';
+      return '/';
+    };
+
+    const updateGlobalFooterVisibility = (page: 'home' | 'work' | 'contact') => {
+      const footer = document.querySelector('[data-footer-section]') as HTMLElement | null;
+      if (!footer) return;
+      footer.style.display = page === 'work' ? 'none' : '';
+    };
+
+    let currentPage: 'home' | 'work' | 'contact' = resolvePageFromPath(window.location.pathname);
 
     const registerHomeHandoff = () => {
       const nav = document.querySelector('[data-nav-bar]') as HTMLElement | null;
@@ -166,7 +185,7 @@ export class App implements AfterViewInit, OnDestroy {
     };
 
     const showPage = async (name: string) => {
-      if ((name === 'home' || name === 'contact') && currentPage === name) {
+      if ((name === 'home' || name === 'work' || name === 'contact') && currentPage === name) {
         return;
       }
       await runPaperIn();
@@ -175,10 +194,14 @@ export class App implements AfterViewInit, OnDestroy {
       if (name === 'contact') {
         this.pageContainer.createComponent(ContactComponent);
         currentPage = 'contact';
+      } else if (name === 'work') {
+        this.pageContainer.createComponent(WorkComponent);
+        currentPage = 'work';
       } else {
         this.pageContainer.createComponent(HomeComponent);
         currentPage = 'home';
       }
+      updateGlobalFooterVisibility(currentPage);
       await runPaperOut();
 
       if (name === 'home') {
@@ -193,15 +216,18 @@ export class App implements AfterViewInit, OnDestroy {
     this.pageContainer.clear();
     if (currentPage === 'contact') {
       this.pageContainer.createComponent(ContactComponent);
+    } else if (currentPage === 'work') {
+      this.pageContainer.createComponent(WorkComponent);
     } else {
       this.pageContainer.createComponent(HomeComponent);
     }
-    history.replaceState({ page: currentPage }, '', currentPage === 'contact' ? '/contact' : '/');
+    updateGlobalFooterVisibility(currentPage);
+    history.replaceState({ page: currentPage }, '', resolvePathFromPage(currentPage));
 
     // handle browser back/forward
     this.popStateHandler = (ev: PopStateEvent) => {
-      const state = (ev.state && (ev.state as any).page) || 'home';
-      showPage(state === 'contact' ? 'contact' : 'home');
+      const state = (ev.state && (ev.state as any).page) || resolvePageFromPath(window.location.pathname);
+      showPage(state === 'contact' || state === 'work' ? state : 'home');
     };
     window.addEventListener('popstate', this.popStateHandler);
 
@@ -235,9 +261,9 @@ export class App implements AfterViewInit, OnDestroy {
       if (!link) return;
 
       const page = link.getAttribute('data-page');
-      if (page === 'home' || page === 'contact') {
+      if (page === 'home' || page === 'work' || page === 'contact') {
         event.preventDefault();
-        history.pushState({ page }, '', page === 'contact' ? '/contact' : '/');
+        history.pushState({ page }, '', resolvePathFromPage(page));
         showPage(page);
         return;
       }

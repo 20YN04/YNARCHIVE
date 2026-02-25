@@ -11,20 +11,20 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 			[class.hero-nav-static]="!fixed"
 			data-nav-bar
 		>
-			<div class="nav-left">
-				<a href="/" data-nav-link data-page="home" class="nav-brand" data-nav-brand>YNARCHIVE</a>
+			<div class="flex items-center gap-4">
+				<a href="/" data-nav-link data-page="home" class="text-sm font-bold tracking-[0.08em] uppercase no-underline text-inherit" data-nav-brand>YNARCHIVE</a>
 			</div>
-			<div class="nav-center">
-				<a href="/" class="nav-link" [class.nav-link-active]="activePage === 'home'" data-nav-link data-page="home">Work,</a>
-				<a href="/" class="nav-link" [class.nav-link-active]="activePage === 'home'" data-nav-link data-page="home">Process,</a>
-				<a href="/" class="nav-link" [class.nav-link-active]="activePage === 'home'" data-nav-link data-page="home">Studio</a>
+			<div class="flex gap-[3px]">
+				<a href="/work" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'work' ? 1 : null" data-nav-link data-page="work">Work,</a>
+				<a href="/" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">Process,</a>
+				<a href="/" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">Studio</a>
 			</div>
-			<div class="nav-right">
-				<span class="nav-clock">
-					<span>{{ timeHour() }}</span><span class="clock-colon">:</span><span>{{ timeMinute() }}</span>
-					<span class="clock-period">{{ timePeriod() }}</span>
+			<div class="flex items-center gap-4">
+				<span class="text-xs tracking-[0.02em] opacity-60">
+					<span>{{ timeHour() }}</span><span class="blink-colon">:</span><span>{{ timeMinute() }}</span>
+					<span class="ml-1 text-[10px] opacity-50 uppercase">{{ timePeriod() }}</span>
 				</span>
-				<a href="/contact" class="nav-link" [class.nav-link-active]="activePage === 'contact'" data-nav-link data-page="contact">Contact</a>
+				<a href="/contact" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'contact' ? 1 : null" data-nav-link data-page="contact">Contact</a>
 			</div>
 		</nav>
 	`,
@@ -40,7 +40,7 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 				align-items: center;
 				justify-content: space-between;
 				height: 64px;
-				padding: 0 2.5rem;
+				padding: 0 1.5rem;
 				background: transparent;
 				color: #0a0a0a;
 				opacity: 0;
@@ -57,73 +57,31 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 				top: auto;
 				left: auto;
 				right: auto;
+				width: 100%;
 				transform: none;
 				opacity: 1;
 				pointer-events: auto;
 				z-index: 2;
 			}
 			.hero-nav-solid {
-				background: rgba(209, 211, 208, 0.95);
+				background: rgba(255, 255, 255, 0.95);
 				backdrop-filter: blur(6px);
-				border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+				border-bottom: 1px solid rgba(10, 10, 10, 0.08);
 			}
-			.nav-left, .nav-right {
-				display: flex;
-				align-items: center;
-				gap: 1rem;
-			}
-			.nav-right {
-				gap: 1rem;
-			}
-			.nav-brand {
-				font-family: 'area-normal', sans-serif;
-				font-size: 14px;
-				font-weight: 700;
-				letter-spacing: 0.08em;
-				text-transform: uppercase;
-				color: inherit;
-				text-decoration: none;
-			}
-			.nav-center {
-				display: flex;
-				gap: 3px;
-			}
-			.nav-link {
-				font-family: 'area-normal', sans-serif;
-				font-size: 13px;
-				font-weight: 400;
-				color: inherit;
-				text-decoration: none;
-				transition: opacity 0.3s ease;
-				letter-spacing: 0.01em;
-			}
-			.nav-link:hover {
-				opacity: 0.5;
-			}
-			.nav-link-active {
-				opacity: 1;
-			}
-			.nav-clock {
-				font-family: 'area-normal', sans-serif;
-				font-size: 12px;
-				letter-spacing: 0.02em;
-				opacity: 0.6;
-			}
-			.clock-colon {
+			.blink-colon {
 				animation: blink 1s steps(1, end) infinite;
-			}
-			.clock-period {
-				margin-left: 4px;
-				font-size: 10px;
-				opacity: 0.5;
-				text-transform: uppercase;
 			}
 			@keyframes blink {
 				50% { opacity: 0; }
 			}
-			@media (max-width: 768px) {
+			@media (min-width: 768px) {
 				.hero-nav {
-					padding: 0 1.5rem;
+					padding: 0 2.5rem;
+				}
+			}
+			@media (min-width: 1024px) {
+				.hero-nav {
+					padding: 0 3.5rem;
 				}
 			}
 		`
@@ -133,7 +91,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	@Input() fixed = true;
 	@Input() alwaysVisible = false;
 	@Input() solidBackground = false;
-	@Input() activePage: 'home' | 'contact' | null = null;
+	@Input() activePage: 'home' | 'work' | 'contact' | null = null;
 
 	readonly timeHour = signal('00');
 	readonly timeMinute = signal('00');
