@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { TitleRevealDirective } from '../../core/directives/title-reveal.directive';
 
 @Component({
   selector: 'app-about-section',
   standalone: true,
+  imports: [TitleRevealDirective],
   template: `
     <section class="about-section" id="about" data-about-section>
       <div class="about-header">
@@ -12,7 +14,7 @@ import { Component } from '@angular/core';
 
       <div class="about-grid">
         <div class="about-intro">
-          <h2 class="about-heading">Hello — I'm Yentl.</h2>
+          <h2 class="about-heading" appTitleReveal>Hello — I'm Yentl.</h2>
           <p class="about-role">Designer &amp; developer based in Tessenderlo, Belgium.</p>
         </div>
         <div class="about-content">

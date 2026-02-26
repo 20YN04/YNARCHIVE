@@ -12,7 +12,7 @@ html, body {
 }
 
 body {
-  font-family: 'area-normal', sans-serif;
+  font-family: 'area-normal', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #fff;
@@ -37,9 +37,14 @@ html {
 }
 
 /* ═══════════════════════════════════════════
-   THICK BORDER BARS — frame the viewport
-   Start at ~40px, animate down to 1px via GSAP
+   THICK BORDER BARS — hidden for pure solid background
+   (Keep in DOM for timeline compatibility but invisible)
    ═══════════════════════════════════════════ */
+[data-frame-container],
+[data-grid-container] {
+  display: none !important;
+}
+
 .bar-top {
   position: absolute;
   top: 0;

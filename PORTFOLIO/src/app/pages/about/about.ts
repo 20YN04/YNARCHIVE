@@ -31,13 +31,13 @@ import { NavBarComponent } from '../../components/navbar/navbar';
               <div class="about-stack-group">
                 <span class="about-stack-label">Frontend</span>
                 <div class="about-stack-tags">
-                  <span>HTML</span><span>CSS</span><span>Tailwind</span><span>JavaScript</span><span>TypeScript</span><span>Angular</span>
+                  <span>HTML</span><span>CSS</span><span>Tailwind</span><span>JavaScript</span><span>TypeScript</span><span>Angular</span><span>React</span>
                 </div>
               </div>
               <div class="about-stack-group">
                 <span class="about-stack-label">Backend &amp; data</span>
                 <div class="about-stack-tags">
-                  <span>Python</span><span>PHP</span><span>Laravel</span><span>SQL</span>
+                  <span>Python</span><span>PHP</span><span>Laravel</span><span>Node.js</span><span>SQL</span>
                 </div>
               </div>
               <div class="about-stack-group">
@@ -49,7 +49,7 @@ import { NavBarComponent } from '../../components/navbar/navbar';
               <div class="about-stack-group">
                 <span class="about-stack-label">Process</span>
                 <div class="about-stack-tags">
-                  <span>Agile</span><span>Scrum</span>
+                  <span>Agile</span><span>Scrum</span><span>Git</span>
                 </div>
               </div>
             </div>

@@ -1,17 +1,21 @@
-import { AfterViewInit, Component, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 import { HomeComponent } from './pages/home/home';
 import { PreloaderComponent } from './components/preloader/preloader.component';
 import { ContactComponent } from './components/contact/contact';
 import { WorkComponent } from './pages/work/work';
 import { AboutComponent } from './pages/about/about';
+import { FloatingCtaComponent } from './components/floating-cta/floating-cta.component';
+import { LenisService } from './core/lenis.service';
+import { registerPortfolioEffects } from './core/gsap-effects';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+registerPortfolioEffects();
 
 @Component({
   selector: 'app-root',
-  imports: [PreloaderComponent],
+  imports: [PreloaderComponent, FloatingCtaComponent],
   template: `
     <!-- Preloader — slide-clock letters on black overlay -->
     <app-preloader />
@@ -42,6 +46,9 @@ gsap.registerPlugin(ScrollTrigger);
     <div class="page-overlay page-overlay-back" data-page-overlay-back></div>
     <div class="page-overlay page-overlay-front" data-page-overlay-front></div>
 
+    <!-- Floating CTA: label/link update by section (View Work → Next Project → Get in touch) -->
+    <app-floating-cta />
+
     <!-- Footer -->
     <section class="footer-section" data-footer-section>
       <div class="footer-inner" data-footer-inner>
@@ -63,6 +70,7 @@ export class App implements AfterViewInit, OnDestroy {
   private navClickHandler?: (event: Event) => void;
   private popStateHandler?: (event: PopStateEvent) => void;
   @ViewChild('pageContainer', { read: ViewContainerRef, static: true }) pageContainer!: ViewContainerRef;
+  private lenis = inject(LenisService);
 
   ngAfterViewInit(): void {
     if (typeof history !== 'undefined' && history.scrollRestoration) {
@@ -317,9 +325,9 @@ export class App implements AfterViewInit, OnDestroy {
     document.addEventListener('click', this.navClickHandler);
 
     if (!preloader || letters.length === 0) {
-      console.error('Missing critical animation elements');
       if (preloader) preloader.style.display = 'none';
       document.body.style.overflow = '';
+      this.lenis.start();
       return;
     }
 
@@ -356,6 +364,7 @@ export class App implements AfterViewInit, OnDestroy {
       onComplete: () => {
         document.body.style.overflow = '';
         preloader.style.display = 'none';
+        this.lenis.start();
         if (currentPage === 'home') {
           registerHomeHandoff();
           ScrollTrigger.refresh();
@@ -364,13 +373,11 @@ export class App implements AfterViewInit, OnDestroy {
     });
     const tl = this.timeline;
 
-    // ─── ACT 1: SLIDE-CLOCK LETTERS (0s → 2.6s) ───
-    // Preloader info fades in
+    // ─── ACT 1: SLIDE-CLOCK LETTERS (YNARCHIVE) ───
     tl.to(preloaderInfos, {
       opacity: 1, duration: 0.8, ease: 'power2.out', stagger: 0.1,
     }, 0.2);
 
-    // Letters slide up into view with stagger
     tl.to(letters, {
       y: '0%',
       duration: 0.9,
@@ -378,12 +385,8 @@ export class App implements AfterViewInit, OnDestroy {
       stagger: { each: 0.06, from: 'start' },
     }, 0.3);
 
-    // Preloader info fades out
-    tl.to(preloaderInfos, {
-      opacity: 0, duration: 0.3, ease: 'power2.in',
-    }, 1.8);
+    tl.to(preloaderInfos, { opacity: 0, duration: 0.3, ease: 'power2.in' }, 1.8);
 
-    // Hold for a beat, then letters slide up and out
     tl.to(letters, {
       y: '-110%',
       duration: 0.6,
@@ -392,22 +395,21 @@ export class App implements AfterViewInit, OnDestroy {
     }, 2.0);
 
     // Preloader compresses into the mega title black box
-    // Get mega title dimensions to know the target height
     const megaHeight = megaTitle ? megaTitle.offsetHeight : 200;
+    const compressStart = 2.4;
     tl.to(preloader, {
       height: megaHeight,
       top: 0,
       borderRadius: 0,
       duration: 1.2,
       ease: 'power4.inOut',
-    }, 2.4);
+    }, compressStart);
 
-    // Fade out preloader completely once it matches mega title
     tl.to(preloader, {
       opacity: 0,
       duration: 0.3,
       ease: 'power2.in',
-    }, 3.5);
+    }, compressStart + 1.0);
 
     // ─── ACT 2: THICK BARS → THIN LINES (2.6s → 3.8s) ───
     // Side bars shrink from 40px to 1px

@@ -20,7 +20,7 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 				<a href="/about" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'about' ? 1 : null" data-nav-link data-page="about">About</a>
 			</div>
 			<div class="flex items-center gap-4">
-				<span class="text-[13px] tracking-[0.01em] opacity-60">: Tessenderlo, BEL</span>
+				<span class="text-[13px] tracking-[0.01em] opacity-60">TESSENDERLO, BEL</span>
 				<a href="/contact" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'contact' ? 1 : null" data-nav-link data-page="contact">Contact</a>
 			</div>
 		</nav>
