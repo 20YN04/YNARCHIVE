@@ -15,167 +15,121 @@ interface Project {
   standalone: true,
   template: `
     <section class="project-section" id="work">
-      <!-- Section header -->
-      <div class="project-header">
-        <span class="section-num">03</span>
-        <span class="section-label">Selected Works</span>
+      <!-- Palmer-style: section tag + headline + intro -->
+      <div class="project-hero">
+        <p class="project-section-tag">© Featured Projects (03) Creative Development</p>
+        <h2 class="project-headline"># Featured Works</h2>
+        <p class="project-intro">
+          Every project blends design and development — bold ideas into
+          <strong>sleek digital realities</strong>, built with intent and clarity.
+        </p>
       </div>
 
-      <!-- Sticky + scroll layout like Telha Clarke -->
-      <div class="project-grid">
-        <!-- Left: sticky text column -->
-        <div class="project-info-col">
-          <div class="project-info-sticky">
-            <p class="project-years">17 — 26'</p>
-          </div>
-        </div>
-
-        <!-- Right: scrolling project cards -->
-        <div class="project-cards-col">
-          @for (project of projects(); track project.title) {
-            <article class="project-card" data-project-card>
-              <figure class="project-figure">
-                <img
-                  class="project-image"
-                  [src]="project.imageUrl"
-                  [alt]="project.title"
-                  data-project-image
-                  loading="lazy"
-                />
-                <figcaption class="project-caption">
-                  <span class="project-name">{{ project.title }}</span>
-                  <span class="project-meta">{{ project.category }} {{ project.year }}</span>
-                </figcaption>
-              </figure>
-            </article>
-          }
-        </div>
+      <div class="project-list">
+        @for (project of projects(); track project.title; let i = $index) {
+          <article class="project-card" data-project-card>
+            <figure class="project-figure">
+              <img
+                class="project-image"
+                [src]="project.imageUrl"
+                [alt]="project.title"
+                data-project-image
+                loading="lazy"
+              />
+              <figcaption class="project-caption">
+                <span class="project-num">({{ i < 9 ? '0' + (i + 1) : (i + 1) }})</span>
+                <span class="project-name">{{ project.title }}</span>
+                <span class="project-meta">{{ project.category }} · {{ project.year }}</span>
+              </figcaption>
+            </figure>
+          </article>
+        }
       </div>
     </section>
   `,
   styles: [
     `
-      :host {
-        display: block;
-      }
-
-      .project-section {
-        padding: 5rem 0 3rem;
-      }
-
-      .project-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-bottom: 2.5rem;
-        border-bottom: 1px solid rgba(10, 10, 10, 0.1);
-        margin-bottom: 3rem;
-      }
-
-      .section-num {
+      :host { display: block; }
+      .project-section { padding: 5rem 0 3rem; }
+      .project-hero { margin-bottom: 3rem; }
+      .project-section-tag {
         font-family: 'area-normal', sans-serif;
         font-size: 11px;
-        letter-spacing: 0.32em;
+        letter-spacing: 0.2em;
         text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.4);
+        color: rgba(10, 10, 10, 0.45);
+        margin: 0 0 0.75rem;
       }
-
-      .section-label {
+      .project-headline {
         font-family: 'area-normal', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.32em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.4);
+        font-size: clamp(2rem, 6vw, 4rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 0.95;
+        margin: 0 0 1rem;
+        color: #0a0a0a;
       }
-
-      /* Sticky + scroll grid */
-      .project-grid {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 3rem;
-      }
-
-      .project-info-col {
-        position: relative;
-      }
-
-      .project-info-sticky {
-        position: sticky;
-        top: 100px;
-      }
-
-      .project-years {
+      .project-intro {
         font-family: 'area-normal', sans-serif;
-        font-size: 14px;
-        letter-spacing: 0.08em;
-        color: rgba(10, 10, 10, 0.4);
+        font-size: clamp(0.95rem, 1.3vw, 1.05rem);
+        line-height: 1.6;
+        color: rgba(10, 10, 10, 0.75);
         margin: 0;
+        max-width: 38ch;
       }
-
-      .project-cards-col {
+      .project-intro strong { color: #0a0a0a; font-weight: 600; }
+      .project-list {
         display: flex;
         flex-direction: column;
-        gap: 3rem;
+        gap: 3.5rem;
       }
-
-      .project-card {
-        position: relative;
-        will-change: transform, opacity;
-      }
-
+      .project-card { will-change: transform, opacity; }
       .project-figure {
         position: relative;
         overflow: hidden;
         margin: 0;
         background: #f0f0f0;
       }
-
       .project-image {
         width: 100%;
         height: auto;
         display: block;
         object-fit: cover;
-        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        aspect-ratio: 16 / 10;
+        transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         will-change: transform;
       }
-
-      .project-card:hover .project-image {
-        transform: scale(1.03);
-      }
-
+      .project-card:hover .project-image { transform: scale(1.02); }
       .project-caption {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 0;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem 1rem;
+        padding: 0.75rem 0 0;
       }
-
+      .project-num {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        color: rgba(10, 10, 10, 0.45);
+      }
       .project-name {
         font-family: 'area-normal', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        letter-spacing: 0.02em;
+        font-size: clamp(1.1rem, 2vw, 1.4rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
         color: #0a0a0a;
       }
-
       .project-meta {
         font-family: 'area-normal', sans-serif;
         font-size: 11px;
         letter-spacing: 0.15em;
         text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.4);
+        color: rgba(10, 10, 10, 0.45);
       }
-
       @media (max-width: 768px) {
-        .project-grid {
-          grid-template-columns: 1fr;
-          gap: 2rem;
-        }
-
-        .project-info-sticky {
-          position: relative;
-          top: 0;
-        }
+        .project-hero { margin-bottom: 2.5rem; }
+        .project-list { gap: 2.5rem; }
       }
     `
   ]

@@ -31,196 +31,260 @@ interface GalleryRow {
   items: WorkItem[];
 }
 
+interface DisplayCell {
+  item: WorkItem;
+  isHero: boolean;
+  aspect: 'wide' | 'tall';
+  /** Vertical offset in px so some cards sit lower (uneven layout). */
+  offsetY: number;
+}
+
+interface DisplayRow {
+  key: string;
+  cells: DisplayCell[];
+}
+
 @Component({
   selector: 'app-work',
   imports: [NavBarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="work-page min-h-screen bg-white text-[#0a0a0a] w-full" #container>
+    <div class="work-page min-h-screen w-full bg-white text-[#0a0a0a]" #container>
       <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="work"></app-navbar>
 
-      <!-- Telha Clarke style: 02 Selected Works, 17 - 25' -->
-      <div class="work-inner mx-auto w-full max-w-[1400px] pt-16 pb-20">
-        <div class="work-header">
-          <span class="work-section-num">02</span>
-          <span class="work-section-label">Selected Works</span>
-        </div>
-
-        <div class="work-grid">
-          <div class="work-info-col">
-            <div class="work-info-sticky">
-              <p class="work-years">17 — 25'</p>
+      <div class="work-inner mx-auto w-full max-w-[1400px] pt-20 pb-24">
+        <!-- Header: All Work + filters rondom de titel, smooth open/dicht -->
+        <header class="work-header">
+          <div class="work-header-left">
+            <h1 class="work-title">All Work <span class="work-count">({{ filteredItems().length }})</span></h1>
+            <div class="work-filter-panel" [class.is-open]="showFilters()" [attr.aria-hidden]="!showFilters()">
+              <div class="work-filter-list">
+                @for (opt of filterOptionsWithCount(); track opt.value) {
+                  <button
+                    type="button"
+                    class="work-filter-opt"
+                    [class.work-filter-opt-active]="activeFilter() === opt.value"
+                    (click)="setFilter(opt.value)"
+                  >/ {{ opt.label }} ({{ opt.count }})</button>
+                }
+              </div>
+              <button type="button" class="work-filter-close" (click)="toggleFilters()">Close</button>
             </div>
           </div>
-          <div class="work-cards-col">
-            @for (item of filteredItems(); track item.id) {
-              <article class="work-card" data-reveal-card>
-                <a [href]="item.url" target="_blank" rel="noopener noreferrer"
-                   class="work-card-link"
-                   [attr.aria-label]="'View ' + item.title">
-                  <img
-                    class="work-card-image"
-                    [src]="item.imageUrl"
-                    [alt]="item.title"
-                    loading="lazy"
-                    data-parallax-image
-                  />
-                  <span class="work-card-arrow" aria-hidden="true">↗</span>
+          <button type="button" class="work-filters-btn" (click)="toggleFilters()" [attr.aria-expanded]="showFilters()">
+            Filters {{ showFilters() ? '−' : '+' }}
+          </button>
+        </header>
+
+        <!-- Grid: 1 hero (full width) + rest in 2 cols with random tall/wide -->
+        <div class="work-grid" id="work-list">
+          @for (row of displayRows(); track row.key; let rowIndex = $index) {
+            @for (cell of row.cells; track cell.item.id) {
+              <article
+                class="work-card"
+                [class.work-card-hero]="cell.isHero"
+                [class.work-card-tall]="cell.aspect === 'tall'"
+                [style.margin-top.px]="cell.isHero ? 0 : cell.offsetY"
+                data-reveal-card
+              >
+                <a [href]="cell.item.url" target="_blank" rel="noopener noreferrer" class="work-card-link" [attr.aria-label]="'View ' + cell.item.title">
+                  <div class="work-card-frame">
+                    <img
+                      class="work-card-image"
+                      [src]="cell.item.imageUrl"
+                      [alt]="cell.item.title"
+                      loading="lazy"
+                      data-parallax-image
+                    />
+                  </div>
+                  <div class="work-card-meta">
+                    <span class="work-card-title">{{ cell.item.title }}</span>
+                    <span class="work-card-open">Open project →</span>
+                  </div>
+                  <span class="work-card-cat-year">{{ cell.item.category }} · {{ cell.item.year }}</span>
                 </a>
-                <div class="work-card-caption">
-                  <span class="work-card-title">[ {{ item.title }} ]</span>
-                  <span class="work-card-meta">{{ item.category }} {{ item.year }}</span>
-                </div>
               </article>
             }
-          </div>
-        </div>
-
-        <div class="work-all-wrap">
-          <a href="/" data-nav-link data-page="home" class="work-all-link">All Work ({{ workItems().length }})</a>
+          }
         </div>
       </div>
-
-      <!-- Talk to us footer (Telha style) -->
-      <footer class="work-footer">
-        <div class="work-footer-inner mx-auto w-full max-w-[1400px] py-14 md:py-20">
-          <h2 class="work-footer-title">Talk to us about your project</h2>
-          <a href="/contact" data-nav-link data-page="contact" class="work-footer-cta">Contact us</a>
-        </div>
-      </footer>
     </div>
   `,
   styles: [
     `
       :host { display: block; }
       .work-page { font-family: 'area-normal', sans-serif; }
-      .work-inner, .work-footer-inner {
+      .work-inner {
         padding-left: clamp(2rem, 6vw, 5rem);
         padding-right: clamp(2rem, 6vw, 5rem);
       }
       .work-header {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
-        padding-bottom: 2.5rem;
-        border-bottom: 1px solid rgba(10, 10, 10, 0.1);
         margin-bottom: 3rem;
+        gap: 1rem;
       }
-      .work-section-num, .work-section-label {
+      .work-header-left {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem 1.25rem;
+        min-width: 0;
+      }
+      .work-title {
         font-family: 'area-normal', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.32em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.4);
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        margin: 0;
+        color: #0a0a0a;
       }
-      .work-grid {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 3rem;
+      .work-count {
+        font-size: 0.6em;
+        font-weight: 400;
+        color: rgba(10, 10, 10, 0.45);
+        vertical-align: 0.35em;
       }
-      .work-info-col { position: relative; }
-      .work-info-sticky { position: sticky; top: 100px; }
-      .work-years {
+      .work-filter-panel {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem 1.25rem;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        pointer-events: none;
+        transition: max-height 0.4s ease, opacity 0.35s ease;
+      }
+      .work-filter-panel.is-open {
+        max-height: 180px;
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .work-filter-list {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem 1.25rem;
+      }
+      .work-filters-btn {
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(1.15rem, 2.8vw, 1.75rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: rgba(10, 10, 10, 0.5);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem 0;
+        transition: color 0.2s;
+        flex-shrink: 0;
+      }
+      .work-filters-btn:hover { color: #0a0a0a; }
+      .work-filter-opt {
         font-family: 'area-normal', sans-serif;
         font-size: 14px;
-        letter-spacing: 0.08em;
-        color: rgba(10, 10, 10, 0.4);
-        margin: 0;
+        color: rgba(10, 10, 10, 0.38);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem 0;
+        transition: color 0.2s;
       }
-      .work-cards-col {
-        display: flex;
-        flex-direction: column;
-        gap: 3rem;
+      .work-filter-opt:hover { color: rgba(10, 10, 10, 0.6); }
+      .work-filter-opt-active { color: #0a0a0a; font-weight: 600; }
+      .work-filter-close {
+        font-family: 'area-normal', sans-serif;
+        font-size: 13px;
+        color: rgba(10, 10, 10, 0.4);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem 0;
+        transition: color 0.2s;
+      }
+      .work-filter-close:hover { color: #0a0a0a; }
+      .work-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: clamp(4rem, 8vw, 6rem);
+        column-gap: clamp(2.5rem, 5vw, 4rem);
+      }
+      .work-card-hero {
+        grid-column: 1 / -1;
+      }
+      .work-card-hero .work-card-frame {
+        aspect-ratio: 21 / 9;
       }
       .work-card { will-change: transform, opacity; }
       .work-card-link {
-        position: relative;
         display: block;
+        text-decoration: none;
+        color: inherit;
+      }
+      .work-card-frame {
+        position: relative;
         overflow: hidden;
-        background: #f0f0f0;
+        background: #f5f5f5;
+        margin-bottom: 1rem;
+      }
+      .work-card:not(.work-card-hero) .work-card-frame {
+        aspect-ratio: 4 / 3;
+      }
+      .work-card-tall:not(.work-card-hero) .work-card-frame {
+        aspect-ratio: 3 / 4;
       }
       .work-card-image {
         width: 100%;
-        height: auto;
+        height: 100%;
         display: block;
         object-fit: cover;
-        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: transform 0.5s ease;
       }
-      .work-card-link:hover .work-card-image { transform: scale(1.03); }
-      .work-card-arrow {
-        position: absolute;
-        right: 1rem;
-        bottom: 1rem;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 50%;
-        background: rgba(0,0,0,0.8);
-        color: #fff;
+      .work-card-link:hover .work-card-image { transform: scale(1.02); }
+      .work-card-meta {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-        opacity: 0;
-        transform: scale(0.75);
-        transition: opacity 0.3s, transform 0.3s;
-      }
-      .work-card-link:hover .work-card-arrow {
-        opacity: 1;
-        transform: scale(1);
-      }
-      .work-card-caption {
-        display: flex;
-        align-items: center;
+        flex-wrap: wrap;
+        align-items: baseline;
         justify-content: space-between;
-        padding: 1rem 0;
+        gap: 0.5rem;
       }
       .work-card-title {
         font-family: 'area-normal', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        letter-spacing: 0.02em;
+        font-size: clamp(1rem, 1.5vw, 1.25rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
         color: #0a0a0a;
       }
-      .work-card-meta {
+      .work-card-open {
         font-family: 'area-normal', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.4);
+        font-size: 12px;
+        color: rgba(10, 10, 10, 0.5);
+        transition: color 0.2s;
       }
-      .work-all-wrap { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(10,10,10,0.08); }
-      .work-all-link {
+      .work-card-link:hover .work-card-open { color: #0a0a0a; }
+      .work-card-cat-year {
         font-family: 'area-normal', sans-serif;
-        font-size: 13px;
-        letter-spacing: 0.05em;
-        color: #0a0a0a;
-        text-decoration: none;
-        transition: opacity 0.3s;
+        font-size: 12px;
+        color: rgba(10, 10, 10, 0.5);
+        display: block;
+        margin-top: 0.15rem;
       }
-      .work-all-link:hover { opacity: 0.6; }
-      .work-footer { border-top: 1px solid rgba(10,10,10,0.08); background: #fafafa; }
-      .work-footer-inner { }
-      .work-footer-title {
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.5rem, 4vw, 2.5rem);
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        line-height: 1.2;
-        margin: 0 0 1rem;
-        color: #0a0a0a;
-      }
-      .work-footer-cta {
-        font-family: 'area-normal', sans-serif;
-        font-size: 14px;
-        text-decoration: underline;
-        text-underline-offset: 4px;
-        color: #0a0a0a;
-        transition: opacity 0.3s;
-      }
-      .work-footer-cta:hover { opacity: 0.6; }
-      @media (max-width: 768px) {
-        .work-grid { grid-template-columns: 1fr; gap: 2rem; }
-        .work-info-sticky { position: relative; top: 0; }
+      @media (max-width: 600px) {
+        .work-grid {
+          grid-template-columns: 1fr;
+          row-gap: 3.5rem;
+        }
+        .work-card-hero .work-card-frame {
+          aspect-ratio: 16 / 10;
+        }
+        .work-card:not(.work-card-hero) .work-card-frame,
+        .work-card-tall:not(.work-card-hero) .work-card-frame {
+          aspect-ratio: 4 / 3;
+        }
+        .work-header { flex-direction: column; align-items: flex-start; margin-bottom: 2rem; }
       }
     `
   ]
@@ -230,6 +294,7 @@ export class WorkComponent implements AfterViewInit, OnDestroy {
 
   readonly filterOptions: Array<'All' | Category> = ['All', 'E-commerce', 'SaaS', 'Landing Pages'];
   readonly activeFilter = signal<'All' | Category>('All');
+  readonly showFilters = signal(false);
 
   readonly workItems = signal<WorkItem[]>([
     {
@@ -294,6 +359,49 @@ export class WorkComponent implements AfterViewInit, OnDestroy {
     return this.workItems().filter((item) => item.category === filter);
   });
 
+  readonly filterOptionsWithCount = computed(() => {
+    const items = this.workItems();
+    const total = items.length;
+    return this.filterOptions.map((value) => ({
+      value,
+      label: value === 'All' ? 'All Work' : value,
+      count: value === 'All' ? total : items.filter((i) => i.category === value).length
+    }));
+  });
+
+  /** Stable “random” 0..max from string. */
+  private static hashId(id: string, max: number): number {
+    let h = 0;
+    for (let i = 0; i < id.length; i++) h = (h << 5) - h + id.charCodeAt(i) | 0;
+    return Math.abs(h) % (max + 1);
+  }
+
+  /** Vertical offsets (px) for uneven layout – same id always gets same offset. */
+  private static readonly OFFSETS = [0, 36, 72, 24, 56];
+
+  /** Layout: 1 hero (full width) + rest in rows of 2, random tall/wide + random offset down. */
+  readonly displayRows = computed<DisplayRow[]>(() => {
+    const items = this.filteredItems();
+    if (items.length === 0) return [];
+    const rows: DisplayRow[] = [];
+    const [hero, ...rest] = items;
+    rows.push({
+      key: 'hero',
+      cells: [{ item: hero, isHero: true, aspect: 'wide', offsetY: 0 }]
+    });
+    for (let i = 0; i < rest.length; i += 2) {
+      const slice = rest.slice(i, i + 2);
+      const cells: DisplayCell[] = slice.map((item) => ({
+        item,
+        isHero: false,
+        aspect: WorkComponent.hashId(item.id, 1) === 0 ? 'wide' : 'tall',
+        offsetY: WorkComponent.OFFSETS[WorkComponent.hashId(item.id, WorkComponent.OFFSETS.length - 1)]
+      }));
+      rows.push({ key: `row-${i}`, cells });
+    }
+    return rows;
+  });
+
   readonly galleryRows = computed<GalleryRow[]>(() => {
     const items = this.filteredItems();
     const rows: GalleryRow[] = [];
@@ -317,6 +425,10 @@ export class WorkComponent implements AfterViewInit, OnDestroy {
   setFilter(option: 'All' | Category): void {
     this.activeFilter.set(option);
     queueMicrotask(() => this.setupScrollAnimations());
+  }
+
+  toggleFilters(): void {
+    this.showFilters.update((v) => !v);
   }
 
   ngAfterViewInit(): void {

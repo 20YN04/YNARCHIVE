@@ -9,6 +9,7 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 			[class.hero-nav-visible]="alwaysVisible"
 			[class.hero-nav-solid]="solidBackground"
 			[class.hero-nav-static]="!fixed"
+			[class.hero-nav-dark]="dark"
 			data-nav-bar
 		>
 			<div class="flex items-center gap-4">
@@ -64,6 +65,11 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 				backdrop-filter: blur(6px);
 				border-bottom: 1px solid rgba(10, 10, 10, 0.08);
 			}
+			.hero-nav-dark.hero-nav-solid {
+				background: rgba(10, 10, 10, 0.95);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+				color: #fff;
+			}
 			.blink-colon {
 				animation: blink 1s steps(1, end) infinite;
 			}
@@ -83,6 +89,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	@Input() alwaysVisible = false;
 	@Input() solidBackground = false;
 	@Input() activePage: 'home' | 'work' | 'contact' | 'about' | null = null;
+	@Input() dark = false;
 
 	readonly timeHour = signal('00');
 	readonly timeMinute = signal('00');

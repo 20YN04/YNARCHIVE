@@ -91,10 +91,10 @@ export class App implements AfterViewInit, OnDestroy {
       return '/';
     };
 
-    const updateGlobalFooterVisibility = (page: 'home' | 'work' | 'contact' | 'about') => {
+    const updateGlobalFooterVisibility = (_page: 'home' | 'work' | 'contact' | 'about') => {
       const footer = document.querySelector('[data-footer-section]') as HTMLElement | null;
       if (!footer) return;
-      footer.style.display = page === 'work' ? 'none' : '';
+      footer.style.display = '';
     };
 
     let currentPage: 'home' | 'work' | 'contact' | 'about' = resolvePageFromPath(window.location.pathname);
