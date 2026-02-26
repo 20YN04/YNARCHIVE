@@ -63,6 +63,11 @@ export class App implements AfterViewInit, OnDestroy {
   @ViewChild('pageContainer', { read: ViewContainerRef, static: true }) pageContainer!: ViewContainerRef;
 
   ngAfterViewInit(): void {
+    // Always start at top on load or reload
+    if (typeof history !== 'undefined' && history.scrollRestoration) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
     document.body.style.overflow = 'hidden';
     setTimeout(() => this.initAnimations(), 200);
   }
@@ -184,9 +189,9 @@ export class App implements AfterViewInit, OnDestroy {
       await outTl.then();
     };
 
-    const showPage = async (name: string) => {
+    const showPage = async (name: string): Promise<void> => {
       if ((name === 'home' || name === 'work' || name === 'contact') && currentPage === name) {
-        return;
+        return Promise.resolve();
       }
       await runPaperIn();
       // swap content
@@ -203,6 +208,9 @@ export class App implements AfterViewInit, OnDestroy {
       }
       updateGlobalFooterVisibility(currentPage);
       await runPaperOut();
+
+      // Scroll to top on every page change
+      window.scrollTo(0, 0);
 
       if (name === 'home') {
         requestAnimationFrame(() => {
@@ -247,6 +255,8 @@ export class App implements AfterViewInit, OnDestroy {
     const megaTitle = document.querySelector('[data-hero-mega-title]') as HTMLElement;
     const megaTitleText = document.querySelector('[data-hero-mega-text]') as HTMLElement;
     const titleLines = document.querySelectorAll('[data-hero-title-line]');
+    const heroEyebrow = document.querySelector('[data-hero-eyebrow]') as HTMLElement | null;
+    const heroSubtitle = document.querySelector('[data-hero-subtitle]') as HTMLElement | null;
     const heroImage = document.querySelector('[data-hero-image]') as HTMLElement;
     const heroImg = document.querySelector('[data-hero-img]') as HTMLElement;
     const heroBottom = document.querySelector('[data-hero-bottom]') as HTMLElement;
@@ -260,15 +270,30 @@ export class App implements AfterViewInit, OnDestroy {
       const link = target?.closest('[data-nav-link]') as HTMLAnchorElement | null;
       if (!link) return;
 
+      const href = link.getAttribute('href') || '';
+      const hashMatch = href.match(/#([a-z0-9-]+)/i);
+      const hashId = hashMatch ? hashMatch[1] : null;
       const page = link.getAttribute('data-page');
+
       if (page === 'home' || page === 'work' || page === 'contact') {
         event.preventDefault();
-        history.pushState({ page }, '', resolvePathFromPage(page));
-        showPage(page);
+        const path = resolvePathFromPage(page) + (hashId ? '#' + hashId : '');
+        history.pushState({ page }, '', path);
+        showPage(page).then(() => {
+          if (hashId) {
+            setTimeout(() => {
+              const anchorTarget = document.getElementById(hashId);
+              if (anchorTarget) {
+                const navHeight = navBar ? navBar.offsetHeight : 60;
+                const top = anchorTarget.getBoundingClientRect().top + window.scrollY - navHeight - 8;
+                window.scrollTo({ top, behavior: 'smooth' });
+              }
+            }, 100);
+          }
+        });
         return;
       }
 
-      const href = link.getAttribute('href');
       if (href && href.startsWith('#')) {
         event.preventDefault();
         const id = href.slice(1);
@@ -310,6 +335,8 @@ export class App implements AfterViewInit, OnDestroy {
     // Mega title visible from the start (preloader covers it, then morphs into it)
     if (megaTitleText) gsap.set(megaTitleText, { opacity: 0 });
     gsap.set(titleLines, { y: '110%' });
+    if (heroEyebrow) gsap.set(heroEyebrow, { y: '110%' });
+    if (heroSubtitle) gsap.set(heroSubtitle, { y: '110%' });
     if (heroImage) gsap.set(heroImage, { clipPath: 'inset(100% 0 0 0)' });
     if (heroImg) gsap.set(heroImg, { scale: 1.1, y: '5%' });
     if (heroBottom) gsap.set(heroBottom, { opacity: 0, y: 25 });
@@ -417,6 +444,10 @@ export class App implements AfterViewInit, OnDestroy {
       }, 3.2);
     }
 
+    // Eyebrow and subtitle reveal
+    if (heroEyebrow) {
+      tl.to(heroEyebrow, { y: '0%', duration: 0.7, ease: 'power4.out' }, 3.5);
+    }
     // Title lines stagger reveal (each line slides up from its mask)
     tl.to(titleLines, {
       y: '0%',
@@ -424,6 +455,9 @@ export class App implements AfterViewInit, OnDestroy {
       ease: 'power4.out',
       stagger: 0.15,
     }, 3.6);
+    if (heroSubtitle) {
+      tl.to(heroSubtitle, { y: '0%', duration: 0.8, ease: 'power4.out' }, 4.2);
+    }
 
     // Hero image parallax mask reveal
     if (heroImage) {
@@ -511,6 +545,36 @@ export class App implements AfterViewInit, OnDestroy {
         ease: 'none',
       });
     });
+
+    // Rotor (featured) section — fade-in on scroll
+    const rotorSection = document.querySelector('[data-rotor-section]');
+    if (rotorSection) {
+      gsap.from(rotorSection, {
+        scrollTrigger: {
+          trigger: rotorSection,
+          start: 'top 90%',
+          end: 'top 55%',
+          scrub: 0.5,
+        },
+        opacity: 0,
+        y: 35,
+      });
+    }
+
+    // About section — fade-in on scroll
+    const aboutSection = document.querySelector('[data-about-section]');
+    if (aboutSection) {
+      gsap.from(aboutSection, {
+        scrollTrigger: {
+          trigger: aboutSection,
+          start: 'top 88%',
+          end: 'top 55%',
+          scrub: 0.5,
+        },
+        opacity: 0,
+        y: 40,
+      });
+    }
 
     // Project cards — staggered fade-in
     const projectCards = document.querySelectorAll('[data-project-card]');

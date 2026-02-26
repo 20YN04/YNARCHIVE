@@ -16,15 +16,17 @@ import { NavBarComponent } from '../components/navbar/navbar';
 
       <!-- HERO TITLE — large text with staggered line-reveal -->
       <div class="hero-title-block" data-hero-title-block>
+        <p class="hero-eyebrow" data-hero-eyebrow>Portfolio &amp; Studio</p>
         <div class="title-line-mask">
           <h1 class="hero-title-line" data-hero-title-line>Driven by Passion,</h1>
         </div>
         <div class="title-line-mask">
-          <h1 class="hero-title-line" data-hero-title-line>Centered on Code,</h1>
+          <h1 class="hero-title-line" data-hero-title-line>Centered on Craft,</h1>
         </div>
         <div class="title-line-mask">
-          <h1 class="hero-title-line" data-hero-title-line>Embracing Craft</h1>
+          <h1 class="hero-title-line" data-hero-title-line>Built for Impact</h1>
         </div>
+        <p class="hero-subtitle" data-hero-subtitle>Design, development, and everything in between — based in Tessenderlo, Belgium.</p>
       </div>
 
       <!-- HERO IMAGE — parallax mask (container moves down, image moves up) -->
@@ -187,6 +189,18 @@ import { NavBarComponent } from '../components/navbar/navbar';
         padding: 4rem 2.5rem 3rem;
       }
 
+      .hero-eyebrow {
+        margin: 0 0 0.75rem;
+        font-family: 'area-normal', sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(10, 10, 10, 0.5);
+        transform: translateY(110%);
+        will-change: transform;
+      }
+
       .title-line-mask {
         overflow: hidden;
         line-height: 1;
@@ -200,6 +214,19 @@ import { NavBarComponent } from '../components/navbar/navbar';
         line-height: 1.15;
         letter-spacing: -0.03em;
         color: #0a0a0a;
+        transform: translateY(110%);
+        will-change: transform;
+      }
+
+      .hero-subtitle {
+        margin: 1.5rem 0 0;
+        max-width: 32ch;
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+        font-weight: 400;
+        line-height: 1.5;
+        letter-spacing: 0.01em;
+        color: rgba(10, 10, 10, 0.6);
         transform: translateY(110%);
         will-change: transform;
       }

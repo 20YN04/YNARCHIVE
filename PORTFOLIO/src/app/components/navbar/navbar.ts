@@ -16,7 +16,7 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 			</div>
 			<div class="flex gap-[3px]">
 				<a href="/work" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'work' ? 1 : null" data-nav-link data-page="work">Work,</a>
-				<a href="/" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">Process,</a>
+				<a href="/#about" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">About,</a>
 				<a href="/" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">Studio</a>
 			</div>
 			<div class="flex items-center gap-4">

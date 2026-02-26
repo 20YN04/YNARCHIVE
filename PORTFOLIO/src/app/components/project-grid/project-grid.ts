@@ -17,7 +17,7 @@ interface Project {
     <section class="project-section" id="work">
       <!-- Section header -->
       <div class="project-header">
-        <span class="section-num">02</span>
+        <span class="section-num">03</span>
         <span class="section-label">Selected Works</span>
       </div>
 
