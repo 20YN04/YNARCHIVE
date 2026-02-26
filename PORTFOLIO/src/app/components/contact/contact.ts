@@ -261,7 +261,9 @@ export class ContactComponent implements OnInit {
       },
       error: (err) => {
         this.submitting = false;
-        this.submitError = err?.error?.error ?? 'Something went wrong. Please try again.';
+        const msg = err?.error?.error ?? err?.message ?? 'Something went wrong. Please try again.';
+        this.submitError = msg;
+        console.error('Contact submit failed:', err);
       }
     });
   }

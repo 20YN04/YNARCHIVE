@@ -4,15 +4,20 @@ Express server met **MySQL** (database: `YNARCHIVEdb`). Slaat contactformulier-s
 
 - **POST** `/api/contact` — body: `{ name, email, message }` → opgeslagen in MySQL
 
-## Database
+## Database & migraties
 
 - Database: **YNARCHIVEdb** (bestaande MySQL-db)
-- Tabel: `contact_submissions` (wordt automatisch aangemaakt als die nog niet bestaat)
-  - `id` INT AUTO_INCREMENT PRIMARY KEY
-  - `name` VARCHAR(255)
-  - `email` VARCHAR(255)
-  - `message` TEXT
-  - `created_at` DATETIME
+- Tabellen worden aangemaakt via **migraties** (bij serverstart of handmatig).
+
+**Handmatig migraties draaien:**
+```bash
+npm run migrate
+```
+
+**Tabellen:**
+- `_migrations` — welke migraties al gedraaid zijn
+- `contact_submissions` — contactformulier (name, email, message, created_at)
+- `projects` — portfolio-work (id, title, year, category, url, image_url, tags JSON, created_at, updated_at). Geen seed; vul zelf aan.
 
 ## Configuratie
 

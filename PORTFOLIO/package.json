@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "migrate": "cd server && node migrate.js",
+    "db:migrate": "cd server && node migrate.js"
   },
   "prettier": {
     "printWidth": 100,

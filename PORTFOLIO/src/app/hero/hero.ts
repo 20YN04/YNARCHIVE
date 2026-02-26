@@ -33,19 +33,6 @@ import { NavBarComponent } from '../components/navbar/navbar';
         </figure>
       </div>
 
-      <!-- BOTTOM — section number + scroll hint -->
-      <div class="hero-bottom" data-hero-bottom>
-        <div class="hero-bottom-left">
-          <span class="section-number">01</span>
-          <span class="section-label">STUDIO</span>
-        </div>
-        <div class="hero-bottom-center">
-          <span class="scroll-hint" data-scroll-hint>[ Scroll down ]</span>
-        </div>
-        <div class="hero-bottom-right">
-          <span class="location-label">Tessenderlo, BEL</span>
-        </div>
-      </div>
     </section>
   `,
   styles: [
@@ -223,66 +210,6 @@ import { NavBarComponent } from '../components/navbar/navbar';
         transform: scale(1.1) translateY(5%);
       }
 
-      /* ═══ BOTTOM ═══ */
-      .hero-bottom {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.5rem clamp(2rem, 6vw, 5rem) 3rem;
-      }
-
-      .hero-bottom-left,
-      .hero-bottom-center,
-      .hero-bottom-right {
-        flex: 1;
-      }
-
-      .hero-bottom-center {
-        text-align: center;
-      }
-
-      .hero-bottom-right {
-        text-align: right;
-      }
-
-      .section-number {
-        font-family: 'area-normal', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.3em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.3);
-        margin-right: 1rem;
-      }
-
-      .section-label {
-        font-family: 'area-normal', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.3);
-      }
-
-      .scroll-hint {
-        font-family: 'area-normal', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.05em;
-        color: rgba(10, 10, 10, 0.2);
-        animation: scrollBounce 2.5s ease-in-out infinite;
-      }
-
-      @keyframes scrollBounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(4px); }
-      }
-
-      .location-label {
-        font-family: 'area-normal', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.3);
-      }
-
       /* ═══ Responsive ═══ */
       @media (max-width: 768px) {
         .hero-mega-title {
@@ -296,16 +223,6 @@ import { NavBarComponent } from '../components/navbar/navbar';
         }
         .hero-image-outer {
           padding: 0 clamp(1.5rem, 5vw, 2.5rem) 1.5rem;
-        }
-        .hero-bottom {
-          flex-direction: column;
-          gap: 12px;
-          padding: 1rem clamp(1.5rem, 5vw, 2.5rem) 2rem;
-          text-align: left;
-        }
-        .hero-bottom-center,
-        .hero-bottom-right {
-          text-align: left;
         }
       }
     `
