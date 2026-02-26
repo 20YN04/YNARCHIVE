@@ -39,6 +39,10 @@ testem.log
 /typings
 __screenshots__/
 
+# Server (API + env met wachtwoorden)
+/server/node_modules
+/server/.env
+
 # System files
 .DS_Store
 Thumbs.db

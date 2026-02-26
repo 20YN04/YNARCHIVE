@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { gsap } from 'gsap';
 import { NavBarComponent } from '../navbar/navbar';
+import { ContactService } from '../../services/contact.service';
 
 @Component({
   selector: 'app-contact',
@@ -36,9 +37,15 @@ import { NavBarComponent } from '../navbar/navbar';
                 <label class="sr-only">Message</label>
                 <textarea formControlName="message" placeholder="Message" rows="4" class="contact-input contact-textarea"></textarea>
               </div>
-              <button type="submit" [disabled]="contactForm.invalid" class="contact-submit">
-                Send Message
+              <button type="submit" [disabled]="contactForm.invalid || submitting" class="contact-submit">
+                {{ submitting ? 'Sending…' : 'Send Message' }}
               </button>
+              @if (submitSuccess) {
+                <p class="contact-message contact-message-success">Thanks! Your message was sent.</p>
+              }
+              @if (submitError) {
+                <p class="contact-message contact-message-error">{{ submitError }}</p>
+              }
             </form>
           </div>
           <div class="contact-right">
@@ -134,6 +141,9 @@ import { NavBarComponent } from '../navbar/navbar';
     }
     .contact-submit:hover:not(:disabled) { opacity: 1; }
     .contact-submit:disabled { opacity: 0.35; cursor: not-allowed; }
+    .contact-message { margin: 0.5rem 0 0; font-size: 14px; }
+    .contact-message-success { color: #0a0a0a; }
+    .contact-message-error { color: #b91c1c; }
     .contact-block {
       display: grid;
       grid-template-columns: 1.5rem 1fr;
@@ -171,9 +181,23 @@ import { NavBarComponent } from '../navbar/navbar';
 })
 export class ContactComponent implements OnInit {
   contactForm: FormGroup;
+  submitting = false;
+  submitSuccess = false;
+  submitError: string | null = null;
 
   @ViewChild('container', { static: true }) container!: ElementRef;
   @ViewChild('flipText', { static: true }) flipText!: ElementRef;
+
+  constructor(
+    private fb: FormBuilder,
+    private contactService: ContactService
+  ) {
+    this.contactForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      message: ['', Validators.required]
+    });
+  }
 
   locations = [
     'the rest of the world',
@@ -185,14 +209,6 @@ export class ContactComponent implements OnInit {
     'Denmark',
     'Sweden'
   ];
-
-  constructor(private fb: FormBuilder) {
-    this.contactForm = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      message: ['', Validators.required]
-    });
-  }
 
   ngOnInit(): void {
     const el = this.container?.nativeElement;
@@ -231,9 +247,22 @@ export class ContactComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.contactForm.valid) {
-      console.log('Formulier Data:', this.contactForm.value);
-      this.contactForm.reset();
-    }
+    if (!this.contactForm.valid || this.submitting) return;
+    this.submitting = true;
+    this.submitSuccess = false;
+    this.submitError = null;
+    const payload = this.contactForm.value;
+    this.contactService.submit(payload).subscribe({
+      next: () => {
+        this.submitting = false;
+        this.submitSuccess = true;
+        this.contactForm.reset();
+        setTimeout(() => (this.submitSuccess = false), 5000);
+      },
+      error: (err) => {
+        this.submitting = false;
+        this.submitError = err?.error?.error ?? 'Something went wrong. Please try again.';
+      }
+    });
   }
 }
