@@ -1,14 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
-import { environment } from '../../../environments/environment';
-
-interface Project {
-  title: string;
-  year: number;
-  category: string;
-  imageUrl: string;
-}
+import { Component, inject, computed } from '@angular/core';
+import { WorkService } from '../../services/work.service';
 
 @Component({
   selector: 'app-project-grid',
@@ -17,7 +8,7 @@ interface Project {
     <section class="project-section" id="work">
       <!-- Palmer-style: section tag + headline + intro -->
       <div class="project-hero">
-        <p class="project-section-tag">© Featured Projects (03) Creative Development</p>
+        <p class="project-section-tag">© Featured Projects ({{ projects().length }}) Creative Development</p>
         <h2 class="project-headline"># Featured Works</h2>
         <p class="project-intro">
           Every project blends design and development — bold ideas into
@@ -134,13 +125,14 @@ interface Project {
     `
   ]
 })
-export class ProjectGridComponent implements OnInit {
-  readonly projects = signal<Project[]>([]);
-  private readonly http = inject(HttpClient);
-
-  ngOnInit(): void {
-    this.http
-      .get<Project[]>(`${environment.apiUrl}/projects`)
-      .subscribe((projects) => this.projects.set(projects));
-  }
+export class ProjectGridComponent {
+  private readonly workService = inject(WorkService);
+  readonly projects = computed(() =>
+    this.workService.workItems().map((w) => ({
+      title: w.title,
+      year: w.year,
+      category: w.category,
+      imageUrl: w.imageUrl
+    }))
+  );
 }

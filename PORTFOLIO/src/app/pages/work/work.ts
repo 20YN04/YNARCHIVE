@@ -5,26 +5,18 @@ import {
   ElementRef,
   OnDestroy,
   ViewChild,
+  inject,
   signal,
   computed
 } from '@angular/core';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { NavBarComponent } from '../../components/navbar/navbar';
+import { WorkService, type WorkItem, type WorkCategory } from '../../services/work.service';
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Category = 'E-commerce' | 'SaaS' | 'Landing Pages';
-
-interface WorkItem {
-  id: string;
-  title: string;
-  year: number;
-  category: Category;
-  url: string;
-  imageUrl: string;
-  tags: string[];
-}
+type Category = WorkCategory;
 
 interface GalleryRow {
   type: 'full' | 'split';
@@ -273,6 +265,8 @@ interface DisplayRow {
         margin-top: 0.15rem;
       }
       @media (max-width: 600px) {
+        .work-header { flex-direction: column; align-items: flex-start; margin-bottom: 2rem; }
+        .work-filter-panel.is-open { max-height: 220px; }
         .work-grid {
           grid-template-columns: 1fr;
           row-gap: 3.5rem;
@@ -284,74 +278,18 @@ interface DisplayRow {
         .work-card-tall:not(.work-card-hero) .work-card-frame {
           aspect-ratio: 4 / 3;
         }
-        .work-header { flex-direction: column; align-items: flex-start; margin-bottom: 2rem; }
       }
     `
   ]
 })
 export class WorkComponent implements AfterViewInit, OnDestroy {
   @ViewChild('container', { static: true }) container!: ElementRef<HTMLElement>;
+  private readonly workService = inject(WorkService);
 
   readonly filterOptions: Array<'All' | Category> = ['All', 'E-commerce', 'SaaS', 'Landing Pages'];
   readonly activeFilter = signal<'All' | Category>('All');
   readonly showFilters = signal(false);
-
-  readonly workItems = signal<WorkItem[]>([
-    {
-      id: 'atlas-commerce',
-      title: 'Atlas Commerce',
-      year: 2026,
-      category: 'E-commerce',
-      url: 'https://example.com',
-      imageUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1800&q=80',
-      tags: ['Web', 'UI', 'Shop']
-    },
-    {
-      id: 'nova-saas',
-      title: 'Nova Platform',
-      year: 2025,
-      category: 'SaaS',
-      url: 'https://example.com',
-      imageUrl: 'https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=1800&q=80',
-      tags: ['Dashboard', 'SaaS', 'Product']
-    },
-    {
-      id: 'spline-landing',
-      title: 'Spline Campaign',
-      year: 2025,
-      category: 'Landing Pages',
-      url: 'https://example.com',
-      imageUrl: 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1800&q=80',
-      tags: ['Launch', 'Motion', 'Brand']
-    },
-    {
-      id: 'district-store',
-      title: 'District Storefront',
-      year: 2024,
-      category: 'E-commerce',
-      url: 'https://example.com',
-      imageUrl: 'https://images.unsplash.com/photo-1522199755839-a2bacb67c546?auto=format&fit=crop&w=1800&q=80',
-      tags: ['Checkout', 'CMS', 'Shop']
-    },
-    {
-      id: 'pulse-suite',
-      title: 'Pulse Suite',
-      year: 2024,
-      category: 'SaaS',
-      url: 'https://example.com',
-      imageUrl: 'https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=1800&q=80',
-      tags: ['B2B', 'Data', 'UX']
-    },
-    {
-      id: 'mono-launch',
-      title: 'Mono Launch System',
-      year: 2023,
-      category: 'Landing Pages',
-      url: 'https://example.com',
-      imageUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1800&q=80',
-      tags: ['Landing', 'Design', 'Performance']
-    }
-  ]);
+  readonly workItems = this.workService.workItems;
 
   readonly filteredItems = computed(() => {
     const filter = this.activeFilter();

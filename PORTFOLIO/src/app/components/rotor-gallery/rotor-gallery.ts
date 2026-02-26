@@ -2,6 +2,7 @@ import {
   Component,
   Input,
   AfterViewInit,
+  OnChanges,
   OnDestroy,
   ElementRef,
   ViewChild,
@@ -15,7 +16,7 @@ import {
     <section class="rotor-section" data-rotor-section>
       <div class="rotor-header">
         <span class="section-num">01</span>
-        <span class="section-label">Featured</span>
+        <h2 class="rotor-title">Featured Works</h2>
       </div>
       <div
         class="rotor-wrapper"
@@ -28,22 +29,23 @@ import {
         (pointerleave)="onPointerUp()"
         [class.rotor-dragging]="isDragging()"
       >
-        <div
-          class="rotor-scene"
-          #rotorScene
-        >
+        <div class="rotor-scene" #rotorScene>
           <div
             class="rotor-list"
             [style.transform]="'translate3d(0, 0, 0) rotateX(' + camXDeg + 'deg) rotateY(' + camYDeg + 'deg) rotateZ(' + camZDeg + 'deg)'"
           >
-            @for (item of items(); track $index) {
-              <div
+            @for (item of displayItems(); track $index) {
+              <a
+                [href]="item.url"
+                [attr.aria-label]="'View project ' + ($index + 1)"
+                target="_blank"
+                rel="noopener noreferrer"
                 class="rotor-item"
-                [style.--item-angle]="($index / items().length) * 360 + 'deg'"
+                [style.--item-angle]="($index / displayItems().length) * 360 + 'deg'"
                 [style.--radial]="radiusPx + $index * zOffsetPx + 'px'"
               >
-                <div class="rotor-face" [style.backgroundImage]="'url(' + item + ')'"></div>
-              </div>
+                <div class="rotor-face" [style.backgroundImage]="'url(' + item.imageUrl + ')'"></div>
+              </a>
             }
           </div>
         </div>
@@ -62,15 +64,14 @@ import {
 
       .rotor-header {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         justify-content: space-between;
         padding-bottom: 2rem;
         border-bottom: 1px solid rgba(10, 10, 10, 0.1);
         margin-bottom: 2.5rem;
       }
 
-      .section-num,
-      .section-label {
+      .section-num {
         font-family: 'area-normal', sans-serif;
         font-size: 11px;
         letter-spacing: 0.32em;
@@ -78,11 +79,20 @@ import {
         color: rgba(10, 10, 10, 0.4);
       }
 
+      .rotor-title {
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(1.75rem, 4vw, 2.75rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0;
+        color: #0a0a0a;
+      }
+
       .rotor-wrapper {
         position: relative;
         width: 100%;
-        height: 320px;
-        perspective: 2500px;
+        height: 420px;
+        perspective: 2800px;
         perspective-origin: 50% 50%;
         cursor: grab;
         touch-action: none;
@@ -96,10 +106,10 @@ import {
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 280px;
-        height: 280px;
-        margin-left: -140px;
-        margin-top: -140px;
+        width: 380px;
+        height: 380px;
+        margin-left: -190px;
+        margin-top: -190px;
         transform-style: preserve-3d;
         --global-rotation: 0deg;
       }
@@ -116,11 +126,14 @@ import {
         inset: 0;
         transform-style: preserve-3d;
         transform-origin: center center;
-        pointer-events: none;
-        transform: rotateX(calc(var(--global-rotation) - var(--item-angle, 0deg)))
-          translateZ(var(--radial, 150px));
-        -webkit-transform: rotateX(calc(var(--global-rotation) - var(--item-angle, 0deg)))
-          translateZ(var(--radial, 150px));
+        pointer-events: auto;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        transform: rotateY(calc(var(--global-rotation) - var(--item-angle, 0deg)))
+          translateZ(var(--radial, 220px));
+        -webkit-transform: rotateY(calc(var(--global-rotation) - var(--item-angle, 0deg)))
+          translateZ(var(--radial, 220px));
       }
 
       .rotor-face {
@@ -138,39 +151,41 @@ import {
 
       @media (max-width: 768px) {
         .rotor-wrapper {
-          height: 260px;
+          height: 340px;
         }
         .rotor-scene {
-          width: 220px;
-          height: 220px;
-          margin-left: -110px;
-          margin-top: -110px;
+          width: 300px;
+          height: 300px;
+          margin-left: -150px;
+          margin-top: -150px;
         }
       }
     `,
   ],
 })
-export class RotorGalleryComponent implements AfterViewInit, OnDestroy {
+export class RotorGalleryComponent implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('rotorScene') rotorScene!: ElementRef<HTMLElement>;
   @ViewChild('rotorWrapper') rotorWrapper!: ElementRef<HTMLElement>;
 
-  /** Featured project image URLs (you can add more later). */
+  /** Featured works: imageUrl + url (clickable). Takes precedence over images. */
+  @Input() items: { imageUrl: string; url: string }[] = [];
+  /** Legacy: image URLs only (links to #). */
   @Input() images: string[] = [];
 
   /** Seconds for one full rotation. */
   @Input() speedSec = 40;
-  /** Camera tilt (degrees). */
-  @Input() camXDeg = -28;
+  /** Camera tilt — standing-up wheel: look from front/slightly above. */
+  @Input() camXDeg = -22;
   @Input() camYDeg = 0;
-  @Input() camZDeg = -100;
+  @Input() camZDeg = 0;
   /** Radius of the wheel (px). */
-  @Input() radiusPx = 150;
+  @Input() radiusPx = 220;
   @Input() zOffsetPx = 0;
   /** Slow down when hovering. */
   @Input() slowOnHover = true;
   @Input() enableDrag = true;
 
-  readonly items = signal<string[]>([]);
+  readonly displayItems = signal<{ imageUrl: string; url: string }[]>([]);
   readonly isDragging = signal(false);
 
   private animationId: number | null = null;
@@ -184,11 +199,21 @@ export class RotorGalleryComponent implements AfterViewInit, OnDestroy {
   private readonly DRAG_DEG_PER_PX = 0.4;
 
   ngAfterViewInit(): void {
-    const list = this.images?.length
-      ? [...this.images]
-      : this.getPlaceholderImages();
-    this.items.set(list);
+    this.applyImages();
     this.startAnimation();
+  }
+
+  ngOnChanges(): void {
+    this.applyImages();
+  }
+
+  private applyImages(): void {
+    if (this.items?.length > 0) {
+      this.displayItems.set([...this.items]);
+      return;
+    }
+    const urls = this.images?.length ? [...this.images] : this.getPlaceholderImages();
+    this.displayItems.set(urls.map((imageUrl) => ({ imageUrl, url: '#' })));
   }
 
   ngOnDestroy(): void {
@@ -221,6 +246,7 @@ export class RotorGalleryComponent implements AfterViewInit, OnDestroy {
 
   onPointerDown(e: PointerEvent): void {
     if (!this.enableDrag) return;
+    if ((e.target as HTMLElement).closest?.('a.rotor-item')) return;
     this.isPointerDown = true;
     this.dragStartX = e.clientX;
     this.dragStartY = e.clientY;
@@ -249,7 +275,7 @@ export class RotorGalleryComponent implements AfterViewInit, OnDestroy {
     const el = this.rotorScene?.nativeElement;
     if (!el) return;
     el.style.setProperty('--global-rotation', this._rotationDeg + 'deg');
-    const n = this.items().length;
+    const n = this.displayItems().length;
     const list = el.querySelector('.rotor-list');
     const items = list?.querySelectorAll('.rotor-item');
     items?.forEach((item, i) => {
@@ -276,7 +302,7 @@ export class RotorGalleryComponent implements AfterViewInit, OnDestroy {
       const el = this.rotorScene?.nativeElement;
       if (el) {
         el.style.setProperty('--global-rotation', next + 'deg');
-        const n = this.items().length;
+        const n = this.displayItems().length;
         const list = el.querySelector('.rotor-list');
         const items = list?.querySelectorAll('.rotor-item');
         items?.forEach((item, i) => {
