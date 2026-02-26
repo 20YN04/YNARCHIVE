@@ -44,7 +44,7 @@ interface DisplayRow {
     <div class="work-page min-h-screen w-full bg-white text-[#0a0a0a]" #container>
       <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="work"></app-navbar>
 
-      <div class="work-inner mx-auto w-full max-w-[1400px] pt-20 pb-24">
+      <div class="work-inner mx-auto w-full pt-20 pb-24">
         <!-- Header: All Work + filters rondom de titel, smooth open/dicht -->
         <header class="work-header">
           <div class="work-header-left">
@@ -107,6 +107,7 @@ interface DisplayRow {
       :host { display: block; }
       .work-page { font-family: 'area-normal', sans-serif; }
       .work-inner {
+        max-width: var(--content-max-width);
         padding-left: clamp(2rem, 6vw, 5rem);
         padding-right: clamp(2rem, 6vw, 5rem);
       }

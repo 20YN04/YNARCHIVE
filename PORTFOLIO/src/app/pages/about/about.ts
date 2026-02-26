@@ -9,7 +9,7 @@ import { NavBarComponent } from '../../components/navbar/navbar';
     <div class="about-page min-h-screen bg-white text-[#0a0a0a] w-full">
       <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" [activePage]="currentPage"></app-navbar>
 
-      <div class="about-inner mx-auto w-full max-w-[1400px] pt-16 pb-20">
+      <div class="about-inner mx-auto w-full pt-16 pb-20">
         <h1 class="about-title">About</h1>
 
         <div class="about-content">
@@ -63,6 +63,7 @@ import { NavBarComponent } from '../../components/navbar/navbar';
       :host { display: block; }
       .about-page { font-family: 'area-normal', sans-serif; }
       .about-inner {
+        max-width: var(--content-max-width);
         padding-left: clamp(2rem, 6vw, 5rem);
         padding-right: clamp(2rem, 6vw, 5rem);
       }

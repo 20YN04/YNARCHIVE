@@ -12,6 +12,7 @@ import {
 @Component({
   selector: 'app-rotor-gallery',
   standalone: true,
+  inputs: ['items', 'images', 'speedSec', 'camXDeg', 'camYDeg', 'camZDeg', 'radiusPx', 'zOffsetPx', 'slowOnHover', 'enableDrag'],
   template: `
     <section class="rotor-section" data-rotor-section>
       <div class="rotor-header">

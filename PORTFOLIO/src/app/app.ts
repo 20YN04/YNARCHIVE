@@ -65,7 +65,6 @@ export class App implements AfterViewInit, OnDestroy {
   @ViewChild('pageContainer', { read: ViewContainerRef, static: true }) pageContainer!: ViewContainerRef;
 
   ngAfterViewInit(): void {
-    // Always start at top on load or reload
     if (typeof history !== 'undefined' && history.scrollRestoration) {
       history.scrollRestoration = 'manual';
     }
@@ -240,6 +239,8 @@ export class App implements AfterViewInit, OnDestroy {
     }
     updateGlobalFooterVisibility(currentPage);
     history.replaceState({ page: currentPage }, '', resolvePathFromPage(currentPage));
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
 
     // handle browser back/forward
     this.popStateHandler = (ev: PopStateEvent) => {

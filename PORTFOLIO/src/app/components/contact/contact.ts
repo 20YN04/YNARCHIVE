@@ -11,7 +11,7 @@ import { NavBarComponent } from '../navbar/navbar';
   template: `
     <div id="contact" class="contact-page min-h-screen bg-white text-[#0a0a0a] w-full" #container>
       <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="contact"></app-navbar>
-      <div class="contact-inner mx-auto w-full max-w-[1400px] pt-32 pb-24">
+      <div class="contact-inner mx-auto w-full pt-32 pb-24">
         <h1 class="contact-headline">
           Based in Belgium but available for your projects in
           <br class="hidden lg:block" />
@@ -69,6 +69,7 @@ import { NavBarComponent } from '../navbar/navbar';
   styles: [`
     .contact-page { font-family: 'area-normal', sans-serif; width: 100%; }
     .contact-inner {
+      max-width: var(--content-max-width);
       padding-left: clamp(2rem, 6vw, 5rem);
       padding-right: clamp(2rem, 6vw, 5rem);
     }
