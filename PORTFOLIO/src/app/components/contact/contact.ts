@@ -2,111 +2,175 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { gsap } from 'gsap';
+import { NavBarComponent } from '../navbar/navbar';
 
 @Component({
   selector: 'app-contact',
-  standalone: true, 
-  imports: [CommonModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, NavBarComponent],
   template: `
-    <div id="contact" class="contact-page min-h-screen bg-[#d1d3d0] text-black px-6 lg:px-24 pt-32 lg:pt-48 pb-24 relative flex flex-col" #container>
+    <div id="contact" class="contact-page min-h-screen bg-white text-[#0a0a0a] w-full" #container>
+      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="contact"></app-navbar>
+      <div class="contact-inner mx-auto w-full max-w-[1400px] pt-32 pb-24">
+        <h1 class="contact-headline">
+          Based in Belgium but available for your projects in
+          <br class="hidden lg:block" />
+          <span class="contact-headline-rotating">
+            <span #flipText class="contact-flip-text">the rest of the world</span>
+          </span>
+        </h1>
+        <p class="contact-subhead">Talk to us about your project</p>
 
-      <div class="contact-inner grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-16 lg:gap-32 items-start w-full max-w-[1600px] mx-auto">
-
-        <div class="left-col flex flex-col w-full">
-          <h1 class="contact-headline text-[2.5rem] lg:text-[4rem] xl:text-[4.5rem] leading-[1.03] font-medium tracking-tight mb-16 lg:mb-20 max-w-[95%]">
-            Based in Belgium but available for your projects in
-            <br class="hidden lg:block" />
-            <span class="inline-block text-black/60 h-[1.1em] align-bottom overflow-hidden">
-              <span #flipText class="block">the rest of the world</span>
-            </span>
-          </h1>
-
-          <div class="w-full lg:max-w-[80%]">
-            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-8">
-              
-              <div class="relative">
+        <div class="contact-grid">
+          <div class="contact-left">
+            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+              <div class="contact-field">
                 <label class="sr-only">Name</label>
-                <input type="text" formControlName="name" placeholder="Name"
-                       class="w-full bg-transparent border-0 border-b border-black/20 py-4 text-lg lg:text-xl text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors rounded-none" />
+                <input type="text" formControlName="name" placeholder="Name" class="contact-input" />
               </div>
-
-              <div class="relative">
+              <div class="contact-field">
                 <label class="sr-only">Email</label>
-                <input type="email" formControlName="email" placeholder="Email"
-                       class="w-full bg-transparent border-0 border-b border-black/20 py-4 text-lg lg:text-xl text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors rounded-none" />
+                <input type="email" formControlName="email" placeholder="Email" class="contact-input" />
               </div>
-
-              <div class="relative mt-4">
+              <div class="contact-field">
                 <label class="sr-only">Message</label>
-                <textarea formControlName="message" placeholder="Message" rows="4"
-                          class="w-full bg-transparent border-0 border-b border-black/20 py-4 text-lg lg:text-xl text-black outline-none placeholder:text-black/40 focus:border-black focus:ring-0 transition-colors resize-y min-h-[100px] rounded-none"></textarea>
+                <textarea formControlName="message" placeholder="Message" rows="4" class="contact-input contact-textarea"></textarea>
               </div>
-
-              <div class="pt-4">
-                <button type="submit" [disabled]="contactForm.invalid"
-                        class="bg-transparent border-none p-0 text-xl cursor-pointer underline underline-offset-8 decoration-1 opacity-80 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity font-medium">
-                  Send Message
-                </button>
-              </div>
+              <button type="submit" [disabled]="contactForm.invalid" class="contact-submit">
+                Send Message
+              </button>
             </form>
           </div>
-        </div>
-
-        <div class="right-col flex flex-col pt-4 lg:pt-6">
-          <div class="contact-details space-y-10 lg:space-y-12">
-            
-            <div class="grid grid-cols-[120px_1fr] lg:grid-cols-[160px_1fr] items-start gap-x-4">
-              <span class="text-xs uppercase tracking-widest mt-2 font-medium">BUSINESS</span>
-              <span class="text-xl lg:text-[1.7rem] leading-tight hover:underline underline-offset-[6px] decoration-1 cursor-pointer tracking-tight">
-                <a href="mailto:yentl.nerinckx@icloud.com">yentl.nerinckx&#64;icloud.com</a>
+          <div class="contact-right">
+            <div class="contact-block">
+              <span class="contact-label">N</span>
+              <p class="contact-value">Tessenderlo<br>Belgium</p>
+            </div>
+            <div class="contact-block">
+              <span class="contact-label">P</span>
+              <a href="tel:+32475451358" class="contact-value contact-link">+32 475 45 13 58</a>
+            </div>
+            <div class="contact-block">
+              <span class="contact-label">C</span>
+              <a href="mailto:yentl.nerinckx@icloud.com" class="contact-value contact-link">yentl.nerinckx&#64;icloud.com</a>
+            </div>
+            <div class="contact-block contact-social-wrap">
+              <span class="contact-label">S</span>
+              <span class="contact-social">
+                <a href="#" target="_blank" rel="noopener noreferrer" class="contact-social-link" aria-label="Instagram">Instagram</a>,
+                <a href="#" target="_blank" rel="noopener noreferrer" class="contact-social-link" aria-label="LinkedIn">LinkedIn</a>
               </span>
             </div>
-
-            <div class="grid grid-cols-[120px_1fr] lg:grid-cols-[160px_1fr] items-start gap-x-4">
-              <span class="text-xs uppercase tracking-widest mt-2 font-medium">PHONE</span>
-              <span class="text-xl lg:text-[1.7rem] leading-tight hover:underline underline-offset-[6px] decoration-1 cursor-pointer tracking-tight">
-                <a href="tel:+32475451358">+32 475 45 13 58</a>
-              </span>
-            </div>
-
           </div>
         </div>
-
       </div>
-
-      <div class="contact-social mt-24 lg:mt-0 lg:absolute lg:bottom-12 lg:left-24 flex items-center gap-1 text-base font-medium tracking-tight">
-        <a href="#" target="_blank" rel="noopener noreferrer" class="hover:underline underline-offset-4 decoration-1 cursor-pointer" aria-label="Instagram">Instagram</a>,
-        <a href="#" target="_blank" rel="noopener noreferrer" class="hover:underline underline-offset-4 decoration-1 cursor-pointer ml-1" aria-label="LinkedIn">LinkedIn</a>
-      </div>
-
     </div>
   `,
   styles: [`
-    .contact-page {
-      font-family: 'area-normal', sans-serif;
+    .contact-page { font-family: 'area-normal', sans-serif; width: 100%; }
+    .contact-inner {
+      padding-left: clamp(2rem, 6vw, 5rem);
+      padding-right: clamp(2rem, 6vw, 5rem);
     }
-    .contact-headline,
-    .contact-inner input,
-    .contact-inner textarea,
-    .contact-inner button,
-    .contact-details,
-    .contact-social {
+    .contact-headline {
       font-family: 'area-normal', sans-serif;
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin: 0 0 1rem;
+      color: #0a0a0a;
     }
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus,
-    input:-webkit-autofill:active,
+    .contact-headline-rotating {
+      display: inline-block;
+      height: 1.15em;
+      overflow: hidden;
+      vertical-align: bottom;
+    }
+    .contact-flip-text { display: block; }
+    .contact-subhead {
+      font-family: 'area-normal', sans-serif;
+      font-size: 1rem;
+      color: rgba(10,10,10,0.6);
+      margin: 0 0 2.5rem;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+    .contact-field { position: relative; }
+    .contact-input {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid rgba(10,10,10,0.2);
+      padding: 0.75rem 0;
+      font-family: 'area-normal', sans-serif;
+      font-size: 1rem;
+      color: #0a0a0a;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .contact-input::placeholder { color: rgba(10,10,10,0.4); }
+    .contact-input:focus { border-color: #0a0a0a; }
+    .contact-textarea { resize: vertical; min-height: 100px; }
+    .contact-submit {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-family: 'area-normal', sans-serif;
+      font-size: 1rem;
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      cursor: pointer;
+      color: #0a0a0a;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+      margin-top: 0.5rem;
+    }
+    .contact-submit:hover:not(:disabled) { opacity: 1; }
+    .contact-submit:disabled { opacity: 0.35; cursor: not-allowed; }
+    .contact-block {
+      display: grid;
+      grid-template-columns: 1.5rem 1fr;
+      gap: 0.5rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .contact-label {
+      font-family: 'area-normal', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(10,10,10,0.5);
+    }
+    .contact-value {
+      font-family: 'area-normal', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #0a0a0a;
+      margin: 0;
+    }
+    .contact-link { text-decoration: none; transition: opacity 0.2s; }
+    .contact-link:hover { opacity: 0.6; }
+    .contact-social-wrap { align-items: center; }
+    .contact-social-link { color: inherit; text-decoration: underline; text-underline-offset: 4px; transition: opacity 0.2s; }
+    .contact-social-link:hover { opacity: 0.6; }
+    @media (max-width: 768px) {
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
     textarea:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0 30px #d1d3d0 inset !important;
-      -webkit-text-fill-color: black !important;
-      transition: background-color 5000s ease-in-out 0s;
+      -webkit-box-shadow: 0 0 0 30px #fff inset !important;
+      -webkit-text-fill-color: #0a0a0a !important;
     }
   `]
 })
 export class ContactComponent implements OnInit {
   contactForm: FormGroup;
-  
+
   @ViewChild('container', { static: true }) container!: ElementRef;
   @ViewChild('flipText', { static: true }) flipText!: ElementRef;
 
@@ -130,33 +194,35 @@ export class ContactComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    gsap.fromTo(this.container.nativeElement.children, 
-      { y: 60, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.2 }
-    );
-
+    const el = this.container?.nativeElement;
+    if (el) {
+      gsap.fromTo(el.querySelector('.contact-inner'),
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.15 }
+      );
+    }
     this.startTextAnimation();
   }
 
   startTextAnimation(): void {
     let currentIndex = 0;
-    const el = this.flipText.nativeElement;
-
+    const el = this.flipText?.nativeElement;
+    if (!el) return;
     setInterval(() => {
-      gsap.to(el, { 
-        yPercent: -100, 
-        opacity: 0, 
-        duration: 0.4, 
-        ease: "power2.in", 
+      gsap.to(el, {
+        yPercent: -100,
+        opacity: 0,
+        duration: 0.4,
+        ease: 'power2.in',
         onComplete: () => {
           currentIndex = (currentIndex + 1) % this.locations.length;
           el.innerText = this.locations[currentIndex];
           gsap.set(el, { yPercent: 100 });
-          gsap.to(el, { 
-            yPercent: 0, 
-            opacity: 1, 
-            duration: 0.4, 
-            ease: "power2.out" 
+          gsap.to(el, {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.4,
+            ease: 'power2.out'
           });
         }
       });

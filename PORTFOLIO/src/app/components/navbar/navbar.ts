@@ -16,14 +16,11 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 			</div>
 			<div class="flex gap-[3px]">
 				<a href="/work" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'work' ? 1 : null" data-nav-link data-page="work">Work,</a>
-				<a href="/#about" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">About,</a>
+				<a href="/" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">Process,</a>
 				<a href="/" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">Studio</a>
 			</div>
 			<div class="flex items-center gap-4">
-				<span class="text-xs tracking-[0.02em] opacity-60">
-					<span>{{ timeHour() }}</span><span class="blink-colon">:</span><span>{{ timeMinute() }}</span>
-					<span class="ml-1 text-[10px] opacity-50 uppercase">{{ timePeriod() }}</span>
-				</span>
+				<span class="text-[13px] tracking-[0.01em] opacity-60">: Tessenderlo, BEL</span>
 				<a href="/contact" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'contact' ? 1 : null" data-nav-link data-page="contact">Contact</a>
 			</div>
 		</nav>
@@ -40,7 +37,7 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 				align-items: center;
 				justify-content: space-between;
 				height: 64px;
-				padding: 0 1.5rem;
+				padding: 0 clamp(1.5rem, 5vw, 3rem);
 				background: transparent;
 				color: #0a0a0a;
 				opacity: 0;
@@ -76,12 +73,7 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 			}
 			@media (min-width: 768px) {
 				.hero-nav {
-					padding: 0 2.5rem;
-				}
-			}
-			@media (min-width: 1024px) {
-				.hero-nav {
-					padding: 0 3.5rem;
+					padding: 0 clamp(2rem, 6vw, 5rem);
 				}
 			}
 		`

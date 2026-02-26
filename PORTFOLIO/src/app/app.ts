@@ -255,8 +255,6 @@ export class App implements AfterViewInit, OnDestroy {
     const megaTitle = document.querySelector('[data-hero-mega-title]') as HTMLElement;
     const megaTitleText = document.querySelector('[data-hero-mega-text]') as HTMLElement;
     const titleLines = document.querySelectorAll('[data-hero-title-line]');
-    const heroEyebrow = document.querySelector('[data-hero-eyebrow]') as HTMLElement | null;
-    const heroSubtitle = document.querySelector('[data-hero-subtitle]') as HTMLElement | null;
     const heroImage = document.querySelector('[data-hero-image]') as HTMLElement;
     const heroImg = document.querySelector('[data-hero-img]') as HTMLElement;
     const heroBottom = document.querySelector('[data-hero-bottom]') as HTMLElement;
@@ -335,8 +333,6 @@ export class App implements AfterViewInit, OnDestroy {
     // Mega title visible from the start (preloader covers it, then morphs into it)
     if (megaTitleText) gsap.set(megaTitleText, { opacity: 0 });
     gsap.set(titleLines, { y: '110%' });
-    if (heroEyebrow) gsap.set(heroEyebrow, { y: '110%' });
-    if (heroSubtitle) gsap.set(heroSubtitle, { y: '110%' });
     if (heroImage) gsap.set(heroImage, { clipPath: 'inset(100% 0 0 0)' });
     if (heroImg) gsap.set(heroImg, { scale: 1.1, y: '5%' });
     if (heroBottom) gsap.set(heroBottom, { opacity: 0, y: 25 });
@@ -444,20 +440,12 @@ export class App implements AfterViewInit, OnDestroy {
       }, 3.2);
     }
 
-    // Eyebrow and subtitle reveal
-    if (heroEyebrow) {
-      tl.to(heroEyebrow, { y: '0%', duration: 0.7, ease: 'power4.out' }, 3.5);
-    }
-    // Title lines stagger reveal (each line slides up from its mask)
+    // Hero title line reveal (single line like Telha Clarke)
     tl.to(titleLines, {
       y: '0%',
       duration: 1.0,
       ease: 'power4.out',
-      stagger: 0.15,
     }, 3.6);
-    if (heroSubtitle) {
-      tl.to(heroSubtitle, { y: '0%', duration: 0.8, ease: 'power4.out' }, 4.2);
-    }
 
     // Hero image parallax mask reveal
     if (heroImage) {

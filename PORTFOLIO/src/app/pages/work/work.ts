@@ -36,145 +36,194 @@ interface GalleryRow {
   imports: [NavBarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen bg-white text-[#0a0a0a]" #container>
-      <!-- Shared navbar — static, white solid bg -->
+    <div class="work-page min-h-screen bg-white text-[#0a0a0a] w-full" #container>
       <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="work"></app-navbar>
 
-      <!-- Hero title + filters -->
-      <div class="mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-14 pt-10 md:pt-14 lg:pt-16">
-        <h1 class="font-bold text-[clamp(4rem,16vw,14rem)] leading-[0.9] tracking-tighter uppercase">
-          PROJECTS
-        </h1>
-
-        <div class="mt-6 md:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-black/10 py-3.5">
-          @for (option of filterOptions; track option) {
-            <button
-              type="button"
-              class="text-xs uppercase tracking-[0.14em] bg-transparent border-none p-0 cursor-pointer transition-colors duration-200"
-              [style.color]="activeFilter() === option ? '#0a0a0a' : 'rgba(10,10,10,0.4)'"
-              (click)="setFilter(option)"
-            >
-              {{ option }}
-            </button>
-          }
+      <!-- Telha Clarke style: 02 Selected Works, 17 - 25' -->
+      <div class="work-inner mx-auto w-full max-w-[1400px] pt-16 pb-20">
+        <div class="work-header">
+          <span class="work-section-num">02</span>
+          <span class="work-section-label">Selected Works</span>
         </div>
-      </div>
 
-      <!-- Project gallery -->
-      <div class="mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-14 pt-8 md:pt-10 pb-20">
-        <div class="flex flex-col gap-8 md:gap-10 lg:gap-14">
-          @for (row of galleryRows(); track $index) {
-            @if (row.type === 'full') {
-              <article class="group" data-reveal-card>
-                <a [href]="row.items[0].url" target="_blank" rel="noopener noreferrer"
-                   class="relative block overflow-hidden bg-neutral-50 border border-black/6"
-                   [attr.aria-label]="'View ' + row.items[0].title">
+        <div class="work-grid">
+          <div class="work-info-col">
+            <div class="work-info-sticky">
+              <p class="work-years">17 — 25'</p>
+            </div>
+          </div>
+          <div class="work-cards-col">
+            @for (item of filteredItems(); track item.id) {
+              <article class="work-card" data-reveal-card>
+                <a [href]="item.url" target="_blank" rel="noopener noreferrer"
+                   class="work-card-link"
+                   [attr.aria-label]="'View ' + item.title">
                   <img
-                    class="w-full h-auto block object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.6,0.2,1)] group-hover:scale-[1.03]"
-                    [src]="row.items[0].imageUrl"
-                    [alt]="row.items[0].title"
+                    class="work-card-image"
+                    [src]="item.imageUrl"
+                    [alt]="item.title"
                     loading="lazy"
                     data-parallax-image
                   />
-                  <span
-                    class="absolute right-4 bottom-4 size-14 rounded-full flex items-center justify-center bg-black/80 text-white text-xl opacity-0 scale-75 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 border border-white/40"
-                    aria-hidden="true">↗</span>
+                  <span class="work-card-arrow" aria-hidden="true">↗</span>
                 </a>
-                <div class="flex items-end justify-between gap-4 pt-3">
-                  <h2 class="text-[clamp(1.15rem,2.5vw,1.75rem)] tracking-tight leading-none">{{ row.items[0].title }}</h2>
-                  <div class="text-right shrink-0">
-                    <span class="block text-[11px] uppercase tracking-[0.18em] text-black/45">{{ row.items[0].year }}</span>
-                    <div class="flex flex-wrap gap-1.5 mt-1 justify-end">
-                      @for (tag of row.items[0].tags; track tag) {
-                        <span class="text-[10px] uppercase tracking-widest text-black/60">{{ tag }}</span>
-                      }
-                    </div>
-                  </div>
+                <div class="work-card-caption">
+                  <span class="work-card-title">[ {{ item.title }} ]</span>
+                  <span class="work-card-meta">{{ item.category }} {{ item.year }}</span>
                 </div>
               </article>
-
-              <!-- Split row -->
-            } @else {
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-                @for (item of row.items; track item.id) {
-                  <article class="group" data-reveal-card>
-                    <a [href]="item.url" target="_blank" rel="noopener noreferrer"
-                       class="relative block overflow-hidden bg-neutral-50 border border-black/6"
-                       [attr.aria-label]="'View ' + item.title">
-                      <img
-                        class="w-full h-auto block object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.6,0.2,1)] group-hover:scale-[1.03]"
-                        [src]="item.imageUrl"
-                        [alt]="item.title"
-                        loading="lazy"
-                        data-parallax-image
-                      />
-                      <span
-                        class="absolute right-4 bottom-4 size-12 rounded-full flex items-center justify-center bg-black/80 text-white text-lg opacity-0 scale-75 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 border border-white/40"
-                        aria-hidden="true">↗</span>
-                    </a>
-                    <div class="flex items-end justify-between gap-3 pt-3">
-                      <h2 class="text-[clamp(1rem,2vw,1.4rem)] tracking-tight leading-none">{{ item.title }}</h2>
-                      <div class="text-right shrink-0">
-                        <span class="block text-[11px] uppercase tracking-[0.18em] text-black/45">{{ item.year }}</span>
-                        <div class="flex flex-wrap gap-1.5 mt-1 justify-end">
-                          @for (tag of item.tags; track tag) {
-                            <span class="text-[10px] uppercase tracking-widest text-black/60">{{ tag }}</span>
-                          }
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                }
-              </div>
             }
-          }
+          </div>
+        </div>
+
+        <div class="work-all-wrap">
+          <a href="/" data-nav-link data-page="home" class="work-all-link">All Work ({{ workItems().length }})</a>
         </div>
       </div>
 
-      <!-- LET'S TALK footer -->
-      <footer class="border-t border-black/8 bg-neutral-50/80">
-        <div class="mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-14 py-14 md:py-20">
-          <h2 class="font-bold text-[clamp(3rem,10vw,9rem)] leading-[0.9] tracking-tighter uppercase">
-            LET'S TALK
-          </h2>
-
-          <div class="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-[1.2fr_1fr_auto] gap-10 items-start">
-            <div>
-              <p class="text-[11px] uppercase tracking-[0.2em] text-black/40 m-0">Business</p>
-              <a href="mailto:yentl.nerinckx@icloud.com"
-                 class="mt-2 inline-block text-lg md:text-xl lg:text-2xl leading-tight hover:opacity-60 transition-opacity duration-200">
-                yentl.nerinckx&#64;icloud.com
-              </a>
-            </div>
-
-            <div>
-              <p class="text-[11px] uppercase tracking-[0.2em] text-black/40 m-0">Location</p>
-              <p class="mt-2 text-lg md:text-xl lg:text-2xl leading-tight m-0">Tessenderlo, Belgium</p>
-              <a href="/contact" data-nav-link data-page="contact"
-                 class="mt-3 inline-block text-sm underline underline-offset-4 decoration-1 hover:opacity-60 transition-opacity duration-200">
-                Contact page &#8594;
-              </a>
-            </div>
-
-            <a href="/contact" data-nav-link data-page="contact"
-               class="stamp relative size-28 border border-black/25 rounded-full no-underline text-[#0a0a0a] inline-flex items-center justify-center overflow-hidden hover:border-black/50 transition-colors duration-300"
-               aria-label="Contact us">
-              <svg class="absolute inset-0 w-full h-full animate-[spin_9s_linear_infinite]" viewBox="0 0 100 100">
-                <defs>
-                  <path id="stampPath" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
-                </defs>
-                <text font-size="8" letter-spacing="3" fill="currentColor">
-                  <textPath href="#stampPath">CONTACT US · CONTACT US ·</textPath>
-                </text>
-              </svg>
-              <span class="text-xl relative z-10">↗</span>
-            </a>
-          </div>
+      <!-- Talk to us footer (Telha style) -->
+      <footer class="work-footer">
+        <div class="work-footer-inner mx-auto w-full max-w-[1400px] py-14 md:py-20">
+          <h2 class="work-footer-title">Talk to us about your project</h2>
+          <a href="/contact" data-nav-link data-page="contact" class="work-footer-cta">Contact us</a>
         </div>
       </footer>
     </div>
   `,
-  styles: [`:host { display: block; }`]
+  styles: [
+    `
+      :host { display: block; }
+      .work-page { font-family: 'area-normal', sans-serif; }
+      .work-inner, .work-footer-inner {
+        padding-left: clamp(2rem, 6vw, 5rem);
+        padding-right: clamp(2rem, 6vw, 5rem);
+      }
+      .work-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 2.5rem;
+        border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+        margin-bottom: 3rem;
+      }
+      .work-section-num, .work-section-label {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: rgba(10, 10, 10, 0.4);
+      }
+      .work-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 3rem;
+      }
+      .work-info-col { position: relative; }
+      .work-info-sticky { position: sticky; top: 100px; }
+      .work-years {
+        font-family: 'area-normal', sans-serif;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        color: rgba(10, 10, 10, 0.4);
+        margin: 0;
+      }
+      .work-cards-col {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+      }
+      .work-card { will-change: transform, opacity; }
+      .work-card-link {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        background: #f0f0f0;
+      }
+      .work-card-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .work-card-link:hover .work-card-image { transform: scale(1.03); }
+      .work-card-arrow {
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.8);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        opacity: 0;
+        transform: scale(0.75);
+        transition: opacity 0.3s, transform 0.3s;
+      }
+      .work-card-link:hover .work-card-arrow {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .work-card-caption {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0;
+      }
+      .work-card-title {
+        font-family: 'area-normal', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        color: #0a0a0a;
+      }
+      .work-card-meta {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(10, 10, 10, 0.4);
+      }
+      .work-all-wrap { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(10,10,10,0.08); }
+      .work-all-link {
+        font-family: 'area-normal', sans-serif;
+        font-size: 13px;
+        letter-spacing: 0.05em;
+        color: #0a0a0a;
+        text-decoration: none;
+        transition: opacity 0.3s;
+      }
+      .work-all-link:hover { opacity: 0.6; }
+      .work-footer { border-top: 1px solid rgba(10,10,10,0.08); background: #fafafa; }
+      .work-footer-inner { }
+      .work-footer-title {
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin: 0 0 1rem;
+        color: #0a0a0a;
+      }
+      .work-footer-cta {
+        font-family: 'area-normal', sans-serif;
+        font-size: 14px;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        color: #0a0a0a;
+        transition: opacity 0.3s;
+      }
+      .work-footer-cta:hover { opacity: 0.6; }
+      @media (max-width: 768px) {
+        .work-grid { grid-template-columns: 1fr; gap: 2rem; }
+        .work-info-sticky { position: relative; top: 0; }
+      }
+    `
+  ]
 })
 export class WorkComponent implements AfterViewInit, OnDestroy {
   @ViewChild('container', { static: true }) container!: ElementRef<HTMLElement>;

@@ -28,6 +28,10 @@ html {
   color: #fff;
 }
 
+#page-root {
+  width: 100%;
+}
+
 /* ═══════════════════════════════════════════
    THICK BORDER BARS — frame the viewport
    Start at ~40px, animate down to 1px via GSAP
@@ -113,7 +117,7 @@ html {
   position: relative;
   background: #d1d3d0;
   color: #0a0a0a;
-  padding: 1.2rem 2.5rem;
+  padding: 1.2rem clamp(2rem, 6vw, 5rem);
   border-top: 1px solid rgba(10, 10, 10, 0.12);
 }
 
@@ -122,8 +126,9 @@ html {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  max-width: 1500px;
+  max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .footer-brand {
@@ -165,7 +170,7 @@ html {
 
 @media (max-width: 768px) {
   .footer-section {
-    padding: 1rem 1.5rem;
+    padding: 1rem clamp(1.5rem, 5vw, 2.5rem);
   }
 
   .footer-inner {
