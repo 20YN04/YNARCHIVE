@@ -16,8 +16,7 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 			</div>
 			<div class="flex gap-[3px]">
 				<a href="/work" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'work' ? 1 : null" data-nav-link data-page="work">Work,</a>
-				<a href="/" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">Process,</a>
-				<a href="/" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" data-nav-link data-page="home">Studio</a>
+				<a href="/about" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'about' ? 1 : null" data-nav-link data-page="about">About</a>
 			</div>
 			<div class="flex items-center gap-4">
 				<span class="text-[13px] tracking-[0.01em] opacity-60">: Tessenderlo, BEL</span>
@@ -83,7 +82,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	@Input() fixed = true;
 	@Input() alwaysVisible = false;
 	@Input() solidBackground = false;
-	@Input() activePage: 'home' | 'work' | 'contact' | null = null;
+	@Input() activePage: 'home' | 'work' | 'contact' | 'about' | null = null;
 
 	readonly timeHour = signal('00');
 	readonly timeMinute = signal('00');

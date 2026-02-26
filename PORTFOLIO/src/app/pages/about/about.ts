@@ -7,7 +7,7 @@ import { NavBarComponent } from '../../components/navbar/navbar';
   imports: [NavBarComponent],
   template: `
     <div class="about-page min-h-screen bg-white text-[#0a0a0a] w-full">
-      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="about"></app-navbar>
+      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" [activePage]="currentPage"></app-navbar>
 
       <div class="about-inner mx-auto w-full max-w-[1400px] pt-16 pb-20">
         <h1 class="about-title">About</h1>
@@ -118,4 +118,6 @@ import { NavBarComponent } from '../../components/navbar/navbar';
     `
   ]
 })
-export class AboutComponent {}
+export class AboutComponent {
+  readonly currentPage = 'about' as const;
+}
