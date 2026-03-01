@@ -151,7 +151,7 @@ import { ContactService } from '../../services/contact.service';
                   >Instagram</a
                 >,
                 <a
-                  href="#"
+                  href="https://www.linkedin.com/in/yentl-nerinckx-6829142a3/"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="contact-social-link"
