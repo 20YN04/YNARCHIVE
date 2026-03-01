@@ -1,103 +1,76 @@
 import { AfterViewInit, Component, ElementRef, inject, OnDestroy } from '@angular/core';
 import { WorkService, type WorkItem } from '../../services/work.service';
-import { MarqueeComponent } from '../marquee/marquee';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-/** Extract a short client code from the project title (Jack Elder style). */
+/** Extract a short client code from the project title. */
 function toClientCode(item: WorkItem): string {
   const words = item.title.split(/\s+/);
   if (words.length === 1) return words[0].substring(0, 3).toUpperCase();
-  // Take first word if short (like "BT"), otherwise first letters
   if (words[0].length <= 3) return words[0].toUpperCase();
   return words.map(w => w[0]).join('').substring(0, 3).toUpperCase();
 }
 
-/** Map tags to uppercase discipline labels. */
+/** Map tags to discipline labels. */
 function toDisciplineTags(item: WorkItem): string[] {
-  const fromTags = (item.tags ?? []).slice(0, 3).map((t) => t.toUpperCase());
-  return [...new Set(fromTags)];
+  return [...new Set((item.tags ?? []).slice(0, 3).map((t) => t.toUpperCase()))];
 }
 
 @Component({
   selector: 'app-featured-work',
   standalone: true,
-  imports: [MarqueeComponent],
   template: `
     <section class="featured-work" data-featured-work>
-      <!-- Big heading -->
-      <div class="work-heading-wrap" data-work-heading>
-        <h1 class="work-heading-display">W<span class="heading-alt">O</span>RK</h1>
+      <!-- Section label -->
+      <div class="work-label" data-work-label>
+        <span class="label-num">(01)</span>
+        <span class="label-text">Selected Projects</span>
       </div>
 
-      <div class="work-spacer-sm"></div>
+      <!-- Horizontal scroll track -->
+      <div class="h-scroll-wrapper" data-h-scroll-wrapper>
+        <div class="h-scroll-track" data-h-scroll-track>
+          @for (project of projects(); track project.id; let i = $index) {
+            <div class="h-card" data-h-card>
+              <a
+                [href]="project.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="h-card-link"
+                (mouseenter)="onCardEnter($event)"
+                (mouseleave)="onCardLeave($event)"
+              >
+                <div class="h-card-image-wrap">
+                  <img
+                    [src]="project.imageUrl"
+                    [alt]="project.title"
+                    class="h-card-image"
+                    data-card-image
+                    loading="lazy"
+                  />
+                  <span class="h-card-index">{{ (i + 1).toString().padStart(2, '0') }}</span>
+                </div>
+                <div class="h-card-info">
+                  <h3 class="h-card-title">{{ project.title }}</h3>
+                  <span class="h-card-year">{{ project.year }}</span>
+                  <div class="h-card-tags">
+                    @for (tag of toDisciplineTags(project); track tag) {
+                      <span class="h-card-tag">{{ tag }}</span>
+                    }
+                  </div>
+                </div>
+              </a>
+            </div>
+          }
 
-      <!-- Info overlay -->
-      <div class="work-overlay">
-        <div class="work-overlay-item">
-          <span class="work-overlay-text">(02)</span>
-        </div>
-        <div class="work-overlay-item work-overlay-right">
-          <span class="work-overlay-text">NOW FOR THE GOOD STUFF</span>
-        </div>
-      </div>
-
-      <div class="work-spacer-sm"></div>
-
-      <!-- Marquee -->
-      <app-marquee
-        text="Selected Projects"
-        [dark]="false"
-        [large]="false"
-        [showArrows]="true"
-        [duration]="18"
-      ></app-marquee>
-
-      <div class="work-spacer-lg"></div>
-
-      <!-- Alternating zigzag cards -->
-      <div class="cards-grid">
-        @for (project of projects(); track project.id; let i = $index) {
-          <div
-            class="card-slot"
-            [class.card-slot--right]="i % 2 !== 0"
-            data-work-card
-          >
-            <a
-              [href]="project.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="work-card"
-              (mouseenter)="onCardEnter($event)"
-              (mouseleave)="onCardLeave($event)"
-            >
-              <!-- Image with client label overlay -->
-              <div class="card-image-wrap">
-                <img
-                  [src]="project.imageUrl"
-                  [alt]="project.title"
-                  class="card-image"
-                  data-card-image
-                  loading="lazy"
-                />
-                <span class="card-client-label">{{ toClientCode(project) }}</span>
-              </div>
-
-              <!-- Title + year -->
-              <div class="card-heading-row">
-                <h3 class="card-title">{{ project.title }}</h3>
-                <span class="card-year">{{ project.year }}</span>
-              </div>
-
-              <!-- Tag pills -->
-              <div class="card-tags">
-                @for (tag of toDisciplineTags(project); track tag) {
-                  <span class="card-tag">{{ tag }}</span>
-                }
-              </div>
-            </a>
+          <!-- End card — CTA -->
+          <div class="h-card h-card-end">
+            <div class="h-card-end-inner">
+              <span class="h-card-end-num">{{ projects().length }}</span>
+              <span class="h-card-end-label">Projects &amp; counting</span>
+            </div>
           </div>
-        }
+        </div>
       </div>
     </section>
   `,
@@ -107,141 +80,166 @@ function toDisciplineTags(item: WorkItem): string[] {
 
       .featured-work {
         position: relative;
-        padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 4vw, 4rem);
+        padding: clamp(4rem, 8vw, 6rem) 0;
+        overflow: hidden;
       }
 
-      .work-spacer-sm { height: clamp(1rem, 2vw, 2rem); }
-      .work-spacer-lg { height: clamp(2rem, 4vw, 3rem); }
-
-      /* ═══ BIG HEADING ═══ */
-      .work-heading-wrap { text-align: center; }
-      .work-heading-display {
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(5rem, 18vw, 16rem);
-        font-weight: 800;
-        letter-spacing: -0.04em;
-        line-height: 0.9;
-        color: #0a0a0a;
-        margin: 0;
-        text-transform: uppercase;
-      }
-      .heading-alt {
-        font-style: italic;
-        font-weight: 300;
-      }
-
-      /* ═══ OVERLAY INFO ═══ */
-      .work-overlay {
+      /* ── Label ── */
+      .work-label {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        align-items: baseline;
+        gap: 0.75rem;
+        padding: 0 clamp(1.5rem, 4vw, 4rem);
+        margin-bottom: clamp(2rem, 4vw, 3rem);
       }
-      .work-overlay-item { display: flex; }
-      .work-overlay-right { justify-content: flex-end; }
-      .work-overlay-text {
+      .label-num {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        font-weight: 400;
+        color: rgba(10,10,10,0.3);
+      }
+      .label-text {
         font-family: 'area-normal', sans-serif;
         font-size: 11px;
         font-weight: 500;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
         color: rgba(10,10,10,0.5);
       }
 
-      /* ═══ CARDS GRID ═══ */
-      .cards-grid {
+      /* ── Horizontal scroll ── */
+      .h-scroll-wrapper {
+        overflow: visible;
+        width: 100%;
+      }
+
+      .h-scroll-track {
         display: flex;
-        flex-direction: column;
-        gap: clamp(3rem, 6vw, 5rem);
+        gap: clamp(1.5rem, 3vw, 2.5rem);
+        padding: 0 clamp(1.5rem, 4vw, 4rem);
+        will-change: transform;
       }
 
-      .card-slot {
-        position: relative;
-        width: 55%;
-        align-self: flex-start;
+      /* ── Cards ── */
+      .h-card {
+        flex: 0 0 auto;
+        width: clamp(300px, 40vw, 520px);
       }
-      .card-slot--right { align-self: flex-end; }
 
-      .work-card {
+      .h-card-link {
         display: block;
         text-decoration: none;
         color: inherit;
       }
 
-      .card-image-wrap {
+      .h-card-image-wrap {
         position: relative;
         width: 100%;
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 3 / 4;
         overflow: hidden;
         background: #f0f0f0;
+        border-radius: 4px;
       }
-      .card-image {
+
+      .h-card-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
         will-change: transform;
         transform: scale(1);
-        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       }
-      .card-client-label {
+
+      .h-card-index {
         position: absolute;
-        bottom: 0;
-        left: 0;
+        top: 1rem;
+        left: 1rem;
         font-family: 'area-normal', sans-serif;
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 500;
         letter-spacing: 0.06em;
-        color: rgba(10,10,10,0.6);
+        color: rgba(10,10,10,0.5);
         background: rgba(255,255,255,0.85);
+        padding: 4px 10px;
+        border-radius: 2px;
+      }
+
+      .h-card-info {
+        padding-top: 0.75rem;
+      }
+
+      .h-card-title {
+        margin: 0;
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(1.1rem, 2vw, 1.5rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: #0a0a0a;
+      }
+
+      .h-card-year {
+        display: block;
+        font-family: 'area-normal', sans-serif;
+        font-size: 12px;
+        color: rgba(10,10,10,0.35);
+        margin-top: 0.2rem;
+      }
+
+      .h-card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-top: 0.5rem;
+      }
+
+      .h-card-tag {
+        font-family: 'area-normal', sans-serif;
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(10,10,10,0.5);
+        font-weight: 500;
         padding: 3px 8px;
+        border: 1px solid rgba(10,10,10,0.12);
+        border-radius: 2px;
+      }
+
+      /* ── End card ── */
+      .h-card-end {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: clamp(200px, 25vw, 320px);
+      }
+
+      .h-card-end-inner {
+        text-align: center;
+      }
+
+      .h-card-end-num {
+        display: block;
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(3rem, 8vw, 6rem);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        color: #0a0a0a;
         line-height: 1;
       }
 
-      /* ═══ TITLE + YEAR ═══ */
-      .card-heading-row {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-top: 0.5rem;
-      }
-      .card-title {
-        margin: 0;
+      .h-card-end-label {
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.3rem, 3vw, 2rem);
-        font-weight: 600;
-        letter-spacing: -0.03em;
-        line-height: 1.15;
-        color: #0a0a0a;
-      }
-      .card-year {
-        font-family: 'area-normal', sans-serif;
-        font-size: 14px;
-        color: rgba(10,10,10,0.4);
-      }
-
-      .card-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.4rem;
-        margin-top: 0.5rem;
-      }
-      .card-tag {
-        font-family: 'area-normal', sans-serif;
-        font-size: 9px;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: rgba(10,10,10,0.55);
+        font-size: 11px;
         font-weight: 500;
-        padding: 4px 10px;
-        border: 1px solid rgba(10,10,10,0.15);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(10,10,10,0.4);
+        margin-top: 0.5rem;
+        display: block;
       }
 
-      @media (max-width: 900px) {
-        .card-slot { width: 70%; }
-      }
       @media (max-width: 600px) {
-        .card-slot, .card-slot--right {
-          width: 100%;
-          align-self: stretch;
+        .h-card {
+          width: 80vw;
         }
       }
     `,
@@ -259,64 +257,72 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.rafId = requestAnimationFrame(() => {
-      setTimeout(() => this.setupScrollAnimations(), 150);
+      setTimeout(() => this.setupHorizontalScroll(), 200);
     });
   }
 
-  private setupScrollAnimations(): void {
-    const cards = this.el.nativeElement.querySelectorAll('[data-work-card]');
-    if (!cards.length) return;
+  private setupHorizontalScroll(): void {
+    const wrapper = this.el.nativeElement.querySelector('[data-h-scroll-wrapper]') as HTMLElement;
+    const track = this.el.nativeElement.querySelector('[data-h-scroll-track]') as HTMLElement;
+    const section = this.el.nativeElement.querySelector('[data-featured-work]') as HTMLElement;
 
-    gsap.set(cards, { opacity: 0, y: 50 });
+    if (!wrapper || !track || !section) return;
 
-    ScrollTrigger.batch(cards, {
-      onEnter: (batch) => {
-        gsap.to(batch, {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          stagger: 0.15,
-          overwrite: true,
-        });
+    // Calculate how far the track needs to scroll
+    const calculateScroll = () => {
+      const trackWidth = track.scrollWidth;
+      const viewWidth = wrapper.offsetWidth;
+      return -(trackWidth - viewWidth);
+    };
+
+    let xEnd = calculateScroll();
+
+    // Pin the section and scroll horizontally
+    const tween = gsap.to(track, {
+      x: () => calculateScroll(),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 15%',
+        end: () => `+=${Math.abs(xEnd) * 1.2}`,
+        scrub: 0.8,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onRefresh: () => {
+          xEnd = calculateScroll();
+        },
       },
-      onLeaveBack: (batch) => {
-        gsap.to(batch, {
-          opacity: 0,
-          y: 50,
-          duration: 0.4,
-          ease: 'power2.in',
-          stagger: 0.08,
-          overwrite: true,
-        });
-      },
-      start: 'top 88%',
     });
 
-    // Parallax on card images — subtle upward drift
+    if (tween.scrollTrigger) this.triggers.push(tween.scrollTrigger);
+
+    // Parallax on individual card images
     const images = this.el.nativeElement.querySelectorAll('[data-card-image]');
     images.forEach((img: Element) => {
+      const parent = img.closest('.h-card') as HTMLElement;
+      if (!parent) return;
       gsap.to(img, {
-        y: -30,
+        xPercent: -8,
         ease: 'none',
         scrollTrigger: {
-          trigger: img.closest('.card-slot') || img,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 0.5,
+          trigger: parent,
+          containerAnimation: tween,
+          start: 'left right',
+          end: 'right left',
+          scrub: 0.3,
         },
       });
     });
 
     ScrollTrigger.refresh();
-    this.triggers = ScrollTrigger.getAll();
   }
 
   onCardEnter(event: MouseEvent): void {
     const card = event.currentTarget as HTMLElement;
     const img = card.querySelector('[data-card-image]');
     if (img) {
-      gsap.to(img, { scale: 1.04, duration: 0.5, ease: 'power2.out' });
+      gsap.to(img, { scale: 1.06, duration: 0.6, ease: 'power2.out' });
     }
   }
 

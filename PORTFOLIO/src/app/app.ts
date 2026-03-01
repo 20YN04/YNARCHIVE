@@ -332,30 +332,28 @@ export class App implements AfterViewInit, OnDestroy {
     // It's always the home page now, so register handoff immediately
 
     // ─── Page root is always dark — sections own their backgrounds ───
-    // No more animated bg shifts → eliminates white flash between dark sections
     const pageRoot = document.getElementById('page-root');
-    const navBar = document.querySelector('[data-nav-bar]') as HTMLElement | null;
-
     if (pageRoot) {
       pageRoot.style.backgroundColor = '#0a0a0a';
     }
 
-    // Navbar dark mode: switch to light text when entering the about section (dark bg)
-    const aboutSection = document.querySelector('[data-about-section]');
-    if (aboutSection && navBar) {
-      ScrollTrigger.create({
-        trigger: aboutSection,
-        start: 'top 60%',
-        end: 'top 30%',
-        scrub: 0.3,
-        onUpdate: (self) => {
-          if (self.progress > 0.5) {
-            navBar.classList.add('hero-nav-dark');
-          } else {
-            navBar.classList.remove('hero-nav-dark');
-          }
-        },
-      });
+    // Navbar dark mode: switch to light text when over dark sections
+    const navBar = document.querySelector('[data-nav-bar]') as HTMLElement | null;
+    const workSection = document.querySelector('[data-section-work]') as HTMLElement | null;
+
+    if (navBar) {
+      // Remove dark class when entering white work section
+      if (workSection) {
+        ScrollTrigger.create({
+          trigger: workSection,
+          start: 'top 10%',
+          end: 'bottom 10%',
+          onEnter: () => navBar.classList.remove('hero-nav-dark'),
+          onLeave: () => navBar.classList.add('hero-nav-dark'),
+          onEnterBack: () => navBar.classList.remove('hero-nav-dark'),
+          onLeaveBack: () => navBar.classList.add('hero-nav-dark'),
+        });
+      }
     }
 
     // ─── Scroll animations are handled by each section component ───
