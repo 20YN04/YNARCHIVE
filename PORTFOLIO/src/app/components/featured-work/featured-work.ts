@@ -123,7 +123,7 @@ function toDisciplineTags(item: WorkItem): string[] {
         align-items: baseline;
         gap: clamp(1rem, 2vw, 2rem);
         padding: clamp(1rem, 2vw, 1.5rem) 0;
-        cursor: default;
+        cursor: pointer;
         transition: opacity 0.3s;
       }
 
@@ -283,6 +283,8 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
   private triggers: ScrollTrigger[] = [];
   private rafId?: number;
   private activeIndex = -1;
+  private cardEls: HTMLElement[] = [];
+  private headerListeners: (() => void)[] = [];
 
   ngAfterViewInit(): void {
     this.rafId = requestAnimationFrame(() => {
@@ -297,6 +299,8 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
     const label = host.querySelector('[data-work-label]') as HTMLElement;
 
     if (!section || !cards.length) return;
+
+    this.cardEls = Array.from(cards) as HTMLElement[];
 
     // ── Label reveal ──
     if (label) {
@@ -314,15 +318,11 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
       if (t.scrollTrigger) this.triggers.push(t.scrollTrigger);
     }
 
-    // ── Cards: staggered entrance + sequential reveal ──
+    // ── Card entrance: staggered fade in + line draw ──
     cards.forEach((card, i) => {
       const el = card as HTMLElement;
       const line = el.querySelector('[data-reveal-line]') as HTMLElement;
-      const body = el.querySelector('[data-reveal-body]') as HTMLElement;
-      const inner = el.querySelector('[data-reveal-inner]') as HTMLElement;
-      const image = el.querySelector('[data-reveal-image]') as HTMLElement;
 
-      // 1. Card entrance: slide up + fade in
       const entranceSt = ScrollTrigger.create({
         trigger: el,
         start: 'top 92%',
@@ -334,8 +334,13 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
             duration: 0.7,
             delay: 0.05 * i,
             ease: 'power3.out',
+            onComplete: () => {
+              // Open first card automatically after entrance
+              if (i === 0 && this.activeIndex < 0) {
+                this.openCard(0);
+              }
+            },
           });
-          // Draw the bottom line
           if (line) {
             gsap.to(line, {
               scaleX: 1,
@@ -347,45 +352,34 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
         },
       });
       this.triggers.push(entranceSt);
-
-      // 2. Sequential reveal: when card hits center viewport, expand it
-      const revealSt = ScrollTrigger.create({
-        trigger: el,
-        start: 'top 60%',
-        end: 'bottom 40%',
-        onEnter: () => this.openCard(i, cards),
-        onEnterBack: () => this.openCard(i, cards),
-        onLeave: () => {
-          // Only close if this is the active card
-          if (this.activeIndex === i) {
-            this.closeCard(el);
-            this.activeIndex = -1;
-          }
-        },
-        onLeaveBack: () => {
-          if (this.activeIndex === i) {
-            this.closeCard(el);
-            this.activeIndex = -1;
-          }
-        },
-      });
-      this.triggers.push(revealSt);
     });
 
-    ScrollTrigger.refresh();
+    // ── Hover-based accordion: hover header to expand card ──
+    this.cardEls.forEach((card, i) => {
+      const header = card.querySelector('[data-reveal-header]') as HTMLElement;
+      if (!header) return;
+
+      const onEnter = () => {
+        if (this.activeIndex !== i) {
+          this.openCard(i);
+        }
+      };
+
+      header.addEventListener('mouseenter', onEnter);
+      this.headerListeners.push(() => header.removeEventListener('mouseenter', onEnter));
+    });
   }
 
-  private openCard(index: number, allCards: NodeListOf<Element>): void {
+  private openCard(index: number): void {
     if (this.activeIndex === index) return;
 
     // Close previous
-    if (this.activeIndex >= 0 && this.activeIndex < allCards.length) {
-      const prev = allCards[this.activeIndex] as HTMLElement;
-      this.closeCard(prev);
+    if (this.activeIndex >= 0 && this.activeIndex < this.cardEls.length) {
+      this.closeCard(this.cardEls[this.activeIndex]);
     }
 
     this.activeIndex = index;
-    const card = allCards[index] as HTMLElement;
+    const card = this.cardEls[index];
     const body = card.querySelector('[data-reveal-body]') as HTMLElement;
     const inner = card.querySelector('[data-reveal-inner]') as HTMLElement;
     const image = card.querySelector('[data-reveal-image]') as HTMLElement;
@@ -393,25 +387,22 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
     card.classList.add('is-active');
 
     if (body && inner) {
-      // Expand height
       gsap.to(body, {
         height: 'auto',
-        duration: 0.8,
+        duration: 0.7,
         ease: 'power3.inOut',
       });
 
-      // Clip-path reveal (bottom wipes open)
       gsap.to(inner, {
         clipPath: 'inset(0 0 0% 0)',
-        duration: 0.8,
+        duration: 0.7,
         ease: 'power3.inOut',
       });
 
-      // Image scale settles
       if (image) {
         gsap.to(image, {
           scale: 1,
-          duration: 1.2,
+          duration: 1,
           delay: 0.1,
           ease: 'power2.out',
         });
@@ -436,7 +427,7 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
       gsap.to(body, {
         height: 0,
         duration: 0.5,
-        delay: 0.1,
+        delay: 0.08,
         ease: 'power2.inOut',
       });
 
@@ -448,6 +439,7 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.rafId) cancelAnimationFrame(this.rafId);
+    this.headerListeners.forEach((fn) => fn());
     this.triggers.forEach((t) => t.kill());
   }
 }
