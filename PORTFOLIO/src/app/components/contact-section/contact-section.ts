@@ -22,42 +22,42 @@ import { ContactService } from '../../services/contact.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <section id="contact" class="contact-section" data-contact-section>
-      <div class="contact-inner">
+    <section id="contact" class="contact-section relative bg-[#0a0a0a] text-white" data-contact-section>
+      <div class="max-w-[var(--content-max-width)] mx-auto">
         <!-- Label -->
-        <div class="section-label-wrap" data-contact-label>
-          <span class="section-bullet">&bull;</span>
-          <span class="section-label">Contact</span>
+        <div class="section-label-wrap flex items-center gap-2 mb-8" data-contact-label>
+          <span class="text-[10px] text-white/60">&bull;</span>
+          <span class="font-area-normal text-[11px] font-medium tracking-[0.08em] text-white/60">Contact</span>
         </div>
 
         <!-- Headline with word-by-word reveal -->
-        <div class="contact-headline-wrap" data-contact-headline>
-          <h2 class="contact-headline" data-split-headline>
-            Based in <span class="headline-em">Belgium</span> but available
-            <br class="lg-break" />
+        <div data-contact-headline>
+          <h2 class="contact-headline font-area-normal font-medium tracking-[-0.02em] leading-[1.15] m-0 mb-3 text-white" data-split-headline>
+            Based in <span class="italic font-light">Belgium</span> but available
+            <br class="hidden lg:block" />
             for your projects in
-            <span class="scramble-wrap" data-scramble-wrap>
-              <span class="flip-mask">
-                <span #flipText class="scramble-text" data-scramble-text>the rest of the world</span>
+            <span class="relative inline-block" data-scramble-wrap>
+              <span class="inline-block overflow-hidden h-[1.2em] align-bottom">
+                <span #flipText class="block italic font-light text-white/95" data-scramble-text>the rest of the world</span>
               </span>
               <span class="scramble-line" data-scramble-line></span>
             </span>
           </h2>
-          <p class="contact-subhead" data-contact-subhead>Talk to us about your project</p>
+          <p class="contact-subhead font-area-normal text-base text-white/50" data-contact-subhead>Talk to us about your project</p>
         </div>
 
         <!-- Draw-line divider -->
         <div class="draw-line" data-draw-line></div>
 
         <!-- Grid: form + info -->
-        <div class="contact-grid" data-contact-grid>
-          <div class="contact-left">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start" data-contact-grid>
+          <div>
             <form
               [formGroup]="contactForm"
               (ngSubmit)="onSubmit()"
-              class="contact-form"
+              class="flex flex-col gap-6"
             >
-              <div class="contact-field" data-contact-field>
+              <div class="contact-field relative" data-contact-field>
                 <label class="sr-only">Name</label>
                 <input
                   type="text"
@@ -67,7 +67,7 @@ import { ContactService } from '../../services/contact.service';
                 />
                 <span class="input-line" data-input-line></span>
               </div>
-              <div class="contact-field" data-contact-field>
+              <div class="contact-field relative" data-contact-field>
                 <label class="sr-only">Email</label>
                 <input
                   type="email"
@@ -77,13 +77,13 @@ import { ContactService } from '../../services/contact.service';
                 />
                 <span class="input-line" data-input-line></span>
               </div>
-              <div class="contact-field" data-contact-field>
+              <div class="contact-field relative" data-contact-field>
                 <label class="sr-only">Message</label>
                 <textarea
                   formControlName="message"
                   placeholder="Message"
                   rows="4"
-                  class="contact-input contact-textarea"
+                  class="contact-input resize-y min-h-[100px]"
                 ></textarea>
                 <span class="input-line" data-input-line></span>
               </div>
@@ -96,35 +96,35 @@ import { ContactService } from '../../services/contact.service';
                 (mousemove)="onBtnMove($event)"
                 (mouseleave)="onBtnLeave($event)"
               >
-                <span class="submit-inner" data-submit-inner>
+                <span class="inline-block relative z-[1] will-change-transform" data-submit-inner>
                   {{ submitting ? 'Sending...' : 'Send Message' }}
                 </span>
               </button>
               @if (submitSuccess) {
-                <p class="contact-message contact-message-success">
+                <p class="mt-2 text-sm text-white/80">
                   Thanks! Your message was sent.
                 </p>
               }
               @if (submitError) {
-                <p class="contact-message contact-message-error">
+                <p class="mt-2 text-sm text-red-500">
                   {{ submitError }}
                 </p>
               }
             </form>
           </div>
 
-          <div class="contact-right">
+          <div>
             <div class="contact-block" data-contact-block>
               <span class="contact-label-letter" data-letter-clip>
                 <span class="letter-inner">N</span>
               </span>
-              <p class="contact-value">Tessenderlo<br />Belgium</p>
+              <p class="font-area-normal text-sm leading-relaxed text-white/85 m-0">Tessenderlo<br />Belgium</p>
             </div>
             <div class="contact-block" data-contact-block>
               <span class="contact-label-letter" data-letter-clip>
                 <span class="letter-inner">P</span>
               </span>
-              <a href="tel:+32475451358" class="contact-value contact-link"
+              <a href="tel:+32475451358" class="font-area-normal text-sm leading-relaxed text-white/85 no-underline transition-opacity duration-200 hover:opacity-60"
                 >+32 475 45 13 58</a
               >
             </div>
@@ -134,27 +134,27 @@ import { ContactService } from '../../services/contact.service';
               </span>
               <a
                 href="mailto:yentl.nerinckx@icloud.com"
-                class="contact-value contact-link"
+                class="font-area-normal text-sm leading-relaxed text-white/85 no-underline transition-opacity duration-200 hover:opacity-60"
                 >yentl.nerinckx&#64;icloud.com</a
               >
             </div>
-            <div class="contact-block contact-social-wrap" data-contact-block>
+            <div class="contact-block items-center" data-contact-block>
               <span class="contact-label-letter" data-letter-clip>
                 <span class="letter-inner">S</span>
               </span>
-              <span class="contact-social">
+              <span>
                 <a
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="contact-social-link"
+                  class="text-white/85 underline underline-offset-4 transition-opacity duration-200 hover:opacity-60"
                   >Instagram</a
                 >,
                 <a
                   href="https://www.linkedin.com/in/yentl-nerinckx-6829142a3/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="contact-social-link"
+                  class="text-white/85 underline underline-offset-4 transition-opacity duration-200 hover:opacity-60"
                   >LinkedIn</a
                 >
               </span>
@@ -170,51 +170,23 @@ import { ContactService } from '../../services/contact.service';
         display: block;
       }
 
+      /* Clamp padding — no Tailwind equivalent */
       .contact-section {
-        position: relative;
         padding: clamp(6rem, 14vw, 10rem) clamp(1.5rem, 4vw, 4rem);
-        background: #0a0a0a;
-        color: #fff;
       }
 
-      .contact-inner {
-        max-width: var(--content-max-width);
-        margin: 0 auto;
-      }
-
-      /* ── Label ── */
+      /* GSAP animated */
       .section-label-wrap {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
         opacity: 0;
         transform: translateY(20px);
       }
-      .section-bullet {
-        font-size: 10px;
-        color: rgba(255, 255, 255, 0.6);
-      }
-      .section-label {
-        font-family: 'area-normal', sans-serif;
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        color: rgba(255, 255, 255, 0.6);
-      }
 
-      /* ── Headline ── */
+      /* Clamp font-size — no Tailwind equivalent */
       .contact-headline {
-        font-family: 'area-normal', sans-serif;
         font-size: clamp(1.8rem, 4vw, 3rem);
-        font-weight: 500;
-        letter-spacing: -0.02em;
-        line-height: 1.15;
-        margin: 0 0 0.75rem;
-        color: #fff;
       }
 
-      /* Words start hidden for split reveal */
+      /* GSAP split-text (dynamically created elements) */
       .headline-word {
         display: inline-block;
         overflow: hidden;
@@ -226,38 +198,7 @@ import { ContactService } from '../../services/contact.service';
         will-change: transform;
       }
 
-      .lg-break {
-        display: none;
-      }
-      @media (min-width: 1024px) {
-        .lg-break {
-          display: block;
-        }
-      }
-
-      /* ── Headline emphasis ── */
-      .headline-em {
-        font-style: italic;
-        font-weight: 300;
-      }
-
-      /* ── Scramble decode text ── */
-      .scramble-wrap {
-        position: relative;
-        display: inline-block;
-      }
-      .flip-mask {
-        display: inline-block;
-        overflow: hidden;
-        height: 1.2em;
-        vertical-align: bottom;
-      }
-      .scramble-text {
-        display: block;
-        font-style: italic;
-        font-weight: 300;
-        color: rgba(255, 255, 255, 0.95);
-      }
+      /* Scramble underline — GSAP animated */
       .scramble-line {
         position: absolute;
         bottom: -3px;
@@ -270,16 +211,14 @@ import { ContactService } from '../../services/contact.service';
         will-change: transform;
       }
 
+      /* GSAP animated + clamp margin */
       .contact-subhead {
-        font-family: 'area-normal', sans-serif;
-        font-size: 1rem;
-        color: rgba(255, 255, 255, 0.5);
         margin: 0 0 clamp(2rem, 4vw, 3.5rem);
         opacity: 0;
         transform: translateY(16px);
       }
 
-      /* ── Draw line ── */
+      /* GSAP animated */
       .draw-line {
         width: 100%;
         height: 1px;
@@ -290,35 +229,13 @@ import { ContactService } from '../../services/contact.service';
         will-change: transform;
       }
 
-      /* ── Grid ── */
-      .contact-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        align-items: start;
-      }
-
-      /* ── Form ── */
-      .contact-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
+      /* GSAP animated */
       .contact-field {
-        position: relative;
         opacity: 0;
         transform: translateY(30px);
       }
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        border: 0;
-      }
+
+      /* Pseudo-elements + transitions need CSS */
       .contact-input {
         width: 100%;
         background: transparent;
@@ -342,7 +259,7 @@ import { ContactService } from '../../services/contact.service';
         border-color: transparent;
       }
 
-      /* ── Animated focus line (draws from center outward) ── */
+      /* Focus line animation */
       .input-line {
         position: absolute;
         bottom: 0;
@@ -359,12 +276,7 @@ import { ContactService } from '../../services/contact.service';
         transform: scaleX(1);
       }
 
-      .contact-textarea {
-        resize: vertical;
-        min-height: 100px;
-      }
-
-      /* ── Magnetic submit button ── */
+      /* Complex hover/disabled states */
       .contact-submit {
         position: relative;
         background: transparent;
@@ -382,12 +294,6 @@ import { ContactService } from '../../services/contact.service';
         transition: border-color 0.4s, background-color 0.4s;
         align-self: flex-start;
       }
-      .submit-inner {
-        display: inline-block;
-        position: relative;
-        z-index: 1;
-        will-change: transform;
-      }
       .contact-submit:hover:not(:disabled) {
         border-color: rgba(255, 255, 255, 0.6);
         background: rgba(255, 255, 255, 0.05);
@@ -396,18 +302,8 @@ import { ContactService } from '../../services/contact.service';
         opacity: 0.3;
         cursor: not-allowed;
       }
-      .contact-message {
-        margin: 0.5rem 0 0;
-        font-size: 14px;
-      }
-      .contact-message-success {
-        color: rgba(255, 255, 255, 0.8);
-      }
-      .contact-message-error {
-        color: #ef4444;
-      }
 
-      /* ── Info blocks ── */
+      /* GSAP animated, custom grid */
       .contact-block {
         display: grid;
         grid-template-columns: 1.5rem 1fr;
@@ -430,35 +326,8 @@ import { ContactService } from '../../services/contact.service';
         transform: translateY(110%);
         will-change: transform;
       }
-      .contact-value {
-        font-family: 'area-normal', sans-serif;
-        font-size: 14px;
-        line-height: 1.5;
-        color: rgba(255, 255, 255, 0.85);
-        margin: 0;
-      }
-      .contact-link {
-        text-decoration: none;
-        color: rgba(255, 255, 255, 0.85);
-        transition: opacity 0.2s;
-      }
-      .contact-link:hover {
-        opacity: 0.6;
-      }
-      .contact-social-wrap {
-        align-items: center;
-      }
-      .contact-social-link {
-        color: rgba(255, 255, 255, 0.85);
-        text-decoration: underline;
-        text-underline-offset: 4px;
-        transition: opacity 0.2s;
-      }
-      .contact-social-link:hover {
-        opacity: 0.6;
-      }
 
-      /* ── Autofill fix ── */
+      /* Autofill fix */
       input:-webkit-autofill,
       input:-webkit-autofill:hover,
       input:-webkit-autofill:focus,
@@ -466,12 +335,6 @@ import { ContactService } from '../../services/contact.service';
       textarea:-webkit-autofill {
         -webkit-box-shadow: 0 0 0 30px #0a0a0a inset !important;
         -webkit-text-fill-color: #fff !important;
-      }
-
-      @media (max-width: 768px) {
-        .contact-grid {
-          grid-template-columns: 1fr;
-        }
       }
     `,
   ],
@@ -664,7 +527,7 @@ export class ContactSectionComponent implements AfterViewInit, OnDestroy {
     const textNodes: Text[] = [];
     let node: Node | null;
     while ((node = walker.nextNode())) {
-      if (node.parentElement?.closest('.scramble-wrap')) continue;
+      if (node.parentElement?.closest('[data-scramble-wrap]')) continue;
       if (node.textContent?.trim()) textNodes.push(node as Text);
     }
 
