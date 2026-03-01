@@ -11,7 +11,7 @@ import { ContactService } from '../../services/contact.service';
   imports: [CommonModule, ReactiveFormsModule, NavBarComponent],
   template: `
     <div id="contact" class="contact-page min-h-screen bg-white text-[#0a0a0a] w-full" #container>
-      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="contact"></app-navbar>
+      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true"></app-navbar>
       <div class="contact-inner mx-auto w-full pt-32 pb-24">
         <h1 class="contact-headline">
           Based in Belgium but available for your projects in

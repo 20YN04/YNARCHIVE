@@ -9,7 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   imports: [NavBarComponent],
   template: `
     <div class="about-page min-h-screen bg-white text-[#0a0a0a] w-full">
-      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" [activePage]="currentPage"></app-navbar>
+      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true"></app-navbar>
 
       <div class="about-inner" #aboutInner>
         <span class="section-label" data-about-scroll-label>&#123; ABOUT &#125;</span>
@@ -213,7 +213,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   ]
 })
 export class AboutComponent implements AfterViewInit, OnDestroy {
-  readonly currentPage = 'about' as const;
   private readonly el = inject(ElementRef);
   private scrollTriggers: ScrollTrigger[] = [];
 

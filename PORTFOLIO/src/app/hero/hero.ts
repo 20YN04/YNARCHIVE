@@ -7,7 +7,7 @@ import { gsap } from 'gsap';
   standalone: true,
   imports: [NavBarComponent],
   template: `
-    <section class="hero-section" data-hero-section>
+    <section id="hero" class="hero-section" data-hero-section>
       <app-navbar></app-navbar>
 
       <!-- Content wrapper — vertically centers the hero content -->

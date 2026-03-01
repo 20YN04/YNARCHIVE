@@ -42,7 +42,7 @@ interface DisplayRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="work-page min-h-screen w-full bg-white text-[#0a0a0a]" #container>
-      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true" activePage="work"></app-navbar>
+      <app-navbar [fixed]="false" [alwaysVisible]="true" [solidBackground]="true"></app-navbar>
 
       <div class="work-inner mx-auto w-full pt-20 pb-24">
         <!-- Header: All Work + filters rondom de titel, smooth open/dicht -->

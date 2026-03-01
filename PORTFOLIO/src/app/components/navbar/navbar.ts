@@ -13,15 +13,15 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 			data-nav-bar
 		>
 			<div class="flex items-center gap-4">
-				<a href="/" data-nav-link data-page="home" class="text-sm font-bold tracking-[0.08em] uppercase no-underline text-inherit" data-nav-brand>YNARCHIVE</a>
+				<a href="#hero" data-scroll-link class="text-sm font-bold tracking-[0.08em] uppercase no-underline text-inherit" data-nav-brand>YNARCHIVE</a>
 			</div>
 			<div class="flex gap-[3px]">
-				<a href="/work" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'work' ? 1 : null" data-nav-link data-page="work">Work,</a>
-				<a href="/about" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'about' ? 1 : null" data-nav-link data-page="about">About</a>
+				<a href="#work" data-scroll-link class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50">Work,</a>
+				<a href="#about" data-scroll-link class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50">About</a>
 			</div>
 			<div class="flex items-center gap-4">
 				<span class="text-[13px] tracking-[0.01em] opacity-60">TESSENDERLO, BEL</span>
-				<a href="/contact" class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50" [style.opacity]="activePage === 'contact' ? 1 : null" data-nav-link data-page="contact">Contact</a>
+				<a href="#contact" data-scroll-link class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50">Contact</a>
 			</div>
 		</nav>
 	`,
@@ -88,7 +88,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	@Input() fixed = true;
 	@Input() alwaysVisible = false;
 	@Input() solidBackground = false;
-	@Input() activePage: 'home' | 'work' | 'contact' | 'about' | null = null;
 	@Input() dark = false;
 
 	readonly timeHour = signal('00');
