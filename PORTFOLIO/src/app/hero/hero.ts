@@ -18,6 +18,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
             <span class="hero-top-label">Yentl Nerinckx</span>
             <span class="hero-top-sub">Designer &amp; Developer</span>
           </div>
+          <span class="hero-top-brand" data-hero-top-brand>YNARCHIVE</span>
           <div class="hero-top-group hero-top-right">
             <span class="hero-top-label">Available for freelance</span>
             <span class="hero-top-sub">Based in Belgium</span>
@@ -118,6 +119,15 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         transform: translateY(14px);
       }
       .hero-top-right { align-items: flex-end; }
+      .hero-top-brand {
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(14px, 1.8vw, 20px);
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        color: #fff;
+        opacity: 0;
+        user-select: none;
+      }
       .hero-top-label {
         font-family: 'area-normal', sans-serif;
         font-size: 12px;
@@ -340,13 +350,17 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         defaults: { ease: 'power4.out' },
       });
 
-      // 1. Top info groups fade + slide up
-      this.tl.to(topGroups, {
-        opacity: 1,
-        y: 0,
-        duration: 0.9,
-        stagger: 0.12,
-      }, 0.1);
+      // 1. Top info groups fade + slide up (skip if ink dissolve already revealed them)
+      const heroTopEl = host.querySelector('[data-hero-top]') as HTMLElement;
+      const alreadyRevealed = heroTopEl?.getAttribute('data-ink-revealed') === 'true';
+      if (!alreadyRevealed) {
+        this.tl.to(topGroups, {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          stagger: 0.12,
+        }, 0.1);
+      }
 
       // 2. Statement lines slide up one by one (editorial mask reveal)
       this.tl.to(lines, {

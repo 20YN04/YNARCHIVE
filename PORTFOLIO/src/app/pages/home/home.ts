@@ -320,19 +320,6 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
         },
       });
       if (tween.scrollTrigger) this.scrollTriggers.push(tween.scrollTrigger);
-
-      // Fade out as you scroll past
-      const fadeOut = gsap.to(boundaryWork, {
-        opacity: 0,
-        y: -30,
-        scrollTrigger: {
-          trigger: parent,
-          start: 'top 30%',
-          end: 'top 5%',
-          scrub: 0.3,
-        },
-      });
-      if (fadeOut.scrollTrigger) this.scrollTriggers.push(fadeOut.scrollTrigger);
     }
 
     const boundaryAbout = host.querySelector('[data-boundary-about] .boundary-word') as HTMLElement;
@@ -358,18 +345,6 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
         },
       });
       if (tween.scrollTrigger) this.scrollTriggers.push(tween.scrollTrigger);
-
-      const fadeOut = gsap.to(boundaryAbout, {
-        opacity: 0,
-        y: -30,
-        scrollTrigger: {
-          trigger: parent,
-          start: 'top 30%',
-          end: 'top 5%',
-          scrub: 0.3,
-        },
-      });
-      if (fadeOut.scrollTrigger) this.scrollTriggers.push(fadeOut.scrollTrigger);
     }
 
     // ─── 6. MARQUEE DIVIDERS — fade-in reveal ───

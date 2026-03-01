@@ -3,6 +3,7 @@ import { HomeComponent } from './pages/home/home';
 import { PreloaderComponent } from './components/preloader/preloader.component';
 import { LenisService } from './core/lenis.service';
 import { LoadingProgressService } from './core/loading-progress.service';
+import { InkDissolveService } from './core/ink-dissolve.service';
 import { registerPortfolioEffects } from './core/gsap-effects';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -90,6 +91,7 @@ export class App implements AfterViewInit, OnDestroy {
   @ViewChild('pageContainer', { read: ViewContainerRef, static: true }) pageContainer!: ViewContainerRef;
   private lenis = inject(LenisService);
   private loadingProgress = inject(LoadingProgressService);
+  private inkDissolve = inject(InkDissolveService);
 
   /** Used to duplicate the marquee text items in the footer */
   readonly marqueeItems = Array.from({ length: 8 }, (_, i) => i);
@@ -229,7 +231,7 @@ export class App implements AfterViewInit, OnDestroy {
     const tl = this.timeline;
 
     // Loading % (0→100) only while preloader is visible; ends when compress starts
-    const preloaderVisibleDuration = 3.35;
+    const preloaderVisibleDuration = 3.6;
     tl.to(progressProxy, {
       value: 100,
       duration: preloaderVisibleDuration,
@@ -253,44 +255,80 @@ export class App implements AfterViewInit, OnDestroy {
       stagger: { each: 0.06, from: 'start' },
     }, 0.3);
 
-    tl.to(preloaderInfos, { opacity: 0, duration: 0.3, ease: 'power2.in' }, 1.8);
+    // ─── INK DISSOLVE: letters dissolve into particles that flow to hero-top ───
+    // Start dissolve while letters are still fully visible — particles overlap
+    const dissolveStart = 1.8;
+    tl.add(() => {
+      const heroTop = document.querySelector('[data-hero-top]') as HTMLElement;
+      const heroTopBrand = document.querySelector('[data-hero-top-brand]') as HTMLElement;
+      if (!heroTop || !heroTopBrand) return;
 
+      // Ensure hero-top groups are at final position but invisible
+      const topGroups = heroTop.querySelectorAll('.hero-top-group');
+      gsap.set(topGroups, { opacity: 0, y: 0 });
+      gsap.set(heroTopBrand, { opacity: 0 });
+
+      // Particles fly from preloader letters → converge on the YNARCHIVE brand text
+      const letterEls = Array.from(letters) as HTMLElement[];
+      this.inkDissolve.start(letterEls, heroTopBrand, () => {
+        // Particles have converged — reveal the YNARCHIVE brand text (stays visible)
+        gsap.to(heroTopBrand, {
+          opacity: 1,
+          duration: 0.35,
+          ease: 'power2.out',
+        });
+        // Then reveal the surrounding info groups
+        heroTop.setAttribute('data-ink-revealed', 'true');
+        gsap.to(topGroups, {
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          delay: 0.15,
+          ease: 'power2.out',
+        });
+      });
+    }, dissolveStart);
+
+    // Fade original letters out gradually as particles take over (not instant)
     tl.to(letters, {
-      y: '-110%',
-      duration: 0.6,
-      ease: 'power3.in',
-      stagger: { each: 0.04, from: 'end' },
-    }, 2.0);
+      opacity: 0,
+      duration: 0.5,
+      ease: 'power2.in',
+      stagger: { each: 0.03, from: 'start' },
+    }, dissolveStart + 0.1);
 
-    // Preloader fades out after letter animation
-    const compressStart = 2.4;
+    // Preloader info fades
+    tl.to(preloaderInfos, { opacity: 0, duration: 0.3, ease: 'power2.in' }, dissolveStart);
+
+    // Preloader bg holds dark backdrop while particles fly, then fades
+    const compressStart = 2.8;
     tl.to(preloader, {
       opacity: 0,
-      duration: 0.6,
+      duration: 0.8,
       ease: 'power2.inOut',
     }, compressStart);
 
-    // ─── ACT 2: THICK BARS → THIN LINES (2.6s → 3.8s) ───
+    // ─── ACT 2: THICK BARS → THIN LINES ───
     // Side bars shrink from 40px to 1px
     tl.to([barLeft, barRight], {
       width: 1,
       duration: 1.0,
       ease: 'power3.inOut',
-    }, 2.8);
+    }, 3.2);
 
     // Bottom bar shrinks
     tl.to(barBottom, {
       height: 1,
       duration: 1.0,
       ease: 'power3.inOut',
-    }, 2.8);
+    }, 3.2);
 
     // Top bar shrinks to 0 (nav takes over)
     tl.to(barTop, {
       height: 0,
       duration: 1.0,
       ease: 'power3.inOut',
-    }, 2.8);
+    }, 3.2);
 
     // Grid lines draw in from top
     tl.to(gridLines, {
@@ -298,7 +336,7 @@ export class App implements AfterViewInit, OnDestroy {
       duration: 1.2,
       ease: 'power3.out',
       stagger: { each: 0.06, from: 'center' },
-    }, 3.0);
+    }, 3.4);
 
     // ─── ACT 3: HERO ───
     // Hero reveal is handled by HeroComponent's own GSAP timeline.
@@ -362,6 +400,7 @@ export class App implements AfterViewInit, OnDestroy {
     }
     ScrollTrigger.getAll().forEach(t => t.kill());
     this.timeline?.kill();
+    this.inkDissolve.destroy();
     document.body.style.overflow = '';
   }
 }
