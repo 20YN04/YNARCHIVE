@@ -303,6 +303,76 @@ export class App implements AfterViewInit, OnDestroy {
 
     // It's always the home page now, so register handoff immediately
 
+    // ─── Scroll-driven color shifts ───
+    // Animate the body + navbar color as sections come into view
+    const pageRoot = document.getElementById('page-root');
+    const navBar = document.querySelector('[data-nav-bar]') as HTMLElement | null;
+
+    if (pageRoot) {
+      // Hero is dark, so page root starts dark
+      gsap.set(pageRoot, { backgroundColor: '#0a0a0a' });
+
+      // Work section enters → shift to white
+      const workSection = document.querySelector('[data-section-work]');
+      if (workSection) {
+        ScrollTrigger.create({
+          trigger: workSection,
+          start: 'top 80%',
+          end: 'top 20%',
+          scrub: 0.5,
+          onUpdate: (self) => {
+            const p = self.progress;
+            // Interpolate #0a0a0a → #ffffff
+            const v = Math.round(10 + (255 - 10) * p);
+            gsap.set(pageRoot, { backgroundColor: `rgb(${v},${v},${v})` });
+          },
+        });
+      }
+
+      // About section → shift to #fafafa (subtle)
+      const aboutSection = document.querySelector('[data-about-section]');
+      if (aboutSection) {
+        ScrollTrigger.create({
+          trigger: aboutSection,
+          start: 'top 80%',
+          end: 'top 30%',
+          scrub: 0.5,
+          onUpdate: (self) => {
+            const p = self.progress;
+            // #ffffff → #fafafa
+            const v = Math.round(255 - 5 * p);
+            gsap.set(pageRoot, { backgroundColor: `rgb(${v},${v},${v})` });
+          },
+        });
+      }
+
+      // Contact section → shift back to dark
+      const contactSection = document.querySelector('[data-contact-section]');
+      if (contactSection) {
+        ScrollTrigger.create({
+          trigger: contactSection,
+          start: 'top 80%',
+          end: 'top 20%',
+          scrub: 0.5,
+          onUpdate: (self) => {
+            const p = self.progress;
+            // #fafafa → #0a0a0a
+            const v = Math.round(250 - (250 - 10) * p);
+            gsap.set(pageRoot, { backgroundColor: `rgb(${v},${v},${v})` });
+
+            // Switch navbar to dark mode when entering contact
+            if (navBar) {
+              if (p > 0.5) {
+                navBar.classList.add('hero-nav-dark');
+              } else {
+                navBar.classList.remove('hero-nav-dark');
+              }
+            }
+          },
+        });
+      }
+    }
+
     // ─── Scroll animations are handled by each section component ───
 
     // Footer reveal
@@ -317,6 +387,11 @@ export class App implements AfterViewInit, OnDestroy {
         opacity: 0,
         y: 30,
       });
+
+      // Footer sits in the dark contact zone — invert colors
+      const footerEl = footerSection as HTMLElement;
+      footerEl.style.color = '#fff';
+      footerEl.style.borderTopColor = 'rgba(255,255,255,0.1)';
     }
   }
 

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, inject, OnDestroy } from '@angular/core';
 import { NavBarComponent } from '../components/navbar/navbar';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 @Component({
   selector: 'app-hero',
@@ -37,6 +38,9 @@ import { gsap } from 'gsap';
 
       <!-- Scroll indicator pinned to bottom -->
       <span class="hero-scroll" data-hero-scroll>&#123; SCROLL &#125;</span>
+
+      <!-- Gradient fade at bottom of hero for smooth blend -->
+      <div class="hero-bottom-fade" data-hero-bottom-fade></div>
     </section>
   `,
   styles: [
@@ -150,6 +154,18 @@ import { gsap } from 'gsap';
         opacity: 0;
       }
 
+      /* ═══ BOTTOM FADE — gradient overlay at bottom of hero ═══ */
+      .hero-bottom-fade {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 200px;
+        background: linear-gradient(to bottom, transparent, #0a0a0a);
+        pointer-events: none;
+        z-index: 0;
+      }
+
       /* ═══ Responsive ═══ */
       @media (max-width: 768px) {
         .hero-content {
@@ -172,6 +188,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly el = inject(ElementRef);
   private tl?: gsap.core.Timeline;
   private scrollTween?: gsap.core.Tween;
+  private scrollTriggers: ScrollTrigger[] = [];
   private rafId?: number;
 
   ngAfterViewInit(): void {
@@ -222,6 +239,40 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       repeat: -1,
       delay: this.tl.duration(),
     });
+
+    // ── Parallax: hero content drifts up + fades as you scroll ──
+    const heroContent = host.querySelector('.hero-content') as HTMLElement;
+    const heroSection = host.querySelector('.hero-section') as HTMLElement;
+
+    if (heroContent && heroSection) {
+      // Content parallax — slides up faster than scroll
+      const contentST = gsap.to(heroContent, {
+        y: -120,
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroSection,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.3,
+        },
+      });
+      if (contentST.scrollTrigger) this.scrollTriggers.push(contentST.scrollTrigger);
+
+      // Scroll indicator fades quickly
+      const scrollST = gsap.to(scroll, {
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroSection,
+          start: '5% top',
+          end: '20% top',
+          scrub: true,
+        },
+      });
+      if (scrollST.scrollTrigger) this.scrollTriggers.push(scrollST.scrollTrigger);
+    }
+
     }); // end requestAnimationFrame
   }
 
@@ -229,5 +280,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (this.rafId) cancelAnimationFrame(this.rafId);
     this.tl?.kill();
     this.scrollTween?.kill();
+    this.scrollTriggers.forEach(st => st.kill());
   }
 }

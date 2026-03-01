@@ -89,7 +89,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       .about-section {
         position: relative;
         padding: clamp(6rem, 14vw, 10rem) clamp(1.5rem, 4vw, 4rem);
-        background: #fafafa;
+        background: transparent;
       }
 
       .about-inner {

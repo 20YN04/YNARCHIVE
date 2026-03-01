@@ -289,6 +289,21 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
       start: 'top 88%',
     });
 
+    // Parallax on card images — subtle upward drift
+    const images = this.el.nativeElement.querySelectorAll('[data-card-image]');
+    images.forEach((img: Element) => {
+      gsap.to(img, {
+        y: -30,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: img.closest('.card-slot') || img,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.5,
+        },
+      });
+    });
+
     ScrollTrigger.refresh();
     this.triggers = ScrollTrigger.getAll();
   }
