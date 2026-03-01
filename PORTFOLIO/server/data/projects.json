@@ -1,0 +1,56 @@
+[
+  {
+    "id": "atlas-commerce",
+    "title": "Atlas Commerce",
+    "year": 2026,
+    "category": "E-commerce",
+    "url": "https://example.com",
+    "imageUrl": "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=1800&q=80",
+    "tags": ["Web", "UI", "Shop"]
+  },
+  {
+    "id": "nova-saas",
+    "title": "Nova Platform",
+    "year": 2025,
+    "category": "SaaS",
+    "url": "https://example.com",
+    "imageUrl": "https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=1800&q=80",
+    "tags": ["Dashboard", "SaaS", "Product"]
+  },
+  {
+    "id": "spline-landing",
+    "title": "Spline Campaign",
+    "year": 2025,
+    "category": "Landing Pages",
+    "url": "https://example.com",
+    "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1800&q=80",
+    "tags": ["Launch", "Motion", "Brand"]
+  },
+  {
+    "id": "district-store",
+    "title": "District Storefront",
+    "year": 2024,
+    "category": "E-commerce",
+    "url": "https://example.com",
+    "imageUrl": "https://images.unsplash.com/photo-1555421689-d68471e189f2?auto=format&fit=crop&w=1800&q=80",
+    "tags": ["Checkout", "CMS", "Shop"]
+  },
+  {
+    "id": "pulse-suite",
+    "title": "Pulse Suite",
+    "year": 2024,
+    "category": "SaaS",
+    "url": "https://example.com",
+    "imageUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1800&q=80",
+    "tags": ["B2B", "Data", "UX"]
+  },
+  {
+    "id": "mono-launch",
+    "title": "Mono Launch System",
+    "year": 2023,
+    "category": "Landing Pages",
+    "url": "https://example.com",
+    "imageUrl": "https://images.unsplash.com/photo-1634942537034-2531766767d1?auto=format&fit=crop&w=1800&q=80",
+    "tags": ["Landing", "Design", "Performance"]
+  }
+]

@@ -5,14 +5,10 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js",
-    "migrate": "node migrate.js",
-    "db:migrate": "node migrate.js"
+    "dev": "node --watch index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
-    "mysql2": "^3.11.0"
+    "express": "^4.21.1"
   }
 }
