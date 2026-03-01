@@ -15,6 +15,7 @@ import {
   inputs: ['items', 'images', 'speedSec', 'camXDeg', 'camYDeg', 'camZDeg', 'radiusPx', 'zOffsetPx', 'slowOnHover', 'enableDrag'],
   template: `
     <section class="rotor-section" data-rotor-section>
+      <span class="section-label">&#123; FEATURED WORK &#125;</span>
       <div class="rotor-header">
         <span class="section-num">01</span>
         <h2 class="rotor-title">Featured Works</h2>
@@ -61,6 +62,16 @@ import {
 
       .rotor-section {
         padding: 4rem 0 3rem;
+      }
+
+      .section-label {
+        display: block;
+        font-family: 'area-normal', sans-serif;
+        font-size: 10px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: rgba(10, 10, 10, 0.4);
+        margin-bottom: 1rem;
       }
 
       .rotor-header {

@@ -15,11 +15,12 @@ import { gsap } from 'gsap';
   selector: 'app-about-teaser',
   standalone: true,
   template: `
-    <section class="about-teaser" data-about-teaser>
-      <p class="about-teaser-text">
-        I'm Yentl — designer and developer based in Tessenderlo, Belgium.
-        I focus on clear, purposeful work from concept to code.
-      </p>
+    <section class="about-teaser" data-about-teaser data-about-section>
+      <span class="section-label" data-scroll-label>&#123; ABOUT &#125;</span>
+      <div class="about-teaser-lines">
+        <p class="about-teaser-lead" data-scroll-line><span class="line-inner">I pair strong visual and technical skills with a focus on user-centred design and clean code.</span></p>
+        <p class="about-teaser-text" data-scroll-line><span class="line-inner">With experience across design and development, I help bring products and brands to life through thoughtful interfaces and solid implementation.</span></p>
+      </div>
       <a
         href="/about"
         data-nav-link
@@ -38,15 +39,46 @@ import { gsap } from 'gsap';
     `
       .about-teaser {
         padding: clamp(4rem, 12vw, 8rem) 0;
-        max-width: 42ch;
+        max-width: 48ch;
+      }
+
+      .about-teaser-lines {
+        overflow: hidden;
+      }
+
+      .about-teaser-lines [data-scroll-line] {
+        overflow: hidden;
+      }
+
+      .about-teaser-lines .line-inner {
+        display: block;
+      }
+
+      .section-label {
+        display: block;
+        font-family: 'area-normal', sans-serif;
+        font-size: 10px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: rgba(10, 10, 10, 0.4);
+        margin-bottom: 1.25rem;
+      }
+
+      .about-teaser-lead {
+        margin: 0 0 1rem;
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+        line-height: 1.5;
+        color: #0a0a0a;
+        font-weight: 500;
       }
 
       .about-teaser-text {
         margin: 0 0 1.5rem;
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+        font-size: clamp(1rem, 1.35vw, 1.1rem);
         line-height: 1.65;
-        color: rgba(10, 10, 10, 0.85);
+        color: rgba(10, 10, 10, 0.8);
       }
 
       .about-teaser-link {

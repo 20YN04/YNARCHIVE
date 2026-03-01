@@ -1,10 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { LoadingProgressService } from '../../core/loading-progress.service';
 
 @Component({
   selector: 'app-preloader',
   standalone: true,
   template: `
     <div class="preloader" data-preloader>
+      <!-- Jack Elder style: loading label + percentage -->
+      <div class="preloader-loading" data-preloader-loading>
+        <span class="loading-label">&#123; LOADING &#125;</span>
+        <span class="loading-percent">{{ progress() }}%</span>
+      </div>
+
       <!-- Left info -->
       <div class="preloader-info preloader-left" data-preloader-info>
         <p class="info-line">YENTL NERINCKX</p>
@@ -112,7 +119,35 @@ import { Component } from '@angular/core';
         transform: translateY(110%);
         will-change: transform;
       }
+
+      .preloader-loading {
+        position: absolute;
+        top: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.7);
+        opacity: 0;
+        will-change: opacity;
+      }
+
+      .loading-label {
+        font-weight: 500;
+      }
+
+      .loading-percent {
+        font-weight: 700;
+        color: #fff;
+      }
     `
   ]
 })
-export class PreloaderComponent {}
+export class PreloaderComponent {
+  readonly progress = inject(LoadingProgressService).progress;
+}

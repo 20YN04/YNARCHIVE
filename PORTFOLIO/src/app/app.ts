@@ -6,6 +6,7 @@ import { WorkComponent } from './pages/work/work';
 import { AboutComponent } from './pages/about/about';
 import { FloatingCtaComponent } from './components/floating-cta/floating-cta.component';
 import { LenisService } from './core/lenis.service';
+import { LoadingProgressService } from './core/loading-progress.service';
 import { registerPortfolioEffects } from './core/gsap-effects';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -71,6 +72,7 @@ export class App implements AfterViewInit, OnDestroy {
   private popStateHandler?: (event: PopStateEvent) => void;
   @ViewChild('pageContainer', { read: ViewContainerRef, static: true }) pageContainer!: ViewContainerRef;
   private lenis = inject(LenisService);
+  private loadingProgress = inject(LoadingProgressService);
 
   ngAfterViewInit(): void {
     if (typeof history !== 'undefined' && history.scrollRestoration) {
@@ -260,6 +262,7 @@ export class App implements AfterViewInit, OnDestroy {
 
     // ── Query elements ──
     const preloader = document.querySelector('[data-preloader]') as HTMLElement;
+    const preloaderLoading = document.querySelector('[data-preloader-loading]') as HTMLElement;
     const letters = document.querySelectorAll('[data-letter]');
     const preloaderInfos = document.querySelectorAll('[data-preloader-info]');
 
@@ -337,6 +340,8 @@ export class App implements AfterViewInit, OnDestroy {
 
     // Letters start below their masks
     gsap.set(letters, { y: '110%' });
+    if (preloaderLoading) gsap.set(preloaderLoading, { opacity: 0 });
+    const progressProxy = { value: 0 };
 
     // Thick bars — visible at full thickness
     gsap.set(barTop, { height: 40 });
@@ -372,6 +377,19 @@ export class App implements AfterViewInit, OnDestroy {
       }
     });
     const tl = this.timeline;
+
+    // Loading % (0→100) only while preloader is visible; ends when compress starts
+    const preloaderVisibleDuration = 3.35;
+    tl.to(progressProxy, {
+      value: 100,
+      duration: preloaderVisibleDuration,
+      ease: 'none',
+      onUpdate: () => this.loadingProgress.setProgress(progressProxy.value),
+    }, 0);
+    if (preloaderLoading) {
+      tl.to(preloaderLoading, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 0);
+      tl.to(preloaderLoading, { opacity: 0, duration: 0.25, ease: 'power2.in' }, 1.85);
+    }
 
     // ─── ACT 1: SLIDE-CLOCK LETTERS (YNARCHIVE) ───
     tl.to(preloaderInfos, {
@@ -547,50 +565,102 @@ export class App implements AfterViewInit, OnDestroy {
       });
     });
 
-    // Rotor (featured) section — fade-in on scroll
+    // ─── Jack Elder style: section label + heading reveal (featured work) ───
+    const featuredLabel = document.querySelector('[data-featured-work] [data-scroll-label]');
+    const featuredHeading = document.querySelector('[data-featured-work] [data-scroll-heading]');
     const rotorSection = document.querySelector('[data-rotor-section]');
     if (rotorSection) {
       gsap.from(rotorSection, {
         scrollTrigger: {
           trigger: rotorSection,
-          start: 'top 90%',
-          end: 'top 55%',
-          scrub: 0.5,
+          start: 'top 92%',
+          end: 'top 50%',
+          scrub: 0.8,
         },
         opacity: 0,
-        y: 35,
+        y: 50,
       });
+      if (featuredLabel) {
+        gsap.from(featuredLabel, {
+          scrollTrigger: { trigger: rotorSection, start: 'top 90%', end: 'top 58%', scrub: 0.6 },
+          y: 28,
+          opacity: 0,
+        });
+      }
+      if (featuredHeading) {
+        gsap.from(featuredHeading, {
+          scrollTrigger: { trigger: rotorSection, start: 'top 85%', end: 'top 52%', scrub: 0.6 },
+          y: 32,
+          opacity: 0,
+        });
+      }
     }
 
-    // About section — fade-in on scroll
+    // ─── About section: label + staggered text line reveals ───
     const aboutSection = document.querySelector('[data-about-section]');
+    const aboutLabel = document.querySelector('[data-about-section] [data-scroll-label]');
+    const aboutLines = document.querySelectorAll('[data-about-section] [data-scroll-line]');
     if (aboutSection) {
       gsap.from(aboutSection, {
         scrollTrigger: {
           trigger: aboutSection,
-          start: 'top 88%',
-          end: 'top 55%',
-          scrub: 0.5,
+          start: 'top 90%',
+          end: 'top 48%',
+          scrub: 0.8,
         },
         opacity: 0,
-        y: 40,
+        y: 45,
+      });
+      if (aboutLabel) {
+        gsap.from(aboutLabel, {
+          scrollTrigger: { trigger: aboutSection, start: 'top 88%', end: 'top 55%', scrub: 0.6 },
+          y: 24,
+          opacity: 0,
+        });
+      }
+      aboutLines.forEach((line, i) => {
+        gsap.from(line, {
+          scrollTrigger: {
+            trigger: aboutSection,
+            start: `top ${86 - i * 6}%`,
+            end: `top ${50 - i * 4}%`,
+            scrub: 0.5,
+          },
+          y: 36,
+          opacity: 0,
+        });
       });
     }
 
-    // Project cards — staggered fade-in
+    // Project cards — staggered slide-up + fade (Jack Elder style)
     const projectCards = document.querySelectorAll('[data-project-card]');
-    projectCards.forEach((card) => {
+    projectCards.forEach((card, i) => {
       gsap.from(card, {
         scrollTrigger: {
           trigger: card,
+          start: 'top 92%',
+          end: 'top 58%',
+          scrub: 0.6,
+        },
+        opacity: 0,
+        y: 56,
+      });
+    });
+
+    // View All link — subtle reveal
+    const viewAllWrap = document.querySelector('.home-view-all');
+    if (viewAllWrap) {
+      gsap.from(viewAllWrap, {
+        scrollTrigger: {
+          trigger: viewAllWrap,
           start: 'top 90%',
           end: 'top 60%',
           scrub: 0.5,
         },
         opacity: 0,
-        y: 50,
+        y: 24,
       });
-    });
+    }
 
     // Footer reveal
     if (footerSection) {

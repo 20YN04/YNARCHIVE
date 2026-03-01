@@ -2,7 +2,7 @@ import { AfterViewInit, Component, inject } from '@angular/core';
 import { HeroComponent } from '../../hero/hero';
 import { LayoutComponent } from '../../components/layout/layout';
 import { AboutTeaserComponent } from '../../components/about-teaser/about-teaser.component';
-import { RotorGalleryComponent } from '../../components/rotor-gallery/rotor-gallery';
+import { FeaturedWorkComponent } from '../../components/featured-work/featured-work';
 import { WorkService } from '../../services/work.service';
 
 @Component({
@@ -12,13 +12,13 @@ import { WorkService } from '../../services/work.service';
     HeroComponent,
     LayoutComponent,
     AboutTeaserComponent,
-    RotorGalleryComponent,
+    FeaturedWorkComponent,
   ],
   template: `
     <app-hero></app-hero>
     <app-layout>
       <app-about-teaser></app-about-teaser>
-      <app-rotor-gallery [items]="workService.featuredWorkItems()"></app-rotor-gallery>
+      <app-featured-work></app-featured-work>
       <div class="home-view-all">
         <a href="/work" data-nav-link data-page="work" class="home-view-all-link">View All Projects →</a>
       </div>

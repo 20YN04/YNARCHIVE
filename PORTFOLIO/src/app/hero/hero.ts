@@ -33,6 +33,15 @@ import { NavBarComponent } from '../components/navbar/navbar';
         </figure>
       </div>
 
+      <!-- BOTTOM: tagline + scroll hint (Jack Elder style) -->
+      <div class="hero-bottom" data-hero-bottom>
+        <p class="hero-tagline">
+          <span class="hero-tagline-left">Functionality</span>
+          <span class="hero-tagline-amp">&amp;</span>
+          <span class="hero-tagline-right">Aesthetics</span>
+        </p>
+        <span class="hero-scroll-hint" data-scroll-hint>&#123; SCROLL &#125;</span>
+      </div>
     </section>
   `,
   styles: [
@@ -210,6 +219,45 @@ import { NavBarComponent } from '../components/navbar/navbar';
         transform: scale(1.1) translateY(5%);
       }
 
+      /* ═══ HERO BOTTOM — tagline + scroll (Jack Elder style) ═══ */
+      .hero-bottom {
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        padding: 2.5rem clamp(2rem, 6vw, 5rem) 3rem;
+        min-height: 120px;
+      }
+
+      .hero-tagline {
+        margin: 0;
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(1.25rem, 3vw, 2rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        color: #0a0a0a;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.35em;
+      }
+
+      .hero-tagline-amp {
+        font-weight: 400;
+        opacity: 0.7;
+      }
+
+      .hero-scroll-hint {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: rgba(10, 10, 10, 0.5);
+      }
+
       /* ═══ Responsive ═══ */
       @media (max-width: 768px) {
         .hero-mega-title {
@@ -223,6 +271,10 @@ import { NavBarComponent } from '../components/navbar/navbar';
         }
         .hero-image-outer {
           padding: 0 clamp(1.5rem, 5vw, 2.5rem) 1.5rem;
+        }
+        .hero-bottom {
+          padding: 2rem clamp(1.5rem, 5vw, 2.5rem) 2rem;
+          min-height: 100px;
         }
       }
     `
