@@ -21,9 +21,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
           <span class="label-text">About</span>
         </div>
 
-        <!-- Large statement — scroll-driven word reveal -->
+        <!-- Large statement — ink bleed word reveal -->
         <div class="about-statement" data-about-statement>
-          <p class="statement-text" data-highlight-text>
+          <p class="statement-text" data-ink-bleed="heavy">
             Taking everyday ideas and transforming them into tangible
             digital experiences through design &amp; development.
           </p>
@@ -32,17 +32,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         <!-- Two-column detail -->
         <div class="about-columns" data-about-columns>
           <div class="about-col about-col-left">
-            <p class="about-body" data-highlight-text>
+            <p class="about-body" data-ink-bleed="light">
               I design &amp; develop impactful digital experiences through
               UI/UX, branding, interactions, and clean engineering.
             </p>
-            <p class="about-body" data-highlight-text>
+            <p class="about-body" data-ink-bleed="light">
               Starting my journey as a developer and designer, later
               specialising in frontend engineering and creative development.
               Building brand experiences through digital media, creating
               interactive &amp; performant designs.
             </p>
-            <p class="about-body" data-highlight-text>
+            <p class="about-body" data-ink-bleed="light">
               In 2025, I started combining deep frontend expertise with design
               thinking — taking projects from wireframe all the way to
               deployment.
@@ -105,7 +105,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         align-items: baseline;
         gap: 0.75rem;
         margin-bottom: clamp(3rem, 7vw, 6rem);
-        opacity: 0;
       }
       .label-num {
         font-family: 'area-normal', sans-serif;
@@ -210,6 +209,34 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       }
       .about-cv-link:hover { opacity: 0.7; }
 
+      /* ── Ink Bleed Words ── */
+      .ink-word {
+        display: inline-block;
+        will-change: filter, transform, opacity;
+      }
+
+      /* ── Stack group reveal lines ── */
+      .stack-group {
+        position: relative;
+        padding-left: 0;
+      }
+      .stack-group::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -1rem;
+        width: 0;
+        height: 100%;
+        border-left: 1px solid rgba(255,255,255,0.15);
+        transition: width 0.6s ease;
+      }
+      .stack-group.revealed {
+        padding-left: 1rem;
+      }
+      .stack-group.revealed::before {
+        width: 1px;
+      }
+
       /* ── Responsive ── */
       @media (max-width: 768px) {
         .about-columns {
@@ -225,49 +252,120 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
   private scrollTriggers: ScrollTrigger[] = [];
 
   ngAfterViewInit(): void {
+    // Longer delay to ensure DOM is laid out and home.ts clip-path is ready
     requestAnimationFrame(() => {
-      setTimeout(() => this.setupAnimations(), 100);
+      setTimeout(() => this.setupAnimations(), 400);
     });
   }
 
   private setupAnimations(): void {
     const host = this.el.nativeElement as HTMLElement;
 
-    // ── Highlight text reveal — word-by-word fade on scroll ──
-    const highlightEls = host.querySelectorAll('[data-highlight-text]');
-    highlightEls.forEach((el) => this.initHighlightText(el as HTMLElement));
-
-    // ── General reveals ──
-    const reveal = (selector: string, from: gsap.TweenVars) => {
-      const target = host.querySelector(selector);
-      if (!target) return;
-      const tween = gsap.from(target, {
-        ...from,
+    // ── Label reveal ──
+    const label = host.querySelector('[data-about-label]') as HTMLElement;
+    if (label) {
+      gsap.set(label, { opacity: 0, y: 20 });
+      gsap.to(label, {
+        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
         scrollTrigger: {
-          trigger: target,
+          trigger: label,
           start: 'top 90%',
-          end: 'top 60%',
-          scrub: 0.5,
+          toggleActions: 'play none none none',
+          invalidateOnRefresh: true,
         },
       });
-      if (tween.scrollTrigger) this.scrollTriggers.push(tween.scrollTrigger);
-    };
+    }
 
-    reveal('[data-about-label]', { y: 16, opacity: 0 });
-    reveal('[data-about-columns]', { y: 40, opacity: 0 });
-    reveal('[data-about-stack]', { y: 30, opacity: 0 });
-    reveal('[data-about-cv]', { y: 16, opacity: 0 });
+    // ── Ink Bleed word reveals ──
+    host.querySelectorAll('[data-ink-bleed]').forEach((el) => {
+      const intensity = (el as HTMLElement).getAttribute('data-ink-bleed') || 'light';
+      this.initInkBleed(el as HTMLElement, intensity as 'heavy' | 'light');
+    });
+
+    // ── Columns container reveal ──
+    const cols = host.querySelector('[data-about-columns]') as HTMLElement;
+    if (cols) {
+      gsap.set(cols, { opacity: 0, y: 40 });
+      gsap.to(cols, {
+        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: cols,
+          start: 'top 92%',
+          toggleActions: 'play none none none',
+          invalidateOnRefresh: true,
+        },
+      });
+    }
+
+    // ── Tech stack: staggered group reveal ──
+    const stackGroups = host.querySelectorAll('.stack-group');
+    stackGroups.forEach((group) => {
+      gsap.set(group, { opacity: 0, y: 20 });
+    });
+    if (stackGroups.length) {
+      const stackContainer = host.querySelector('[data-about-stack]') as HTMLElement;
+      if (stackContainer) {
+        ScrollTrigger.create({
+          trigger: stackContainer,
+          start: 'top 88%',
+          once: true,
+          invalidateOnRefresh: true,
+          onEnter: () => {
+            gsap.to(stackGroups, {
+              opacity: 1, y: 0, duration: 0.7,
+              stagger: 0.15,
+              ease: 'power3.out',
+              onComplete: () => {
+                stackGroups.forEach(g => (g as HTMLElement).classList.add('revealed'));
+              },
+            });
+          },
+        });
+      }
+    }
+
+    // ── Stack heading ──
+    const stackHeading = host.querySelector('.stack-heading') as HTMLElement;
+    if (stackHeading) {
+      gsap.set(stackHeading, { opacity: 0, y: 14 });
+      gsap.to(stackHeading, {
+        opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: stackHeading,
+          start: 'top 92%',
+          toggleActions: 'play none none none',
+          invalidateOnRefresh: true,
+        },
+      });
+    }
+
+    // ── CV link ──
+    const cv = host.querySelector('[data-about-cv]') as HTMLElement;
+    if (cv) {
+      gsap.set(cv, { opacity: 0, y: 16 });
+      gsap.to(cv, {
+        opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: cv,
+          start: 'top 95%',
+          toggleActions: 'play none none none',
+          invalidateOnRefresh: true,
+        },
+      });
+    }
 
     ScrollTrigger.refresh();
   }
 
-  private initHighlightText(el: HTMLElement): void {
+  /**
+   * Ink Bleed: words start blurred & oversized (like wet ink blots)
+   * and sharpen into crisp text as you scroll into view.
+   */
+  private initInkBleed(el: HTMLElement, intensity: 'heavy' | 'light'): void {
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     const textNodes: Text[] = [];
     let node: Text | null;
-    while ((node = walker.nextNode() as Text | null)) {
-      textNodes.push(node);
-    }
+    while ((node = walker.nextNode() as Text | null)) textNodes.push(node);
 
     textNodes.forEach((textNode) => {
       const words = textNode.textContent?.split(/(\s+)/) || [];
@@ -277,7 +375,7 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
           frag.appendChild(document.createTextNode(word));
         } else if (word) {
           const span = document.createElement('span');
-          span.className = 'highlight-word';
+          span.className = 'ink-word';
           span.textContent = word;
           frag.appendChild(span);
         }
@@ -285,23 +383,52 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
       textNode.parentNode?.replaceChild(frag, textNode);
     });
 
-    const wordSpans = el.querySelectorAll('.highlight-word');
+    const wordSpans = Array.from(el.querySelectorAll('.ink-word')) as HTMLElement[];
     if (!wordSpans.length) return;
 
-    gsap.set(wordSpans, { opacity: 0.15 });
+    const isHeavy = intensity === 'heavy';
+    const blurPx = isHeavy ? 14 : 7;
+    const scaleFactor = isHeavy ? 1.2 : 1.08;
+    const yPx = isHeavy ? 10 : 5;
 
-    const tween = gsap.to(wordSpans, {
-      opacity: 1,
-      stagger: 0.05,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 85%',
-        end: 'bottom 55%',
-        scrub: true,
+    // Set initial blurred/oversized state
+    wordSpans.forEach((span) => {
+      span.style.opacity = '0.05';
+      span.style.filter = `blur(${blurPx}px)`;
+      span.style.transform = `scale(${scaleFactor}) translateY(${yPx}px)`;
+    });
+
+    // Animate each word to crisp on scroll enter, staggered
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 88%',
+      once: true,
+      invalidateOnRefresh: true,
+      onEnter: () => {
+        wordSpans.forEach((span, i) => {
+          const delay = i * (isHeavy ? 0.06 : 0.03);
+          gsap.to(span, {
+            duration: isHeavy ? 0.8 : 0.6,
+            delay,
+            ease: 'power2.out',
+            onUpdate: function(this: gsap.core.Tween) {
+              const p = this.progress();
+              const blur = blurPx * (1 - p);
+              const scale = 1 + (scaleFactor - 1) * (1 - p);
+              const y = yPx * (1 - p);
+              span.style.opacity = String(0.05 + 0.95 * p);
+              span.style.filter = `blur(${blur}px)`;
+              span.style.transform = `scale(${scale}) translateY(${y}px)`;
+            },
+            onComplete: () => {
+              span.style.opacity = '1';
+              span.style.filter = 'blur(0px)';
+              span.style.transform = 'scale(1) translateY(0px)';
+            },
+          });
+        });
       },
     });
-    if (tween.scrollTrigger) this.scrollTriggers.push(tween.scrollTrigger);
   }
 
   ngOnDestroy(): void {

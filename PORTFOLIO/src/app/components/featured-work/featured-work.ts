@@ -391,6 +391,7 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
         height: 'auto',
         duration: 0.7,
         ease: 'power3.inOut',
+        onComplete: () => ScrollTrigger.refresh(),
       });
 
       gsap.to(inner, {
@@ -429,6 +430,7 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
         duration: 0.5,
         delay: 0.08,
         ease: 'power2.inOut',
+        onComplete: () => ScrollTrigger.refresh(),
       });
 
       if (image) {
