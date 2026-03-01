@@ -33,10 +33,14 @@ import { ContactService } from '../../services/contact.service';
         <!-- Headline with word-by-word reveal -->
         <div class="contact-headline-wrap" data-contact-headline>
           <h2 class="contact-headline" data-split-headline>
-            Based in Belgium but available for your projects in
+            Based in <span class="headline-em">Belgium</span> but available
             <br class="lg-break" />
-            <span class="contact-headline-rotating">
-              <span #flipText class="contact-flip-text">the rest of the world</span>
+            for your projects in
+            <span class="scramble-wrap" data-scramble-wrap>
+              <span class="flip-mask">
+                <span #flipText class="scramble-text" data-scramble-text>the rest of the world</span>
+              </span>
+              <span class="scramble-line" data-scramble-line></span>
             </span>
           </h2>
           <p class="contact-subhead" data-contact-subhead>Talk to us about your project</p>
@@ -230,15 +234,42 @@ import { ContactService } from '../../services/contact.service';
           display: block;
         }
       }
-      .contact-headline-rotating {
+
+      /* ── Headline emphasis ── */
+      .headline-em {
+        font-style: italic;
+        font-weight: 300;
+      }
+
+      /* ── Scramble decode text ── */
+      .scramble-wrap {
+        position: relative;
         display: inline-block;
-        height: 1.15em;
+      }
+      .flip-mask {
+        display: inline-block;
         overflow: hidden;
+        height: 1.2em;
         vertical-align: bottom;
       }
-      .contact-flip-text {
+      .scramble-text {
         display: block;
+        font-style: italic;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.95);
       }
+      .scramble-line {
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.6);
+        transform: scaleX(0);
+        transform-origin: left center;
+        will-change: transform;
+      }
+
       .contact-subhead {
         font-family: 'area-normal', sans-serif;
         font-size: 1rem;
@@ -480,9 +511,11 @@ export class ContactSectionComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.startTextAnimation();
     requestAnimationFrame(() => {
-      setTimeout(() => this.setupAnimations(), 100);
+      setTimeout(() => {
+        this.setupAnimations();
+        this.startFlipAnimation();
+      }, 100);
     });
   }
 
@@ -631,7 +664,7 @@ export class ContactSectionComponent implements AfterViewInit, OnDestroy {
     const textNodes: Text[] = [];
     let node: Node | null;
     while ((node = walker.nextNode())) {
-      if (node.parentElement?.closest('.contact-headline-rotating')) continue;
+      if (node.parentElement?.closest('.scramble-wrap')) continue;
       if (node.textContent?.trim()) textNodes.push(node as Text);
     }
 
@@ -717,11 +750,20 @@ export class ContactSectionComponent implements AfterViewInit, OnDestroy {
   // ═══════════════════════════════════════════
   // FLIP TEXT ROTATION
   // ═══════════════════════════════════════════
-  private startTextAnimation(): void {
+  private startFlipAnimation(): void {
     let currentIndex = 0;
     const el = this.flipText?.nativeElement;
+    const host = this.el.nativeElement as HTMLElement;
+    const lineEl = host.querySelector('[data-scramble-line]') as HTMLElement;
     if (!el) return;
+
+    // Initial underline reveal
+    if (lineEl) gsap.to(lineEl, { scaleX: 1, duration: 0.7, ease: 'power2.out', delay: 1.2 });
+
     this.flipInterval = setInterval(() => {
+      // Retract underline
+      if (lineEl) gsap.to(lineEl, { scaleX: 0, duration: 0.25, ease: 'power2.in' });
+
       gsap.to(el, {
         yPercent: -100,
         opacity: 0,
@@ -736,6 +778,10 @@ export class ContactSectionComponent implements AfterViewInit, OnDestroy {
             opacity: 1,
             duration: 0.4,
             ease: 'power2.out',
+            onComplete: () => {
+              // Draw underline back in
+              if (lineEl) gsap.to(lineEl, { scaleX: 1, duration: 0.5, ease: 'power2.out', delay: 0.08 });
+            },
           });
         },
       });

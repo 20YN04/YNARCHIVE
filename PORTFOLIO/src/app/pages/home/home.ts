@@ -82,8 +82,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       ></app-marquee>
     </div>
 
-    <!-- ═══ CONTACT — flows from about (both dark, no clip needed) ═══ -->
-    <app-contact-section></app-contact-section>
+    <!-- ═══ CONTACT — scale-up emergence (inverse of hero) ═══ -->
+    <div class="section-emerge" data-emerge-contact>
+      <app-contact-section></app-contact-section>
+    </div>
 
     <!-- ═══ TRAVELING LINE — vertical thread connecting sections ═══ -->
     <div class="traveling-line" data-traveling-line>
@@ -109,6 +111,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         z-index: 2;
         will-change: clip-path;
         clip-path: inset(0 0 0 0);
+      }
+
+      /* ═══ SCALE-UP EMERGE — contact zooms into view ═══ */
+      .section-emerge {
+        position: relative;
+        z-index: 2;
+        will-change: transform, filter;
+        transform: scale(0.92);
+        border-radius: 1rem;
+        overflow: hidden;
+        filter: brightness(0.7);
       }
 
       .section-work {
@@ -405,7 +418,51 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       if (lineOut.scrollTrigger) this.scrollTriggers.push(lineOut.scrollTrigger);
     }
 
-    // ─── 8. PARALLAX SPEED DIFFERENCES ───
+    // ─── 8. ABOUT SECTION RECEDES AS CONTACT APPROACHES ───
+    const aboutSection = host.querySelector('[data-clip-about]') as HTMLElement;
+    const aboutContent = aboutSection?.querySelector('[data-about-section]') as HTMLElement;
+    const emergeContact = host.querySelector('[data-emerge-contact]') as HTMLElement;
+    if (aboutContent && emergeContact) {
+      const st = ScrollTrigger.create({
+        trigger: emergeContact,
+        start: 'top 100%',
+        end: 'top 30%',
+        scrub: 0.3,
+        onUpdate: (self) => {
+          const p = self.progress;
+          const scale = 1 - p * 0.05;       // 1 → 0.95
+          const radius = p * 12;             // 0 → 12px
+          const brightness = 1 - p * 0.25;   // 1 → 0.75
+          aboutContent.style.transform = `scale(${scale})`;
+          aboutContent.style.borderRadius = `${radius}px`;
+          aboutContent.style.filter = `brightness(${brightness})`;
+        },
+      });
+      this.scrollTriggers.push(st);
+    }
+
+    // ─── 9. CONTACT SCALE-UP EMERGENCE ───
+    if (emergeContact) {
+      const contactInner = emergeContact.querySelector('[data-contact-section]') as HTMLElement || emergeContact;
+      const st = ScrollTrigger.create({
+        trigger: emergeContact,
+        start: 'top 95%',
+        end: 'top 25%',
+        scrub: 0.4,
+        onUpdate: (self) => {
+          const p = self.progress;
+          const scale = 0.92 + p * 0.08;     // 0.92 → 1.0
+          const radius = (1 - p) * 16;       // 16px → 0
+          const brightness = 0.7 + p * 0.3;  // 0.7 → 1.0
+          emergeContact.style.transform = `scale(${scale})`;
+          emergeContact.style.borderRadius = `${radius}px`;
+          emergeContact.style.filter = `brightness(${brightness})`;
+        },
+      });
+      this.scrollTriggers.push(st);
+    }
+
+    // ─── 10. PARALLAX SPEED DIFFERENCES ───
     // Hero content already has faster parallax in hero.ts
     // About section: slightly slower scroll speed (content drifts up slower)
     const aboutInner = host.querySelector('[data-about-section] .about-inner') as HTMLElement;

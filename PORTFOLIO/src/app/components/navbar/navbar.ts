@@ -15,7 +15,7 @@ import { Component, Input, signal, OnInit, OnDestroy } from '@angular/core';
 			<div class="flex items-center gap-4">
 				<a href="#hero" data-scroll-link class="text-sm font-bold tracking-[0.08em] uppercase no-underline text-inherit" data-nav-brand>YNARCHIVE</a>
 			</div>
-			<div class="flex gap-[3px]">
+			<div class="flex gap-0.75">
 				<a href="#work" data-scroll-link class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50">Work,</a>
 				<a href="#about" data-scroll-link class="text-[13px] tracking-[0.01em] no-underline text-inherit transition-opacity duration-300 hover:opacity-50">About</a>
 			</div>
