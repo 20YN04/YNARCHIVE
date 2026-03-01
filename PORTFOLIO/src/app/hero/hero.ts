@@ -1,5 +1,6 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { NavBarComponent } from '../components/navbar/navbar';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-hero',
@@ -7,41 +8,35 @@ import { NavBarComponent } from '../components/navbar/navbar';
   imports: [NavBarComponent],
   template: `
     <section class="hero-section" data-hero-section>
-      <!-- MEGA TITLE — YNARCHIVE, flush at top, compresses into nav on scroll -->
-      <div class="hero-mega-title" data-hero-mega-title>
-        <span class="mega-title-text" data-hero-mega-text>YNARCHIVE</span>
-      </div>
-
       <app-navbar></app-navbar>
 
-      <!-- HERO TITLE — single line like Telha Clarke -->
-      <div class="hero-title-block" data-hero-title-block>
-        <div class="title-line-mask">
-          <h1 class="hero-title-line" data-hero-title-line>Driven by History, Centered on Context, Embracing Culture</h1>
+      <!-- Content wrapper — vertically centers the hero content -->
+      <div class="hero-content">
+        <!-- Label -->
+        <span class="hero-label" data-hero-label>Product &amp; Visual Designer</span>
+
+        <!-- Massive stacked headings -->
+        <div class="hero-headings">
+          <div class="heading-line-mask">
+            <h1 class="heading-line" data-hero-heading>Functionality</h1>
+          </div>
+          <div class="heading-line-mask">
+            <span class="heading-amp" data-hero-heading>&amp;</span>
+          </div>
+          <div class="heading-line-mask">
+            <h1 class="heading-line" data-hero-heading>Aesthetics</h1>
+          </div>
         </div>
-      </div>
 
-      <!-- HERO IMAGE — parallax mask (container moves down, image moves up) -->
-      <div class="hero-image-outer" data-hero-image-outer>
-        <figure class="hero-image-container" data-hero-image>
-          <img
-            class="hero-image"
-            src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1800&q=80"
-            alt="Featured project"
-            data-hero-img
-          />
-        </figure>
-      </div>
-
-      <!-- BOTTOM: tagline + scroll hint (Jack Elder style) -->
-      <div class="hero-bottom" data-hero-bottom>
-        <p class="hero-tagline">
-          <span class="hero-tagline-left">Functionality</span>
-          <span class="hero-tagline-amp">&amp;</span>
-          <span class="hero-tagline-right">Aesthetics</span>
+        <!-- Bio paragraph -->
+        <p class="hero-bio" data-hero-bio>
+          I craft digital experiences where purposeful design meets clean engineering —
+          blending form and function to build products that feel as good as they work.
         </p>
-        <span class="hero-scroll-hint" data-scroll-hint>&#123; SCROLL &#125;</span>
       </div>
+
+      <!-- Scroll indicator pinned to bottom -->
+      <span class="hero-scroll" data-hero-scroll>&#123; SCROLL &#125;</span>
     </section>
   `,
   styles: [
@@ -50,238 +45,182 @@ import { NavBarComponent } from '../components/navbar/navbar';
         display: block;
       }
 
+      /* ═══ SECTION — full viewport, dark ═══ */
       .hero-section {
         position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         min-height: 100vh;
         width: 100%;
-        background: #fff;
-      }
-
-      /* ═══ MEGA TITLE — flush at very top ═══ */
-      .hero-mega-title {
-        position: relative;
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        height: clamp(140px, 22vw, 220px);
         background: #0a0a0a;
-        clip-path: inset(0 0 0 0);
-        will-change: clip-path;
+        color: #fff;
+        overflow: hidden;
       }
 
-      .mega-title-text {
-        width: 100%;
-        height: 100%;
+      /* ═══ CONTENT — centered block ═══ */
+      .hero-content {
+        position: relative;
+        z-index: 1;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-bottom: 40px;
-        text-align: center;
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(4rem, 14vw, 15rem);
-        font-weight: 700;
+        flex-direction: column;
+        gap: 2rem;
+        padding: 8rem clamp(2rem, 6vw, 6rem) 6rem;
+        max-width: 1400px;
+        width: 100%;
+      }
+
+      /* ═══ LABEL — small monospace uppercase ═══ */
+      .hero-label {
+        font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+      }
+
+      /* ═══ HEADINGS — massive stacked lines ═══ */
+      .hero-headings {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .heading-line-mask {
+        overflow: hidden;
         line-height: 1;
-        letter-spacing: -0.03em;
+      }
+
+      .heading-line {
+        margin: 0;
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(3.5rem, 12vw, 11rem);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.04em;
         text-transform: uppercase;
         color: #fff;
-        white-space: nowrap;
         will-change: transform, opacity;
-      }
-
-      /* ═══ NAVIGATION — fixed, transparent, just text ═══ */
-      .hero-nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 140;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 64px;
-        padding: 0 2.5rem;
-        background: transparent;
-        color: #0a0a0a;
+        transform: translateY(100%);
         opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
       }
 
-      .nav-left, .nav-right {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
-
-      .nav-right {
-        gap: 1rem;
-      }
-
-      .nav-brand {
-        font-family: 'area-normal', sans-serif;
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .nav-center {
-        display: flex;
-        gap: 3px;
-      }
-
-      .nav-link {
-        font-family: 'area-normal', sans-serif;
-        font-size: 13px;
-        font-weight: 400;
-        color: inherit;
-        text-decoration: none;
-        transition: opacity 0.3s ease;
-        letter-spacing: 0.01em;
-      }
-
-      .nav-link:hover {
-        opacity: 0.5;
-      }
-
-      .nav-clock {
-        font-family: 'area-normal', sans-serif;
-        font-size: 12px;
-        letter-spacing: 0.02em;
-        opacity: 0.6;
-      }
-
-      .clock-colon {
-        animation: blink 1s steps(1, end) infinite;
-      }
-
-      .clock-period {
-        margin-left: 4px;
-        font-size: 10px;
-        opacity: 0.5;
-        text-transform: uppercase;
-      }
-
-      @keyframes blink {
-        50% { opacity: 0; }
-      }
-
-      /* (mega title styles are above, before nav) */
-
-      /* ═══ HERO TITLE — single line like Telha Clarke ═══ */
-      .hero-title-block {
-        padding: 4rem clamp(2rem, 6vw, 5rem) 2rem;
-      }
-
-      .title-line-mask {
-        overflow: hidden;
-        line-height: 1.15;
-      }
-
-      .hero-title-line {
+      .heading-amp {
+        display: block;
         margin: 0;
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.75rem, 4.5vw, 4rem);
-        font-weight: 700;
-        line-height: 1.15;
+        font-size: clamp(2.5rem, 8vw, 7rem);
+        font-weight: 300;
+        font-style: italic;
+        line-height: 1.1;
         letter-spacing: -0.02em;
-        color: #0a0a0a;
-        transform: translateY(110%);
-        will-change: transform;
+        color: rgba(255, 255, 255, 0.4);
+        padding-left: 0.15em;
+        will-change: transform, opacity;
+        transform: translateY(100%);
+        opacity: 0;
       }
 
-      /* ═══ HERO IMAGE — parallax mask ═══ */
-      .hero-image-outer {
-        position: relative;
-        padding: 0 clamp(2rem, 6vw, 5rem) 2.5rem;
-        will-change: transform;
-      }
-
-      .hero-image-container {
-        position: relative;
-        margin: 0 auto;
-        width: 100%;
-        max-width: 1100px;
-        aspect-ratio: 16 / 9;
-        overflow: hidden;
-      }
-
-      .hero-image {
-        width: 100%;
-        height: 115%;
-        object-fit: cover;
-        object-position: center;
-        will-change: transform;
-        transform: scale(1.1) translateY(5%);
-      }
-
-      /* ═══ HERO BOTTOM — tagline + scroll (Jack Elder style) ═══ */
-      .hero-bottom {
-        position: relative;
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-        padding: 2.5rem clamp(2rem, 6vw, 5rem) 3rem;
-        min-height: 120px;
-      }
-
-      .hero-tagline {
+      /* ═══ BIO — short paragraph ═══ */
+      .hero-bio {
+        max-width: 520px;
         margin: 0;
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.25rem, 3vw, 2rem);
-        font-weight: 600;
-        letter-spacing: -0.02em;
-        line-height: 1.2;
-        color: #0a0a0a;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        gap: 0.35em;
-      }
-
-      .hero-tagline-amp {
+        font-size: clamp(0.95rem, 1.4vw, 1.15rem);
         font-weight: 400;
-        opacity: 0.7;
+        line-height: 1.65;
+        color: rgba(255, 255, 255, 0.55);
+        opacity: 0;
       }
 
-      .hero-scroll-hint {
-        font-family: 'area-normal', sans-serif;
+      /* ═══ SCROLL INDICATOR — bottom center ═══ */
+      .hero-scroll {
+        position: absolute;
+        bottom: 2.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
         font-size: 11px;
-        letter-spacing: 0.25em;
+        font-weight: 500;
+        letter-spacing: 0.3em;
         text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.5);
+        color: rgba(255, 255, 255, 0.35);
+        opacity: 0;
       }
 
       /* ═══ Responsive ═══ */
       @media (max-width: 768px) {
-        .hero-mega-title {
-          height: clamp(80px, 15vw, 120px);
+        .hero-content {
+          padding: 6rem clamp(1.5rem, 5vw, 2.5rem) 5rem;
+          gap: 1.5rem;
         }
-        .hero-nav {
-          padding: 0 clamp(1.25rem, 4vw, 2rem);
+
+        .hero-bio {
+          max-width: 100%;
         }
-        .hero-title-block {
-          padding: 2.5rem clamp(1.5rem, 5vw, 2.5rem) 2rem;
-        }
-        .hero-image-outer {
-          padding: 0 clamp(1.5rem, 5vw, 2.5rem) 1.5rem;
-        }
-        .hero-bottom {
-          padding: 2rem clamp(1.5rem, 5vw, 2.5rem) 2rem;
-          min-height: 100px;
+
+        .hero-scroll {
+          bottom: 1.5rem;
         }
       }
     `
   ]
 })
-export class HeroComponent implements AfterViewInit {
+export class HeroComponent implements AfterViewInit, OnDestroy {
+  private tl?: gsap.core.Timeline;
+  private scrollTween?: gsap.core.Tween;
+
   ngAfterViewInit(): void {
-    // ...existing code...
+    const headings = document.querySelectorAll('[data-hero-heading]');
+    const label = document.querySelector('[data-hero-label]');
+    const bio = document.querySelector('[data-hero-bio]');
+    const scroll = document.querySelector('[data-hero-scroll]');
+
+    // ── Main entrance timeline ──
+    this.tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+    // Label fades in first
+    this.tl.to(label, {
+      opacity: 1,
+      duration: 0.6,
+    });
+
+    // Each heading line slides up & fades in, staggered
+    this.tl.to(headings, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      stagger: 0.15,
+    }, '-=0.3');
+
+    // Bio paragraph fades in after headings
+    this.tl.to(bio, {
+      opacity: 1,
+      duration: 0.8,
+      y: 0,
+    }, '-=0.3');
+
+    // Scroll indicator fades in
+    this.tl.to(scroll, {
+      opacity: 1,
+      duration: 0.5,
+    }, '-=0.4');
+
+    // ── Scroll indicator bounce (infinite yoyo) ──
+    this.scrollTween = gsap.to(scroll, {
+      y: 8,
+      duration: 1.2,
+      ease: 'power1.inOut',
+      yoyo: true,
+      repeat: -1,
+      delay: this.tl.duration(),
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.tl?.kill();
+    this.scrollTween?.kill();
   }
 }
