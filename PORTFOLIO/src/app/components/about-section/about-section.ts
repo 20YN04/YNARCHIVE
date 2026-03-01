@@ -261,6 +261,8 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
   private setupAnimations(): void {
     const host = this.el.nativeElement as HTMLElement;
 
+    const toggle = 'play none none reverse';
+
     // ── Label reveal ──
     const label = host.querySelector('[data-about-label]') as HTMLElement;
     if (label) {
@@ -270,7 +272,8 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
         scrollTrigger: {
           trigger: label,
           start: 'top 90%',
-          toggleActions: 'play none none none',
+          end: 'top 50%',
+          toggleActions: toggle,
           invalidateOnRefresh: true,
         },
       });
@@ -291,7 +294,8 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
         scrollTrigger: {
           trigger: cols,
           start: 'top 92%',
-          toggleActions: 'play none none none',
+          end: 'top 50%',
+          toggleActions: toggle,
           invalidateOnRefresh: true,
         },
       });
@@ -299,26 +303,28 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
 
     // ── Tech stack: staggered group reveal ──
     const stackGroups = host.querySelectorAll('.stack-group');
-    stackGroups.forEach((group) => {
-      gsap.set(group, { opacity: 0, y: 20 });
-    });
     if (stackGroups.length) {
+      gsap.set(stackGroups, { opacity: 0, y: 20 });
       const stackContainer = host.querySelector('[data-about-stack]') as HTMLElement;
       if (stackContainer) {
-        ScrollTrigger.create({
-          trigger: stackContainer,
-          start: 'top 88%',
-          once: true,
-          invalidateOnRefresh: true,
-          onEnter: () => {
-            gsap.to(stackGroups, {
-              opacity: 1, y: 0, duration: 0.7,
-              stagger: 0.15,
-              ease: 'power3.out',
-              onComplete: () => {
-                stackGroups.forEach(g => (g as HTMLElement).classList.add('revealed'));
-              },
-            });
+        const stackTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: stackContainer,
+            start: 'top 88%',
+            end: 'top 50%',
+            toggleActions: toggle,
+            invalidateOnRefresh: true,
+          },
+        });
+        stackTl.to(stackGroups, {
+          opacity: 1, y: 0, duration: 0.7,
+          stagger: 0.12,
+          ease: 'power3.out',
+          onComplete: () => {
+            stackGroups.forEach(g => (g as HTMLElement).classList.add('revealed'));
+          },
+          onReverseComplete: () => {
+            stackGroups.forEach(g => (g as HTMLElement).classList.remove('revealed'));
           },
         });
       }
@@ -333,7 +339,8 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
         scrollTrigger: {
           trigger: stackHeading,
           start: 'top 92%',
-          toggleActions: 'play none none none',
+          end: 'top 55%',
+          toggleActions: toggle,
           invalidateOnRefresh: true,
         },
       });
@@ -348,7 +355,8 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
         scrollTrigger: {
           trigger: cv,
           start: 'top 95%',
-          toggleActions: 'play none none none',
+          end: 'top 60%',
+          toggleActions: toggle,
           invalidateOnRefresh: true,
         },
       });
@@ -359,7 +367,7 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Ink Bleed: words start blurred & oversized (like wet ink blots)
-   * and sharpen into crisp text as you scroll into view.
+   * and sharpen into crisp text on scroll. Reverses on scroll back.
    */
   private initInkBleed(el: HTMLElement, intensity: 'heavy' | 'light'): void {
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
@@ -398,36 +406,33 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
       span.style.transform = `scale(${scaleFactor}) translateY(${yPx}px)`;
     });
 
-    // Animate each word to crisp on scroll enter, staggered
-    ScrollTrigger.create({
-      trigger: el,
-      start: 'top 88%',
-      once: true,
-      invalidateOnRefresh: true,
-      onEnter: () => {
-        wordSpans.forEach((span, i) => {
-          const delay = i * (isHeavy ? 0.06 : 0.03);
-          gsap.to(span, {
-            duration: isHeavy ? 0.8 : 0.6,
-            delay,
-            ease: 'power2.out',
-            onUpdate: function(this: gsap.core.Tween) {
-              const p = this.progress();
-              const blur = blurPx * (1 - p);
-              const scale = 1 + (scaleFactor - 1) * (1 - p);
-              const y = yPx * (1 - p);
-              span.style.opacity = String(0.05 + 0.95 * p);
-              span.style.filter = `blur(${blur}px)`;
-              span.style.transform = `scale(${scale}) translateY(${y}px)`;
-            },
-            onComplete: () => {
-              span.style.opacity = '1';
-              span.style.filter = 'blur(0px)';
-              span.style.transform = 'scale(1) translateY(0px)';
-            },
-          });
-        });
+    // Build a timeline so it can reverse on scroll back
+    const tl = gsap.timeline({
+      paused: true,
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 88%',
+        end: 'top 40%',
+        toggleActions: 'play none none reverse',
+        invalidateOnRefresh: true,
       },
+    });
+
+    wordSpans.forEach((span, i) => {
+      const delay = i * (isHeavy ? 0.04 : 0.02);
+      tl.to(span, {
+        duration: isHeavy ? 0.6 : 0.4,
+        ease: 'power2.out',
+        onUpdate: function(this: gsap.core.Tween) {
+          const p = this.progress();
+          const blur = blurPx * (1 - p);
+          const scale = 1 + (scaleFactor - 1) * (1 - p);
+          const y = yPx * (1 - p);
+          span.style.opacity = String(0.05 + 0.95 * p);
+          span.style.filter = `blur(${blur}px)`;
+          span.style.transform = `scale(${scale}) translateY(${y}px)`;
+        },
+      }, delay);
     });
   }
 

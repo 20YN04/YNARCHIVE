@@ -2,7 +2,6 @@ import { AfterViewInit, Component, inject, OnDestroy, ViewChild, ViewContainerRe
 import { HomeComponent } from './pages/home/home';
 import { PreloaderComponent } from './components/preloader/preloader.component';
 import { LenisService } from './core/lenis.service';
-import { LoadingProgressService } from './core/loading-progress.service';
 import { InkDissolveService } from './core/ink-dissolve.service';
 import { registerPortfolioEffects } from './core/gsap-effects';
 import { gsap } from 'gsap';
@@ -90,7 +89,6 @@ export class App implements AfterViewInit, OnDestroy {
   private navClickHandler?: (event: Event) => void;
   @ViewChild('pageContainer', { read: ViewContainerRef, static: true }) pageContainer!: ViewContainerRef;
   private lenis = inject(LenisService);
-  private loadingProgress = inject(LoadingProgressService);
   private inkDissolve = inject(InkDissolveService);
 
   /** Used to duplicate the marquee text items in the footer */
@@ -176,7 +174,6 @@ export class App implements AfterViewInit, OnDestroy {
 
     // ── Query elements ──
     const preloader = document.querySelector('[data-preloader]') as HTMLElement;
-    const preloaderLoading = document.querySelector('[data-preloader-loading]') as HTMLElement;
     const letters = document.querySelectorAll('[data-letter]');
     const preloaderInfos = document.querySelectorAll('[data-preloader-info]');
 
@@ -202,9 +199,6 @@ export class App implements AfterViewInit, OnDestroy {
 
     // Letters start below their masks
     gsap.set(letters, { y: '110%' });
-    if (preloaderLoading) gsap.set(preloaderLoading, { opacity: 0 });
-    const progressProxy = { value: 0 };
-
     // Thick bars — visible at full thickness
     gsap.set(barTop, { height: 40 });
     gsap.set(barBottom, { height: 40 });
@@ -229,19 +223,6 @@ export class App implements AfterViewInit, OnDestroy {
       }
     });
     const tl = this.timeline;
-
-    // Loading % (0→100) only while preloader is visible; ends when compress starts
-    const preloaderVisibleDuration = 3.6;
-    tl.to(progressProxy, {
-      value: 100,
-      duration: preloaderVisibleDuration,
-      ease: 'none',
-      onUpdate: () => this.loadingProgress.setProgress(progressProxy.value),
-    }, 0);
-    if (preloaderLoading) {
-      tl.to(preloaderLoading, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 0);
-      tl.to(preloaderLoading, { opacity: 0, duration: 0.25, ease: 'power2.in' }, 1.85);
-    }
 
     // ─── ACT 1: SLIDE-CLOCK LETTERS (YNARCHIVE) ───
     tl.to(preloaderInfos, {
