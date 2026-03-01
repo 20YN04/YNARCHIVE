@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, inject, OnDestroy } from '@angular/core';
 import { WorkService, type WorkItem } from '../../services/work.service';
+import { MarqueeComponent } from '../marquee/marquee';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -21,13 +22,38 @@ function toDisciplineTags(item: WorkItem): string[] {
 @Component({
   selector: 'app-featured-work',
   standalone: true,
+  imports: [MarqueeComponent],
   template: `
     <section class="featured-work" data-featured-work>
-      <!-- Sticky "Featured work" label — top-left -->
-      <div class="section-label-wrap">
-        <span class="section-bullet">•</span>
-        <span class="section-label">Featured work</span>
+      <!-- Big heading -->
+      <div class="work-heading-wrap" data-work-heading>
+        <h1 class="work-heading-display">W<span class="heading-alt">O</span>RK</h1>
       </div>
+
+      <div class="work-spacer-sm"></div>
+
+      <!-- Info overlay -->
+      <div class="work-overlay">
+        <div class="work-overlay-item">
+          <span class="work-overlay-text">(02)</span>
+        </div>
+        <div class="work-overlay-item work-overlay-right">
+          <span class="work-overlay-text">NOW FOR THE GOOD STUFF</span>
+        </div>
+      </div>
+
+      <div class="work-spacer-sm"></div>
+
+      <!-- Marquee -->
+      <app-marquee
+        text="Selected Projects"
+        [dark]="false"
+        [large]="false"
+        [showArrows]="true"
+        [duration]="18"
+      ></app-marquee>
+
+      <div class="work-spacer-lg"></div>
 
       <!-- Alternating zigzag cards -->
       <div class="cards-grid">
@@ -57,8 +83,11 @@ function toDisciplineTags(item: WorkItem): string[] {
                 <span class="card-client-label">{{ toClientCode(project) }}</span>
               </div>
 
-              <!-- Title below image -->
-              <h3 class="card-title">{{ project.title }}</h3>
+              <!-- Title + year -->
+              <div class="card-heading-row">
+                <h3 class="card-title">{{ project.title }}</h3>
+                <span class="card-year">{{ project.year }}</span>
+              </div>
 
               <!-- Tag pills -->
               <div class="card-tags">
@@ -67,11 +96,6 @@ function toDisciplineTags(item: WorkItem): string[] {
                 }
               </div>
             </a>
-
-            <!-- Decorative square between cards -->
-            @if (i < projects().length - 1) {
-              <div class="card-square" [class.card-square--right]="i % 2 !== 0"></div>
-            }
           </div>
         }
       </div>
@@ -79,68 +103,69 @@ function toDisciplineTags(item: WorkItem): string[] {
   `,
   styles: [
     `
-      :host {
-        display: block;
-      }
+      :host { display: block; }
 
-      /* ═══ SECTION ═══ */
       .featured-work {
         position: relative;
         padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 4vw, 4rem);
       }
 
-      /* ═══ STICKY LABEL — top-left (like Jack Elder "• Featured work") ═══ */
-      .section-label-wrap {
-        position: sticky;
-        top: 1.5rem;
-        z-index: 5;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: clamp(2rem, 4vw, 3rem);
-        pointer-events: none;
-      }
+      .work-spacer-sm { height: clamp(1rem, 2vw, 2rem); }
+      .work-spacer-lg { height: clamp(2rem, 4vw, 3rem); }
 
-      .section-bullet {
-        font-size: 10px;
+      /* ═══ BIG HEADING ═══ */
+      .work-heading-wrap { text-align: center; }
+      .work-heading-display {
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(5rem, 18vw, 16rem);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 0.9;
         color: #0a0a0a;
+        margin: 0;
+        text-transform: uppercase;
+      }
+      .heading-alt {
+        font-style: italic;
+        font-weight: 300;
       }
 
-      .section-label {
+      /* ═══ OVERLAY INFO ═══ */
+      .work-overlay {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .work-overlay-item { display: flex; }
+      .work-overlay-right { justify-content: flex-end; }
+      .work-overlay-text {
         font-family: 'area-normal', sans-serif;
         font-size: 11px;
         font-weight: 500;
-        letter-spacing: 0.08em;
-        color: #0a0a0a;
-        margin: 0;
+        letter-spacing: 0.06em;
+        color: rgba(10,10,10,0.5);
       }
 
-      /* ═══ CARDS GRID — alternating zigzag ═══ */
+      /* ═══ CARDS GRID ═══ */
       .cards-grid {
         display: flex;
         flex-direction: column;
         gap: clamp(3rem, 6vw, 5rem);
       }
 
-      /* ═══ CARD SLOT — controls left/right position ═══ */
       .card-slot {
         position: relative;
         width: 55%;
         align-self: flex-start;
       }
+      .card-slot--right { align-self: flex-end; }
 
-      .card-slot--right {
-        align-self: flex-end;
-      }
-
-      /* ═══ CARD LINK ═══ */
       .work-card {
         display: block;
         text-decoration: none;
         color: inherit;
       }
 
-      /* ═══ IMAGE — with overlapping client label ═══ */
       .card-image-wrap {
         position: relative;
         width: 100%;
@@ -148,7 +173,6 @@ function toDisciplineTags(item: WorkItem): string[] {
         overflow: hidden;
         background: #f0f0f0;
       }
-
       .card-image {
         width: 100%;
         height: 100%;
@@ -157,8 +181,6 @@ function toDisciplineTags(item: WorkItem): string[] {
         transform: scale(1);
         transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       }
-
-      /* Client label — overlapping bottom-left of image */
       .card-client-label {
         position: absolute;
         bottom: 0;
@@ -167,77 +189,59 @@ function toDisciplineTags(item: WorkItem): string[] {
         font-size: 10px;
         font-weight: 500;
         letter-spacing: 0.06em;
-        color: rgba(10, 10, 10, 0.6);
-        background: rgba(255, 255, 255, 0.85);
+        color: rgba(10,10,10,0.6);
+        background: rgba(255,255,255,0.85);
         padding: 3px 8px;
         line-height: 1;
       }
 
-      /* ═══ TITLE — large, below image ═══ */
+      /* ═══ TITLE + YEAR ═══ */
+      .card-heading-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 0.5rem;
+      }
       .card-title {
-        margin: 0.75rem 0 0;
+        margin: 0;
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+        font-size: clamp(1.3rem, 3vw, 2rem);
         font-weight: 600;
         letter-spacing: -0.03em;
         line-height: 1.15;
         color: #0a0a0a;
       }
+      .card-year {
+        font-family: 'area-normal', sans-serif;
+        font-size: 14px;
+        color: rgba(10,10,10,0.4);
+      }
 
-      /* ═══ TAGS — bordered pills ═══ */
       .card-tags {
         display: flex;
         flex-wrap: wrap;
         gap: 0.4rem;
-        margin-top: 0.6rem;
+        margin-top: 0.5rem;
       }
-
       .card-tag {
         font-family: 'area-normal', sans-serif;
         font-size: 9px;
         letter-spacing: 0.15em;
         text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.55);
+        color: rgba(10,10,10,0.55);
         font-weight: 500;
         padding: 4px 10px;
-        border: 1px solid rgba(10, 10, 10, 0.15);
+        border: 1px solid rgba(10,10,10,0.15);
       }
 
-      /* ═══ DECORATIVE SQUARE — between cards, centered ═══ */
-      .card-square {
-        position: absolute;
-        bottom: -2rem;
-        right: -3rem;
-        width: 12px;
-        height: 12px;
-        background: #0a0a0a;
-      }
-
-      .card-square--right {
-        right: auto;
-        left: -3rem;
-      }
-
-      /* ═══ Responsive ═══ */
       @media (max-width: 900px) {
-        .card-slot {
-          width: 70%;
-        }
-
-        .card-square {
-          display: none;
-        }
+        .card-slot { width: 70%; }
       }
-
       @media (max-width: 600px) {
-        .card-slot,
-        .card-slot--right {
+        .card-slot, .card-slot--right {
           width: 100%;
           align-self: stretch;
-        }
-
-        .card-image-wrap {
-          aspect-ratio: 4 / 3;
         }
       }
     `,

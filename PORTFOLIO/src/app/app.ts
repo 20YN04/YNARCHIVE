@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, inject, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 import { HomeComponent } from './pages/home/home';
 import { PreloaderComponent } from './components/preloader/preloader.component';
-import { FloatingCtaComponent } from './components/floating-cta/floating-cta.component';
 import { LenisService } from './core/lenis.service';
 import { LoadingProgressService } from './core/loading-progress.service';
 import { registerPortfolioEffects } from './core/gsap-effects';
@@ -13,7 +12,7 @@ registerPortfolioEffects();
 
 @Component({
   selector: 'app-root',
-  imports: [PreloaderComponent, FloatingCtaComponent],
+  imports: [PreloaderComponent],
   template: `
     <!-- Preloader — slide-clock letters on black overlay -->
     <app-preloader />
@@ -40,20 +39,46 @@ registerPortfolioEffects();
       <ng-template #pageContainer></ng-template>
     </div>
 
-    <!-- Floating CTA: label/link update by section (View Work → Next Project → Get in touch) -->
-    <app-floating-cta />
+    <!-- Footer — Daniel Bate style: marquee + large name + socials -->
+    <section id="footer" class="footer-section" data-footer-section>
+      <div class="footer-inner">
+        <div class="footer-stroke"></div>
 
-    <!-- Footer -->
-    <section class="footer-section" data-footer-section>
-      <div class="footer-inner" data-footer-inner>
-        <a href="#hero" data-scroll-link class="footer-brand">YNARCHIVE</a>
-        <div class="footer-links">
-          <a href="#hero" data-scroll-link class="footer-link">Home</a>
-          <a href="#work" data-scroll-link class="footer-link">Work</a>
-          <a href="#about" data-scroll-link class="footer-link">About</a>
-          <a href="#contact" data-scroll-link class="footer-link">Contact</a>
+        <!-- Marquee: Get in touch -->
+        <div class="footer-marquee-wrap" data-footer-marquee>
+          <div class="footer-marquee-scroll">
+            <div class="footer-marquee-track">
+              @for (i of marqueeItems; track i) {
+                <span class="footer-marquee-text">Get in touch</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 125 95" fill="none" class="footer-marquee-arrow">
+                  <path d="M73.67 89.78L116.2 47.25 73.67 4.72" stroke="currentColor" stroke-width="12.15" stroke-miterlimit="10"/>
+                  <path d="M116.2 47.25H.76" stroke="currentColor" stroke-width="12.15" stroke-miterlimit="10"/>
+                </svg>
+              }
+            </div>
+          </div>
         </div>
-        <span class="footer-year">&copy; 2026</span>
+
+        <!-- Social links -->
+        <div class="footer-social-row">
+          <div class="footer-anchor-item">
+            <span class="footer-anchor-num">(01)</span>
+            <a href="mailto:yentl.nerinckx@icloud.com" class="footer-anchor-link" data-scroll-link>Email</a>
+          </div>
+          <div class="footer-anchor-item">
+            <span class="footer-anchor-num">(02)</span>
+            <a href="https://www.linkedin.com/in/yentl-nerinckx" target="_blank" rel="noopener noreferrer" class="footer-anchor-link">LinkedIn</a>
+          </div>
+          <div class="footer-anchor-item">
+            <span class="footer-anchor-num">(03)</span>
+            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="footer-anchor-link">Instagram</a>
+          </div>
+        </div>
+
+        <!-- Massive brand name -->
+        <div class="footer-brand-wrap">
+          <span class="footer-brand-display">YE<span class="footer-alt">N</span>TL NERI<span class="footer-alt">N</span>CKX</span>
+        </div>
       </div>
     </section>
   `,
@@ -65,6 +90,9 @@ export class App implements AfterViewInit, OnDestroy {
   @ViewChild('pageContainer', { read: ViewContainerRef, static: true }) pageContainer!: ViewContainerRef;
   private lenis = inject(LenisService);
   private loadingProgress = inject(LoadingProgressService);
+
+  /** Used to duplicate the marquee text items in the footer */
+  readonly marqueeItems = Array.from({ length: 8 }, (_, i) => i);
 
   ngAfterViewInit(): void {
     if (typeof history !== 'undefined' && history.scrollRestoration) {
@@ -303,74 +331,31 @@ export class App implements AfterViewInit, OnDestroy {
 
     // It's always the home page now, so register handoff immediately
 
-    // ─── Scroll-driven color shifts ───
-    // Animate the body + navbar color as sections come into view
+    // ─── Page root is always dark — sections own their backgrounds ───
+    // No more animated bg shifts → eliminates white flash between dark sections
     const pageRoot = document.getElementById('page-root');
     const navBar = document.querySelector('[data-nav-bar]') as HTMLElement | null;
 
     if (pageRoot) {
-      // Hero is dark, so page root starts dark
-      gsap.set(pageRoot, { backgroundColor: '#0a0a0a' });
+      pageRoot.style.backgroundColor = '#0a0a0a';
+    }
 
-      // Work section enters → shift to white
-      const workSection = document.querySelector('[data-section-work]');
-      if (workSection) {
-        ScrollTrigger.create({
-          trigger: workSection,
-          start: 'top 80%',
-          end: 'top 20%',
-          scrub: 0.5,
-          onUpdate: (self) => {
-            const p = self.progress;
-            // Interpolate #0a0a0a → #ffffff
-            const v = Math.round(10 + (255 - 10) * p);
-            gsap.set(pageRoot, { backgroundColor: `rgb(${v},${v},${v})` });
-          },
-        });
-      }
-
-      // About section → shift to #fafafa (subtle)
-      const aboutSection = document.querySelector('[data-about-section]');
-      if (aboutSection) {
-        ScrollTrigger.create({
-          trigger: aboutSection,
-          start: 'top 80%',
-          end: 'top 30%',
-          scrub: 0.5,
-          onUpdate: (self) => {
-            const p = self.progress;
-            // #ffffff → #fafafa
-            const v = Math.round(255 - 5 * p);
-            gsap.set(pageRoot, { backgroundColor: `rgb(${v},${v},${v})` });
-          },
-        });
-      }
-
-      // Contact section → shift back to dark
-      const contactSection = document.querySelector('[data-contact-section]');
-      if (contactSection) {
-        ScrollTrigger.create({
-          trigger: contactSection,
-          start: 'top 80%',
-          end: 'top 20%',
-          scrub: 0.5,
-          onUpdate: (self) => {
-            const p = self.progress;
-            // #fafafa → #0a0a0a
-            const v = Math.round(250 - (250 - 10) * p);
-            gsap.set(pageRoot, { backgroundColor: `rgb(${v},${v},${v})` });
-
-            // Switch navbar to dark mode when entering contact
-            if (navBar) {
-              if (p > 0.5) {
-                navBar.classList.add('hero-nav-dark');
-              } else {
-                navBar.classList.remove('hero-nav-dark');
-              }
-            }
-          },
-        });
-      }
+    // Navbar dark mode: switch to light text when entering the about section (dark bg)
+    const aboutSection = document.querySelector('[data-about-section]');
+    if (aboutSection && navBar) {
+      ScrollTrigger.create({
+        trigger: aboutSection,
+        start: 'top 60%',
+        end: 'top 30%',
+        scrub: 0.3,
+        onUpdate: (self) => {
+          if (self.progress > 0.5) {
+            navBar.classList.add('hero-nav-dark');
+          } else {
+            navBar.classList.remove('hero-nav-dark');
+          }
+        },
+      });
     }
 
     // ─── Scroll animations are handled by each section component ───
@@ -381,17 +366,12 @@ export class App implements AfterViewInit, OnDestroy {
         scrollTrigger: {
           trigger: footerSection,
           start: 'top 95%',
-          end: 'top 50%',
+          end: 'top 60%',
           scrub: 0.5,
         },
         opacity: 0,
-        y: 30,
+        y: 20,
       });
-
-      // Footer sits in the dark contact zone — invert colors
-      const footerEl = footerSection as HTMLElement;
-      footerEl.style.color = '#fff';
-      footerEl.style.borderTopColor = 'rgba(255,255,255,0.1)';
     }
   }
 

@@ -11,50 +11,69 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
     <section id="hero" class="hero-section" data-hero-section>
       <app-navbar></app-navbar>
 
-      <!-- Content wrapper — vertically centers the hero content -->
       <div class="hero-content">
-        <!-- Label -->
-        <span class="hero-label" data-hero-label>Product &amp; Visual Designer</span>
-
-        <!-- Massive stacked headings -->
-        <div class="hero-headings">
-          <div class="heading-line-mask">
-            <h1 class="heading-line" data-hero-heading>Functionality</h1>
+        <!-- Top bar — info row -->
+        <div class="hero-bar" data-hero-bar>
+          <div class="hero-bar-item">
+            <span class="hero-bar-primary">Yentl Nerinckx</span>
+            <span class="hero-bar-secondary">DESIGNER &amp; DEVELOPER</span>
           </div>
-          <div class="heading-line-mask">
-            <span class="heading-amp" data-hero-heading>&amp;</span>
-          </div>
-          <div class="heading-line-mask">
-            <h1 class="heading-line" data-hero-heading>Aesthetics</h1>
+          <div class="hero-bar-item hero-bar-center">
+            <span class="hero-bar-primary">Working at</span>
+            <span class="hero-bar-secondary">YNARCHIVE Studio</span>
           </div>
         </div>
 
-        <!-- Bio paragraph -->
-        <p class="hero-bio" data-hero-bio>
-          I craft digital experiences where purposeful design meets clean engineering —
-          blending form and function to build products that feel as good as they work.
-        </p>
+        <!-- Massive initials -->
+        <div class="hero-initials">
+          <div class="heading-line-mask">
+            <h1 class="hero-initial" data-hero-heading>Y/</h1>
+          </div>
+          <div class="heading-line-mask heading-right">
+            <h1 class="hero-initial" data-hero-heading>/N</h1>
+          </div>
+        </div>
+
+        <!-- Anchor links row -->
+        <div class="hero-anchors" data-hero-anchors>
+          <div class="anchor-item">
+            <span class="anchor-num">(01)</span>
+            <a href="#work" data-scroll-link class="anchor-link" data-hero-anchor>
+              <span data-btn-chars>Work</span>
+            </a>
+          </div>
+          <div class="anchor-item">
+            <span class="anchor-num">(02)</span>
+            <a href="#about" data-scroll-link class="anchor-link" data-hero-anchor>
+              <span data-btn-chars>About</span>
+            </a>
+          </div>
+          <div class="anchor-item">
+            <span class="anchor-num">(03)</span>
+            <a href="#contact" data-scroll-link class="anchor-link" data-hero-anchor>
+              <span data-btn-chars>Contact</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="hero-about" data-hero-bio>
+          <p class="hero-bio-text">
+            I design &amp; develop impactful digital experiences through
+            UI/UX, branding, interactions, and clean engineering.
+          </p>
+        </div>
       </div>
-
-      <!-- Scroll indicator pinned to bottom -->
-      <span class="hero-scroll" data-hero-scroll>&#123; SCROLL &#125;</span>
-
-      <!-- Gradient fade at bottom of hero for smooth blend -->
-      <div class="hero-bottom-fade" data-hero-bottom-fade></div>
     </section>
   `,
   styles: [
     `
-      :host {
-        display: block;
-      }
+      :host { display: block; }
 
-      /* ═══ SECTION — full viewport, dark ═══ */
       .hero-section {
         position: relative;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         min-height: 100vh;
         width: 100%;
         background: #0a0a0a;
@@ -62,124 +81,143 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         overflow: hidden;
       }
 
-      /* ═══ CONTENT — centered block ═══ */
       .hero-content {
         position: relative;
         z-index: 1;
         display: flex;
         flex-direction: column;
-        gap: 2rem;
-        padding: 8rem clamp(2rem, 6vw, 6rem) 6rem;
-        max-width: 1400px;
+        justify-content: space-between;
+        flex: 1;
+        padding: clamp(1.5rem, 3vw, 2rem) clamp(2rem, 6vw, 5rem);
+        max-width: var(--content-max-width, 1920px);
         width: 100%;
+        margin: 0 auto;
       }
 
-      /* ═══ LABEL — small monospace uppercase ═══ */
-      .hero-label {
-        font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.5);
+      /* ── Top bar ── */
+      .hero-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-top: 5rem;
         opacity: 0;
       }
-
-      /* ═══ HEADINGS — massive stacked lines ═══ */
-      .hero-headings {
+      .hero-bar-item {
         display: flex;
         flex-direction: column;
-        gap: 0;
+        gap: 2px;
+      }
+      .hero-bar-center { align-items: center; }
+      .hero-bar-primary {
+        font-family: 'area-normal', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        color: #fff;
+      }
+      .hero-bar-secondary {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        font-weight: 400;
+        letter-spacing: 0.06em;
+        color: rgba(255,255,255,0.4);
+        text-transform: uppercase;
       }
 
+      /* ── Initials ── */
+      .hero-initials {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex: 1;
+        padding: 2rem 0;
+      }
       .heading-line-mask {
         overflow: hidden;
-        line-height: 1;
+        line-height: 0.85;
       }
-
-      .heading-line {
+      .heading-right { text-align: right; }
+      .hero-initial {
         margin: 0;
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(3.5rem, 12vw, 11rem);
+        font-size: clamp(6rem, 22vw, 20rem);
         font-weight: 800;
-        line-height: 1;
         letter-spacing: -0.04em;
-        text-transform: uppercase;
+        line-height: 0.85;
         color: #fff;
         will-change: transform, opacity;
-        transform: translateY(100%);
+        transform: translateY(110%);
         opacity: 0;
       }
 
-      .heading-amp {
-        display: block;
-        margin: 0;
+      /* ── Anchor links ── */
+      .hero-anchors {
+        display: flex;
+        gap: clamp(2rem, 5vw, 4rem);
+        padding-bottom: 1.5rem;
+        opacity: 0;
+      }
+      .anchor-item {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+      }
+      .anchor-num {
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(2.5rem, 8vw, 7rem);
-        font-weight: 300;
-        font-style: italic;
-        line-height: 1.1;
-        letter-spacing: -0.02em;
-        color: rgba(255, 255, 255, 0.4);
-        padding-left: 0.15em;
-        will-change: transform, opacity;
-        transform: translateY(100%);
-        opacity: 0;
+        font-size: 11px;
+        font-weight: 500;
+        color: rgba(255,255,255,0.35);
+      }
+      .anchor-link {
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(1rem, 2vw, 1.35rem);
+        font-weight: 500;
+        color: #fff;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+      }
+      .anchor-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: rgba(255,255,255,0.3);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.5s cubic-bezier(0.625, 0.05, 0, 1);
+      }
+      .anchor-link:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
       }
 
-      /* ═══ BIO — short paragraph ═══ */
-      .hero-bio {
-        max-width: 520px;
-        margin: 0;
+      /* ── Bio ── */
+      .hero-about {
+        max-width: 480px;
+        padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+        opacity: 0;
+      }
+      .hero-bio-text {
         font-family: 'area-normal', sans-serif;
         font-size: clamp(0.95rem, 1.4vw, 1.15rem);
         font-weight: 400;
         line-height: 1.65;
-        color: rgba(255, 255, 255, 0.55);
-        opacity: 0;
+        color: rgba(255,255,255,0.55);
+        margin: 0;
       }
 
-      /* ═══ SCROLL INDICATOR — bottom center ═══ */
-      .hero-scroll {
-        position: absolute;
-        bottom: 2.5rem;
-        left: 50%;
-        transform: translateX(-50%);
-        font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.3em;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.35);
-        opacity: 0;
-      }
-
-      /* ═══ BOTTOM FADE — gradient overlay at bottom of hero ═══ */
-      .hero-bottom-fade {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 200px;
-        background: linear-gradient(to bottom, transparent, #0a0a0a);
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      /* ═══ Responsive ═══ */
+      /* ── Responsive ── */
       @media (max-width: 768px) {
         .hero-content {
-          padding: 6rem clamp(1.5rem, 5vw, 2.5rem) 5rem;
-          gap: 1.5rem;
+          padding: 1.5rem clamp(1.5rem, 5vw, 2.5rem);
         }
-
-        .hero-bio {
-          max-width: 100%;
-        }
-
-        .hero-scroll {
-          bottom: 1.5rem;
-        }
+        .hero-bar { flex-direction: column; gap: 0.75rem; }
+        .hero-bar-center { align-items: flex-start; }
+        .hero-anchors { flex-wrap: wrap; gap: 1rem; }
+        .hero-about { max-width: 100%; }
       }
     `
   ]
@@ -187,99 +225,62 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly el = inject(ElementRef);
   private tl?: gsap.core.Timeline;
-  private scrollTween?: gsap.core.Tween;
   private scrollTriggers: ScrollTrigger[] = [];
   private rafId?: number;
 
   ngAfterViewInit(): void {
-    // Defer to next frame so the DOM is fully painted & measurable
     this.rafId = requestAnimationFrame(() => {
       const host = this.el.nativeElement as HTMLElement;
       const headings = host.querySelectorAll('[data-hero-heading]');
-      const label = host.querySelector('[data-hero-label]');
+      const bar = host.querySelector('[data-hero-bar]');
+      const anchors = host.querySelector('[data-hero-anchors]');
       const bio = host.querySelector('[data-hero-bio]');
-      const scroll = host.querySelector('[data-hero-scroll]');
+      const heroSection = host.querySelector('.hero-section') as HTMLElement;
+      const heroContent = host.querySelector('.hero-content') as HTMLElement;
 
-    // ── Main entrance timeline ──
-    this.tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-
-    // Label fades in first
-    this.tl.to(label, {
-      opacity: 1,
-      duration: 0.6,
-    });
-
-    // Each heading line slides up & fades in, staggered
-    this.tl.to(headings, {
-      y: 0,
-      opacity: 1,
-      duration: 1,
-      stagger: 0.15,
-    }, '-=0.3');
-
-    // Bio paragraph fades in after headings
-    this.tl.to(bio, {
-      opacity: 1,
-      duration: 0.8,
-      y: 0,
-    }, '-=0.3');
-
-    // Scroll indicator fades in
-    this.tl.to(scroll, {
-      opacity: 1,
-      duration: 0.5,
-    }, '-=0.4');
-
-    // ── Scroll indicator bounce (infinite yoyo) ──
-    this.scrollTween = gsap.to(scroll, {
-      y: 8,
-      duration: 1.2,
-      ease: 'power1.inOut',
-      yoyo: true,
-      repeat: -1,
-      delay: this.tl.duration(),
-    });
-
-    // ── Parallax: hero content drifts up + fades as you scroll ──
-    const heroContent = host.querySelector('.hero-content') as HTMLElement;
-    const heroSection = host.querySelector('.hero-section') as HTMLElement;
-
-    if (heroContent && heroSection) {
-      // Content parallax — slides up faster than scroll
-      const contentST = gsap.to(heroContent, {
-        y: -120,
-        opacity: 0,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: heroSection,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 0.3,
-        },
+      // ── Entrance timeline ──
+      this.tl = gsap.timeline({
+        defaults: { ease: 'power4.out' },
       });
-      if (contentST.scrollTrigger) this.scrollTriggers.push(contentST.scrollTrigger);
 
-      // Scroll indicator fades quickly
-      const scrollST = gsap.to(scroll, {
-        opacity: 0,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: heroSection,
-          start: '5% top',
-          end: '20% top',
-          scrub: true,
-        },
-      });
-      if (scrollST.scrollTrigger) this.scrollTriggers.push(scrollST.scrollTrigger);
-    }
+      // Bar fades in
+      this.tl.to(bar, { opacity: 1, duration: 0.8 }, 0.2);
 
-    }); // end requestAnimationFrame
+      // Initials slide up
+      this.tl.to(headings, {
+        y: 0,
+        opacity: 1,
+        duration: 1.2,
+        stagger: 0.15,
+      }, 0.3);
+
+      // Anchors fade in
+      this.tl.to(anchors, { opacity: 1, duration: 0.8 }, '-=0.5');
+
+      // Bio fades in
+      this.tl.to(bio, { opacity: 1, duration: 0.8 }, '-=0.4');
+
+      // ── Scroll parallax ──
+      if (heroContent && heroSection) {
+        const contentST = gsap.to(heroContent, {
+          y: -100,
+          opacity: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: heroSection,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.3,
+          },
+        });
+        if (contentST.scrollTrigger) this.scrollTriggers.push(contentST.scrollTrigger);
+      }
+    });
   }
 
   ngOnDestroy(): void {
     if (this.rafId) cancelAnimationFrame(this.rafId);
     this.tl?.kill();
-    this.scrollTween?.kill();
     this.scrollTriggers.forEach(st => st.kill());
   }
 }

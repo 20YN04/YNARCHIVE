@@ -14,213 +14,207 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   template: `
     <section id="about" class="about-section" data-about-section>
       <div class="about-inner">
-        <!-- Label -->
-        <div class="section-label-wrap" data-about-label>
-          <span class="section-bullet">&bull;</span>
-          <span class="section-label">About</span>
+
+        <!-- Section label -->
+        <div class="about-label" data-about-label>
+          <span class="label-num">(02)</span>
+          <span class="label-text">About</span>
         </div>
 
-        <!-- Intro -->
-        <div class="about-intro" data-about-intro>
-          <h2 class="about-title">
-            I'm Yentl — designer &amp; developer<br />
-            based in Tessenderlo, Belgium.
-          </h2>
-          <p class="about-lead">
-            I focus on clear, purposeful work: from concept and design to code
-            and delivery. I like to combine design thinking with solid
-            development, and I'm comfortable working in agile setups.
+        <!-- Large statement — scroll-driven word reveal -->
+        <div class="about-statement" data-about-statement>
+          <p class="statement-text" data-highlight-text>
+            Taking everyday ideas and transforming them into tangible
+            digital experiences through design &amp; development.
           </p>
-          <p class="about-body">
-            Whether it's a website, an app, or a visual identity, I aim for
-            quality and clarity.
-          </p>
-          <a
-            href="/YentlNerinckxCv.pdf"
-            download
-            class="about-cv-link"
-          >
-            Download CV
-          </a>
         </div>
 
-        <!-- Tech & Tools -->
-        <div class="about-stack" data-about-stack>
-          <h3 class="about-stack-heading">Tech &amp; tools</h3>
-          <div class="about-stack-grid">
-            <div class="about-stack-group">
-              <span class="about-stack-label">Frontend</span>
-              <div class="about-stack-tags">
-                <span>HTML</span><span>CSS</span><span>Tailwind</span>
-                <span>JavaScript</span><span>TypeScript</span>
-                <span>Angular</span><span>React</span>
+        <!-- Two-column detail -->
+        <div class="about-columns" data-about-columns>
+          <div class="about-col about-col-left">
+            <p class="about-body" data-highlight-text>
+              I design &amp; develop impactful digital experiences through
+              UI/UX, branding, interactions, and clean engineering.
+            </p>
+            <p class="about-body" data-highlight-text>
+              Starting my journey as a developer and designer, later
+              specialising in frontend engineering and creative development.
+              Building brand experiences through digital media, creating
+              interactive &amp; performant designs.
+            </p>
+            <p class="about-body" data-highlight-text>
+              In 2025, I started combining deep frontend expertise with design
+              thinking — taking projects from wireframe all the way to
+              deployment.
+            </p>
+          </div>
+
+          <div class="about-col about-col-right">
+            <!-- Tech & Tools -->
+            <div class="about-stack" data-about-stack>
+              <h3 class="stack-heading">Tech &amp; tools</h3>
+              <div class="stack-list">
+                <div class="stack-group">
+                  <span class="stack-label">Frontend</span>
+                  <span class="stack-items">HTML, CSS, Tailwind, JavaScript, TypeScript, Angular, React</span>
+                </div>
+                <div class="stack-group">
+                  <span class="stack-label">Backend &amp; data</span>
+                  <span class="stack-items">Python, PHP, Laravel, Node.js, SQL</span>
+                </div>
+                <div class="stack-group">
+                  <span class="stack-label">Design</span>
+                  <span class="stack-items">Figma, Adobe XD</span>
+                </div>
+                <div class="stack-group">
+                  <span class="stack-label">Process</span>
+                  <span class="stack-items">Agile, Scrum, Git</span>
+                </div>
               </div>
             </div>
-            <div class="about-stack-group">
-              <span class="about-stack-label">Backend &amp; data</span>
-              <div class="about-stack-tags">
-                <span>Python</span><span>PHP</span><span>Laravel</span>
-                <span>Node.js</span><span>SQL</span>
-              </div>
-            </div>
-            <div class="about-stack-group">
-              <span class="about-stack-label">Design</span>
-              <div class="about-stack-tags">
-                <span>Figma</span><span>Adobe XD</span>
-              </div>
-            </div>
-            <div class="about-stack-group">
-              <span class="about-stack-label">Process</span>
-              <div class="about-stack-tags">
-                <span>Agile</span><span>Scrum</span><span>Git</span>
-              </div>
-            </div>
+
+            <!-- CV link -->
+            <a href="/YentlNerinckxCv.pdf" download class="about-cv-link" data-about-cv>
+              Download CV &rarr;
+            </a>
           </div>
         </div>
+
       </div>
     </section>
   `,
   styles: [
     `
-      :host {
-        display: block;
-      }
+      :host { display: block; }
 
       .about-section {
         position: relative;
-        padding: clamp(6rem, 14vw, 10rem) clamp(1.5rem, 4vw, 4rem);
-        background: transparent;
+        padding: clamp(8rem, 16vw, 14rem) clamp(1.5rem, 4vw, 4rem);
+        background: #0a0a0a;
+        color: #fff;
       }
 
       .about-inner {
-        max-width: var(--content-max-width);
+        max-width: var(--content-max-width, 1400px);
         margin: 0 auto;
       }
 
       /* ── Label ── */
-      .section-label-wrap {
+      .about-label {
         display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
+        align-items: baseline;
+        gap: 0.75rem;
+        margin-bottom: clamp(3rem, 7vw, 6rem);
+        opacity: 0;
       }
-      .section-bullet {
-        font-size: 10px;
-        color: #0a0a0a;
+      .label-num {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        font-weight: 400;
+        color: rgba(255,255,255,0.3);
       }
-      .section-label {
+      .label-text {
         font-family: 'area-normal', sans-serif;
         font-size: 11px;
         font-weight: 500;
-        letter-spacing: 0.08em;
-        color: #0a0a0a;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.5);
       }
 
-      /* ── Intro ── */
-      .about-intro {
-        max-width: 56ch;
-        margin-bottom: clamp(3rem, 6vw, 5rem);
+      /* ── Large statement ── */
+      .about-statement {
+        margin-bottom: clamp(5rem, 10vw, 8rem);
       }
-      .about-title {
+      .statement-text {
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+        font-size: clamp(1.6rem, 4vw, 3rem);
         font-weight: 600;
-        letter-spacing: -0.02em;
-        line-height: 1.2;
-        margin: 0 0 1.25rem;
-        color: #0a0a0a;
+        line-height: 1.25;
+        letter-spacing: -0.025em;
+        color: #fff;
+        margin: 0;
+        max-width: 20ch;
       }
-      .about-lead {
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.05rem, 1.5vw, 1.2rem);
-        line-height: 1.55;
-        margin: 0 0 0.75rem;
-        color: #0a0a0a;
-        font-weight: 500;
+
+      /* ── Two-column layout ── */
+      .about-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(3rem, 6vw, 6rem);
       }
+
       .about-body {
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-        line-height: 1.65;
+        font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+        font-weight: 400;
+        line-height: 1.7;
+        color: rgba(255,255,255,0.6);
         margin: 0 0 1.5rem;
-        color: rgba(10, 10, 10, 0.75);
+        max-width: 45ch;
       }
+      .about-body:last-child { margin-bottom: 0; }
+
+      /* ── Stack ── */
+      .about-stack {
+        margin-bottom: 2.5rem;
+      }
+      .stack-heading {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.4);
+        margin: 0 0 1.5rem;
+      }
+      .stack-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      .stack-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+      .stack-label {
+        font-family: 'area-normal', sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.3);
+      }
+      .stack-items {
+        font-family: 'area-normal', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.6;
+        color: rgba(255,255,255,0.7);
+        letter-spacing: 0.01em;
+      }
+
+      /* ── CV link ── */
       .about-cv-link {
         display: inline-block;
         font-family: 'area-normal', sans-serif;
         font-size: 13px;
         font-weight: 600;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #0a0a0a;
+        color: #fff;
         text-decoration: none;
         padding-bottom: 4px;
-        border-bottom: 1px solid #0a0a0a;
+        border-bottom: 1px solid rgba(255,255,255,0.4);
         transition: opacity 0.25s ease;
       }
-      .about-cv-link:hover {
-        opacity: 0.7;
-      }
+      .about-cv-link:hover { opacity: 0.7; }
 
-      /* ── Tech stack ── */
-      .about-stack {
-        border-top: 1px solid rgba(10, 10, 10, 0.08);
-        padding-top: 2rem;
-      }
-      .about-stack-heading {
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-        font-weight: 600;
-        letter-spacing: -0.02em;
-        margin: 0 0 1.25rem;
-        color: #0a0a0a;
-      }
-      .about-stack-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-      }
-      .about-stack-group {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        gap: 0.5rem 1rem;
-      }
-      .about-stack-label {
-        font-family: 'area-normal', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: rgba(10, 10, 10, 0.45);
-        min-width: 7rem;
-      }
-      .about-stack-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem 0.75rem;
-      }
-      .about-stack-tags span {
-        font-family: 'area-normal', sans-serif;
-        font-size: 13px;
-        letter-spacing: 0.02em;
-        color: #0a0a0a;
-        padding: 0.25rem 0.5rem;
-        border-bottom: 1px solid rgba(10, 10, 10, 0.15);
-        transition: border-color 0.2s, color 0.2s;
-      }
-      .about-stack-tags span:hover {
-        border-color: rgba(10, 10, 10, 0.4);
-        color: rgba(10, 10, 10, 0.9);
-      }
-
+      /* ── Responsive ── */
       @media (max-width: 768px) {
-        .about-stack-group {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0.35rem;
-        }
-        .about-stack-label {
-          min-width: auto;
+        .about-columns {
+          grid-template-columns: 1fr;
+          gap: 3rem;
         }
       }
     `,
@@ -238,33 +232,76 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
 
   private setupAnimations(): void {
     const host = this.el.nativeElement as HTMLElement;
-    const label = host.querySelector('[data-about-label]');
-    const intro = host.querySelector('[data-about-intro]');
-    const stack = host.querySelector('[data-about-stack]');
 
-    const reveal = (
-      trigger: Element | null,
-      targets: Element | Element[] | null,
-      from: gsap.TweenVars
-    ) => {
-      if (!trigger || !targets) return;
-      const tween = gsap.from(targets, {
+    // ── Highlight text reveal — word-by-word fade on scroll ──
+    const highlightEls = host.querySelectorAll('[data-highlight-text]');
+    highlightEls.forEach((el) => this.initHighlightText(el as HTMLElement));
+
+    // ── General reveals ──
+    const reveal = (selector: string, from: gsap.TweenVars) => {
+      const target = host.querySelector(selector);
+      if (!target) return;
+      const tween = gsap.from(target, {
         ...from,
         scrollTrigger: {
-          trigger,
-          start: 'top 88%',
-          end: 'top 55%',
-          scrub: 0.6,
+          trigger: target,
+          start: 'top 90%',
+          end: 'top 60%',
+          scrub: 0.5,
         },
       });
       if (tween.scrollTrigger) this.scrollTriggers.push(tween.scrollTrigger);
     };
 
-    reveal(label, label, { y: 24, opacity: 0 });
-    reveal(intro, intro, { y: 40, opacity: 0 });
-    reveal(stack, stack, { y: 48, opacity: 0 });
+    reveal('[data-about-label]', { y: 16, opacity: 0 });
+    reveal('[data-about-columns]', { y: 40, opacity: 0 });
+    reveal('[data-about-stack]', { y: 30, opacity: 0 });
+    reveal('[data-about-cv]', { y: 16, opacity: 0 });
 
     ScrollTrigger.refresh();
+  }
+
+  private initHighlightText(el: HTMLElement): void {
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const textNodes: Text[] = [];
+    let node: Text | null;
+    while ((node = walker.nextNode() as Text | null)) {
+      textNodes.push(node);
+    }
+
+    textNodes.forEach((textNode) => {
+      const words = textNode.textContent?.split(/(\s+)/) || [];
+      const frag = document.createDocumentFragment();
+      words.forEach((word) => {
+        if (/^\s+$/.test(word)) {
+          frag.appendChild(document.createTextNode(word));
+        } else if (word) {
+          const span = document.createElement('span');
+          span.className = 'highlight-word';
+          span.textContent = word;
+          frag.appendChild(span);
+        }
+      });
+      textNode.parentNode?.replaceChild(frag, textNode);
+    });
+
+    const wordSpans = el.querySelectorAll('.highlight-word');
+    if (!wordSpans.length) return;
+
+    gsap.set(wordSpans, { opacity: 0.15 });
+
+    const tween = gsap.to(wordSpans, {
+      opacity: 1,
+      stagger: 0.05,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 85%',
+        end: 'bottom 55%',
+        scrub: true,
+      },
+    });
+    if (tween.scrollTrigger) this.scrollTriggers.push(tween.scrollTrigger);
   }
 
   ngOnDestroy(): void {

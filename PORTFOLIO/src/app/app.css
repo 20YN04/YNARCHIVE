@@ -120,70 +120,133 @@ html {
 }
 
 /* ═══════════════════════════════════════════
-   FOOTER — minimal, one row
+   FOOTER — Daniel Bate style: marquee + large name
    ═══════════════════════════════════════════ */
 .footer-section {
   position: relative;
-  background: transparent;
-  color: #0a0a0a;
-  padding: 2rem clamp(2rem, 6vw, 5rem);
-  border-top: 1px solid rgba(10, 10, 10, 0.08);
+  background: #0a0a0a;
+  color: #fff;
+  padding: clamp(2rem, 4vw, 3rem) clamp(2rem, 6vw, 5rem);
 }
 
 .footer-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
   max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
 }
 
-.footer-brand {
-  font-family: 'area-normal', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: inherit;
-  text-decoration: none;
+.footer-stroke {
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,0.12);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
 }
 
-.footer-links {
+/* ── Footer Marquee ── */
+.footer-marquee-wrap {
+  overflow: hidden;
+  padding: clamp(1rem, 3vw, 2rem) 0;
+  margin: 0 calc(-1 * clamp(2rem, 6vw, 5rem));
+}
+
+.footer-marquee-scroll {
+  display: flex;
+  width: fit-content;
+}
+
+.footer-marquee-track {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
+  animation: footerMarquee 25s linear infinite;
+  will-change: transform;
 }
 
-.footer-link {
+.footer-marquee-text {
   font-family: 'area-normal', sans-serif;
-  font-size: 13px;
-  color: inherit;
-  opacity: 0.6;
+  font-size: clamp(1.5rem, 4vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.footer-marquee-arrow {
+  width: clamp(24px, 3vw, 40px);
+  height: auto;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+@keyframes footerMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Social links row ── */
+.footer-social-row {
+  display: flex;
+  gap: clamp(2rem, 5vw, 4rem);
+  padding: clamp(1.5rem, 3vw, 2rem) 0;
+}
+
+.footer-anchor-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.footer-anchor-num {
+  font-family: 'area-normal', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.35);
+}
+
+.footer-anchor-link {
+  font-family: 'area-normal', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 500;
+  color: #fff;
   text-decoration: none;
-  transition: opacity 0.2s ease;
+  position: relative;
+  transition: opacity 0.3s;
 }
 
-.footer-link:hover {
-  opacity: 1;
+.footer-anchor-link:hover {
+  opacity: 0.6;
 }
 
-.footer-year {
+/* ── Massive brand name ── */
+.footer-brand-wrap {
+  padding: clamp(2rem, 6vw, 4rem) 0 clamp(1rem, 2vw, 1.5rem);
+}
+
+.footer-brand-display {
   font-family: 'area-normal', sans-serif;
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  color: inherit;
-  opacity: 0.45;
+  font-size: clamp(3rem, 10vw, 10rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  color: #fff;
+  text-transform: uppercase;
+  display: block;
+}
+
+.footer-alt {
+  font-style: italic;
+  font-weight: 300;
 }
 
 @media (max-width: 768px) {
   .footer-section {
     padding: 1.5rem clamp(1.5rem, 5vw, 2.5rem);
   }
-
-  .footer-inner {
+  .footer-social-row {
     flex-wrap: wrap;
-    row-gap: 0.75rem;
+    gap: 1rem;
+  }
+  .footer-marquee-wrap {
+    margin: 0 calc(-1 * clamp(1.5rem, 5vw, 2.5rem));
   }
 }
