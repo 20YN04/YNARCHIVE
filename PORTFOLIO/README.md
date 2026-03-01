@@ -2,6 +2,14 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.5.
 
+## Contact form (EmailJS)
+
+The contact form sends emails via [EmailJS](https://www.emailjs.com/) (no backend required).
+
+1. In [EmailJS](https://dashboard.emailjs.com/), create an **Email template** with variables `{{name}}`, `{{email}}`, `{{message}}`. Note the **Template ID** (e.g. `contact_form`).
+2. Add your **Public Key** in `src/environments/environment.ts` and `environment.development.ts` under `emailjs.publicKey` (Account → API Keys in EmailJS).
+3. The **Service ID** is already set to `service_dx2pzmk`. If your template uses a different ID, set `emailjs.templateId` in the same files.
+
 ## Development server
 
 To start a local development server, run:
