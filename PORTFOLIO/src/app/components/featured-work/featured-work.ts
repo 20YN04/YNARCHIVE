@@ -199,17 +199,27 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
   toDisciplineTags = toDisciplineTags;
 
   private triggers: ScrollTrigger[] = [];
+  private rafId?: number;
 
   /* ── ScrollTrigger batch: staggered reveal on scroll ── */
   ngAfterViewInit(): void {
+    // Defer setup — signal-driven @for may not have rendered cards yet
+    this.rafId = requestAnimationFrame(() => {
+      setTimeout(() => this.setupScrollAnimations(), 100);
+    });
+  }
+
+  private setupScrollAnimations(): void {
     const cards = this.el.nativeElement.querySelectorAll('[data-work-card]');
     if (!cards.length) return;
 
+    // Ensure initial state is set explicitly
+    gsap.set(cards, { opacity: 0, y: 60 });
+
     ScrollTrigger.batch(cards, {
       onEnter: (batch) => {
-        gsap.fromTo(
+        gsap.to(
           batch,
-          { opacity: 0, y: 60 },
           {
             opacity: 1,
             y: 0,
@@ -232,6 +242,9 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
       },
       start: 'top 85%',
     });
+
+    // Refresh so ScrollTrigger picks up positions correctly
+    ScrollTrigger.refresh();
 
     // Store triggers for cleanup
     this.triggers = ScrollTrigger.getAll().filter((t) =>
@@ -257,6 +270,7 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.rafId) cancelAnimationFrame(this.rafId);
     this.triggers.forEach((t) => t.kill());
   }
 }

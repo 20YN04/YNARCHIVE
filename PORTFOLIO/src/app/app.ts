@@ -110,9 +110,8 @@ export class App implements AfterViewInit, OnDestroy {
 
     const registerHomeHandoff = () => {
       const nav = document.querySelector('[data-nav-bar]') as HTMLElement | null;
-      const mega = document.querySelector('[data-hero-mega-title]') as HTMLElement | null;
-      const megaText = document.querySelector('[data-hero-mega-text]') as HTMLElement | null;
-      if (!nav || !mega || !megaText) return;
+      const heroSection = document.querySelector('[data-hero-section]') as HTMLElement | null;
+      if (!nav || !heroSection) return;
 
       const existingMain = ScrollTrigger.getById('home-nav-handoff');
       if (existingMain) existingMain.kill();
@@ -122,31 +121,22 @@ export class App implements AfterViewInit, OnDestroy {
       gsap.set(nav, { opacity: 0, y: -10 });
       nav.style.pointerEvents = 'none';
 
+      // Nav fades in as user scrolls past the hero section
       const handoffTrigger = ScrollTrigger.create({
         id: 'home-nav-handoff',
-        trigger: mega,
+        trigger: heroSection,
         start: 'top top',
-        end: '+=320',
+        end: '+=400',
         onUpdate: (self) => {
           const progress = self.progress;
-          const reveal = progress < 0.28 ? 0 : Math.min(1, (progress - 0.28) / 0.72);
-
-          gsap.set(megaText, {
-            opacity: 1 - progress,
-            yPercent: -22 * progress,
-            scale: 1 - 0.08 * progress,
-          });
-
-          gsap.set(mega, {
-            clipPath: `inset(0 0 ${progress * 100}% 0)`,
-          });
+          const reveal = progress < 0.2 ? 0 : Math.min(1, (progress - 0.2) / 0.8);
 
           gsap.set(nav, {
             opacity: reveal,
             y: -10 + reveal * 10,
           });
 
-          nav.style.pointerEvents = progress > 0.85 ? 'auto' : 'none';
+          nav.style.pointerEvents = progress > 0.7 ? 'auto' : 'none';
         },
       });
 
@@ -274,13 +264,6 @@ export class App implements AfterViewInit, OnDestroy {
     const gridLines = document.querySelectorAll('[data-grid-line]');
 
     const navBar = document.querySelector('[data-nav-bar]') as HTMLElement | null;
-    const megaTitle = document.querySelector('[data-hero-mega-title]') as HTMLElement;
-    const megaTitleText = document.querySelector('[data-hero-mega-text]') as HTMLElement;
-    const titleLines = document.querySelectorAll('[data-hero-title-line]');
-    const heroImage = document.querySelector('[data-hero-image]') as HTMLElement;
-    const heroImg = document.querySelector('[data-hero-img]') as HTMLElement;
-    const heroBottom = document.querySelector('[data-hero-bottom]') as HTMLElement;
-    const scrollHint = document.querySelector('[data-scroll-hint]') as HTMLElement;
 
     const footerSection = document.querySelector('[data-footer-section]');
 
@@ -352,15 +335,7 @@ export class App implements AfterViewInit, OnDestroy {
     // Grid lines — invisible, will draw in after bars shrink
     gsap.set(gridLines, { scaleY: 0, transformOrigin: 'top' });
 
-    // Hero elements — hidden
-    // Nav starts completely hidden (CSS handles initial opacity:0 + pointer-events:none)
-    // Mega title visible from the start (preloader covers it, then morphs into it)
-    if (megaTitleText) gsap.set(megaTitleText, { opacity: 0 });
-    gsap.set(titleLines, { y: '110%' });
-    if (heroImage) gsap.set(heroImage, { clipPath: 'inset(100% 0 0 0)' });
-    if (heroImg) gsap.set(heroImg, { scale: 1.1, y: '5%' });
-    if (heroBottom) gsap.set(heroBottom, { opacity: 0, y: 25 });
-    if (scrollHint) gsap.set(scrollHint, { opacity: 0 });
+    // Hero animations are handled by the HeroComponent itself
 
     // ══════════════════════════════════════════════
     // MASTER TIMELINE
@@ -412,22 +387,13 @@ export class App implements AfterViewInit, OnDestroy {
       stagger: { each: 0.04, from: 'end' },
     }, 2.0);
 
-    // Preloader compresses into the mega title black box
-    const megaHeight = megaTitle ? megaTitle.offsetHeight : 200;
+    // Preloader fades out after letter animation
     const compressStart = 2.4;
     tl.to(preloader, {
-      height: megaHeight,
-      top: 0,
-      borderRadius: 0,
-      duration: 1.2,
-      ease: 'power4.inOut',
-    }, compressStart);
-
-    tl.to(preloader, {
       opacity: 0,
-      duration: 0.3,
-      ease: 'power2.in',
-    }, compressStart + 1.0);
+      duration: 0.6,
+      ease: 'power2.inOut',
+    }, compressStart);
 
     // ─── ACT 2: THICK BARS → THIN LINES (2.6s → 3.8s) ───
     // Side bars shrink from 40px to 1px
@@ -459,53 +425,9 @@ export class App implements AfterViewInit, OnDestroy {
       stagger: { each: 0.06, from: 'center' },
     }, 3.0);
 
-    // ─── ACT 3: HERO REVEAL (3.2s → 5.0s) ───
-    // NOTE: Nav stays hidden — it only appears via ScrollTrigger when mega title scrolls out
-
-    // Mega title text fades in as preloader settles into position
-    if (megaTitleText) {
-      tl.to(megaTitleText, {
-        opacity: 1,
-        duration: 0.8,
-        ease: 'power2.out',
-      }, 3.2);
-    }
-
-    // Hero title line reveal (single line like Telha Clarke)
-    tl.to(titleLines, {
-      y: '0%',
-      duration: 1.0,
-      ease: 'power4.out',
-    }, 3.6);
-
-    // Hero image parallax mask reveal
-    if (heroImage) {
-      tl.to(heroImage, {
-        clipPath: 'inset(0% 0 0 0)',
-        duration: 1.4,
-        ease: 'power4.inOut',
-      }, 3.8);
-    }
-
-    // Image scale settles and counter-translates
-    if (heroImg) {
-      tl.to(heroImg, {
-        scale: 1.0, y: '0%', duration: 2.0, ease: 'power2.out',
-      }, 4.0);
-    }
-
-    // Bottom info
-    if (heroBottom) {
-      tl.to(heroBottom, {
-        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
-      }, 4.4);
-    }
-
-    if (scrollHint) {
-      tl.to(scrollHint, {
-        opacity: 1, duration: 0.6, ease: 'power2.out',
-      }, 4.8);
-    }
+    // ─── ACT 3: HERO ───
+    // Hero reveal is handled by HeroComponent's own GSAP timeline.
+    // The preloader fades out above, revealing the hero underneath.
 
     // ══════════════════════════════════════════════
     // SCROLL-TRIGGERED INTERACTIONS
@@ -536,20 +458,6 @@ export class App implements AfterViewInit, OnDestroy {
       registerHomeHandoff();
     }
 
-    // Hero image parallax — counter-movement for depth
-    if (heroImg && heroImage) {
-      gsap.to(heroImg, {
-        scrollTrigger: {
-          trigger: heroImage,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: true,
-        },
-        y: -80,
-        ease: 'none',
-      });
-    }
-
     // Project images — parallax on scroll
     const projectImages = document.querySelectorAll('[data-project-image]');
     projectImages.forEach((img) => {
@@ -565,36 +473,7 @@ export class App implements AfterViewInit, OnDestroy {
       });
     });
 
-    // ─── Jack Elder style: section label + heading reveal (featured work) ───
-    const featuredLabel = document.querySelector('[data-featured-work] [data-scroll-label]');
-    const featuredHeading = document.querySelector('[data-featured-work] [data-scroll-heading]');
-    const rotorSection = document.querySelector('[data-rotor-section]');
-    if (rotorSection) {
-      gsap.from(rotorSection, {
-        scrollTrigger: {
-          trigger: rotorSection,
-          start: 'top 92%',
-          end: 'top 50%',
-          scrub: 0.8,
-        },
-        opacity: 0,
-        y: 50,
-      });
-      if (featuredLabel) {
-        gsap.from(featuredLabel, {
-          scrollTrigger: { trigger: rotorSection, start: 'top 90%', end: 'top 58%', scrub: 0.6 },
-          y: 28,
-          opacity: 0,
-        });
-      }
-      if (featuredHeading) {
-        gsap.from(featuredHeading, {
-          scrollTrigger: { trigger: rotorSection, start: 'top 85%', end: 'top 52%', scrub: 0.6 },
-          y: 32,
-          opacity: 0,
-        });
-      }
-    }
+    // ─── Featured work + project cards: handled by FeaturedWorkComponent ───
 
     // ─── About section: label + staggered text line reveals ───
     const aboutSection = document.querySelector('[data-about-section]');
@@ -632,20 +511,7 @@ export class App implements AfterViewInit, OnDestroy {
       });
     }
 
-    // Project cards — staggered slide-up + fade (Jack Elder style)
-    const projectCards = document.querySelectorAll('[data-project-card]');
-    projectCards.forEach((card, i) => {
-      gsap.from(card, {
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 92%',
-          end: 'top 58%',
-          scrub: 0.6,
-        },
-        opacity: 0,
-        y: 56,
-      });
-    });
+    // Project cards scroll animations: handled by FeaturedWorkComponent
 
     // View All link — subtle reveal
     const viewAllWrap = document.querySelector('.home-view-all');

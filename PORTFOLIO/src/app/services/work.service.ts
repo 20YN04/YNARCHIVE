@@ -21,7 +21,7 @@ const DEFAULT_WORK_ITEMS: WorkItem[] = [
     year: 2026,
     category: 'E-commerce',
     url: 'https://example.com',
-    imageUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=1800&q=80',
     tags: ['Web', 'UI', 'Shop']
   },
   {
@@ -30,7 +30,7 @@ const DEFAULT_WORK_ITEMS: WorkItem[] = [
     year: 2025,
     category: 'SaaS',
     url: 'https://example.com',
-    imageUrl: 'https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=1800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=1800&q=80',
     tags: ['Dashboard', 'SaaS', 'Product']
   },
   {
@@ -39,7 +39,7 @@ const DEFAULT_WORK_ITEMS: WorkItem[] = [
     year: 2025,
     category: 'Landing Pages',
     url: 'https://example.com',
-    imageUrl: 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1800&q=80',
     tags: ['Launch', 'Motion', 'Brand']
   },
   {
@@ -48,7 +48,7 @@ const DEFAULT_WORK_ITEMS: WorkItem[] = [
     year: 2024,
     category: 'E-commerce',
     url: 'https://example.com',
-    imageUrl: 'https://images.unsplash.com/photo-1522199755839-a2bacb67c546?auto=format&fit=crop&w=1800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1555421689-d68471e189f2?auto=format&fit=crop&w=1800&q=80',
     tags: ['Checkout', 'CMS', 'Shop']
   },
   {
@@ -57,7 +57,7 @@ const DEFAULT_WORK_ITEMS: WorkItem[] = [
     year: 2024,
     category: 'SaaS',
     url: 'https://example.com',
-    imageUrl: 'https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=1800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1800&q=80',
     tags: ['B2B', 'Data', 'UX']
   },
   {
@@ -66,7 +66,7 @@ const DEFAULT_WORK_ITEMS: WorkItem[] = [
     year: 2023,
     category: 'Landing Pages',
     url: 'https://example.com',
-    imageUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1634942537034-2531766767d1?auto=format&fit=crop&w=1800&q=80',
     tags: ['Landing', 'Design', 'Performance']
   }
 ];
@@ -107,6 +107,7 @@ export class WorkService {
       .get<ApiProject[]>(`${environment.apiUrl}/projects`)
       .subscribe({
         next: (list) => {
+          if (!list || list.length === 0) return; // Keep defaults if API returns empty
           const items = list.map((p, i) => this.mapToWorkItem(p, i));
           this.workItems.set(items);
         },

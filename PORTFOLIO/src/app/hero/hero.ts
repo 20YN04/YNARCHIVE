@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnDestroy } from '@angular/core';
 import { NavBarComponent } from '../components/navbar/navbar';
 import { gsap } from 'gsap';
 
@@ -169,14 +169,19 @@ import { gsap } from 'gsap';
   ]
 })
 export class HeroComponent implements AfterViewInit, OnDestroy {
+  private readonly el = inject(ElementRef);
   private tl?: gsap.core.Timeline;
   private scrollTween?: gsap.core.Tween;
+  private rafId?: number;
 
   ngAfterViewInit(): void {
-    const headings = document.querySelectorAll('[data-hero-heading]');
-    const label = document.querySelector('[data-hero-label]');
-    const bio = document.querySelector('[data-hero-bio]');
-    const scroll = document.querySelector('[data-hero-scroll]');
+    // Defer to next frame so the DOM is fully painted & measurable
+    this.rafId = requestAnimationFrame(() => {
+      const host = this.el.nativeElement as HTMLElement;
+      const headings = host.querySelectorAll('[data-hero-heading]');
+      const label = host.querySelector('[data-hero-label]');
+      const bio = host.querySelector('[data-hero-bio]');
+      const scroll = host.querySelector('[data-hero-scroll]');
 
     // ── Main entrance timeline ──
     this.tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
@@ -217,9 +222,11 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       repeat: -1,
       delay: this.tl.duration(),
     });
+    }); // end requestAnimationFrame
   }
 
   ngOnDestroy(): void {
+    if (this.rafId) cancelAnimationFrame(this.rafId);
     this.tl?.kill();
     this.scrollTween?.kill();
   }
