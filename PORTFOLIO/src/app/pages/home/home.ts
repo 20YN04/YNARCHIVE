@@ -38,7 +38,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
     <!-- ═══ BOUNDARY TEXT: spans hero→work ═══ -->
     <div class="boundary-text boundary-text--work" data-boundary-work>
-      <span class="boundary-word">W<span class="boundary-alt">O</span>RK</span>
+      <span class="boundary-word boundary-word--light">W<span class="boundary-alt">O</span>RK</span>
     </div>
 
     <!-- ═══ WORK — clips open over hero, sticky so about clips over it ═══ -->
@@ -49,10 +49,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
     </div>
 
     <!-- ═══ MARQUEE DIVIDER: work → about ═══ -->
-    <div class="marquee-divider marquee-divider--light" data-divider-2>
+    <div class="marquee-divider marquee-divider--dark" data-divider-2>
       <app-marquee
         text="A bit about me"
-        [dark]="false"
+        [dark]="true"
         [large]="true"
         [showArrows]="true"
         [bordered]="true"
@@ -113,8 +113,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
       .section-work {
         position: relative;
-        background: #fff;
-        color: #0a0a0a;
+        background: #0a0a0a;
+        color: #fff;
       }
 
       /* ═══ MARQUEE DIVIDERS ═══ */

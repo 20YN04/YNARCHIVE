@@ -30,17 +30,20 @@ import { ContactService } from '../../services/contact.service';
           <span class="section-label">Contact</span>
         </div>
 
-        <!-- Headline -->
+        <!-- Headline with word-by-word reveal -->
         <div class="contact-headline-wrap" data-contact-headline>
-          <h2 class="contact-headline">
+          <h2 class="contact-headline" data-split-headline>
             Based in Belgium but available for your projects in
             <br class="lg-break" />
             <span class="contact-headline-rotating">
               <span #flipText class="contact-flip-text">the rest of the world</span>
             </span>
           </h2>
-          <p class="contact-subhead">Talk to us about your project</p>
+          <p class="contact-subhead" data-contact-subhead>Talk to us about your project</p>
         </div>
+
+        <!-- Draw-line divider -->
+        <div class="draw-line" data-draw-line></div>
 
         <!-- Grid: form + info -->
         <div class="contact-grid" data-contact-grid>
@@ -50,7 +53,7 @@ import { ContactService } from '../../services/contact.service';
               (ngSubmit)="onSubmit()"
               class="contact-form"
             >
-              <div class="contact-field">
+              <div class="contact-field" data-contact-field>
                 <label class="sr-only">Name</label>
                 <input
                   type="text"
@@ -58,8 +61,9 @@ import { ContactService } from '../../services/contact.service';
                   placeholder="Name"
                   class="contact-input"
                 />
+                <span class="input-line" data-input-line></span>
               </div>
-              <div class="contact-field">
+              <div class="contact-field" data-contact-field>
                 <label class="sr-only">Email</label>
                 <input
                   type="email"
@@ -67,8 +71,9 @@ import { ContactService } from '../../services/contact.service';
                   placeholder="Email"
                   class="contact-input"
                 />
+                <span class="input-line" data-input-line></span>
               </div>
-              <div class="contact-field">
+              <div class="contact-field" data-contact-field>
                 <label class="sr-only">Message</label>
                 <textarea
                   formControlName="message"
@@ -76,13 +81,20 @@ import { ContactService } from '../../services/contact.service';
                   rows="4"
                   class="contact-input contact-textarea"
                 ></textarea>
+                <span class="input-line" data-input-line></span>
               </div>
               <button
                 type="submit"
                 [disabled]="contactForm.invalid || submitting"
                 class="contact-submit"
+                data-magnetic-btn
+                (mouseenter)="onBtnEnter($event)"
+                (mousemove)="onBtnMove($event)"
+                (mouseleave)="onBtnLeave($event)"
               >
-                {{ submitting ? 'Sending…' : 'Send Message' }}
+                <span class="submit-inner" data-submit-inner>
+                  {{ submitting ? 'Sending...' : 'Send Message' }}
+                </span>
               </button>
               @if (submitSuccess) {
                 <p class="contact-message contact-message-success">
@@ -98,26 +110,34 @@ import { ContactService } from '../../services/contact.service';
           </div>
 
           <div class="contact-right">
-            <div class="contact-block">
-              <span class="contact-label-letter">N</span>
+            <div class="contact-block" data-contact-block>
+              <span class="contact-label-letter" data-letter-clip>
+                <span class="letter-inner">N</span>
+              </span>
               <p class="contact-value">Tessenderlo<br />Belgium</p>
             </div>
-            <div class="contact-block">
-              <span class="contact-label-letter">P</span>
+            <div class="contact-block" data-contact-block>
+              <span class="contact-label-letter" data-letter-clip>
+                <span class="letter-inner">P</span>
+              </span>
               <a href="tel:+32475451358" class="contact-value contact-link"
                 >+32 475 45 13 58</a
               >
             </div>
-            <div class="contact-block">
-              <span class="contact-label-letter">C</span>
+            <div class="contact-block" data-contact-block>
+              <span class="contact-label-letter" data-letter-clip>
+                <span class="letter-inner">C</span>
+              </span>
               <a
                 href="mailto:yentl.nerinckx@icloud.com"
                 class="contact-value contact-link"
                 >yentl.nerinckx&#64;icloud.com</a
               >
             </div>
-            <div class="contact-block contact-social-wrap">
-              <span class="contact-label-letter">S</span>
+            <div class="contact-block contact-social-wrap" data-contact-block>
+              <span class="contact-label-letter" data-letter-clip>
+                <span class="letter-inner">S</span>
+              </span>
               <span class="contact-social">
                 <a
                   href="#"
@@ -164,6 +184,8 @@ import { ContactService } from '../../services/contact.service';
         align-items: center;
         gap: 0.5rem;
         margin-bottom: 2rem;
+        opacity: 0;
+        transform: translateY(20px);
       }
       .section-bullet {
         font-size: 10px;
@@ -187,6 +209,19 @@ import { ContactService } from '../../services/contact.service';
         margin: 0 0 0.75rem;
         color: #fff;
       }
+
+      /* Words start hidden for split reveal */
+      .headline-word {
+        display: inline-block;
+        overflow: hidden;
+        vertical-align: bottom;
+      }
+      .headline-word-inner {
+        display: inline-block;
+        transform: translateY(110%);
+        will-change: transform;
+      }
+
       .lg-break {
         display: none;
       }
@@ -209,6 +244,19 @@ import { ContactService } from '../../services/contact.service';
         font-size: 1rem;
         color: rgba(255, 255, 255, 0.5);
         margin: 0 0 clamp(2rem, 4vw, 3.5rem);
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      /* ── Draw line ── */
+      .draw-line {
+        width: 100%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.15);
+        margin-bottom: clamp(2rem, 4vw, 3.5rem);
+        transform: scaleX(0);
+        transform-origin: left center;
+        will-change: transform;
       }
 
       /* ── Grid ── */
@@ -227,6 +275,8 @@ import { ContactService } from '../../services/contact.service';
       }
       .contact-field {
         position: relative;
+        opacity: 0;
+        transform: translateY(30px);
       }
       .sr-only {
         position: absolute;
@@ -242,43 +292,77 @@ import { ContactService } from '../../services/contact.service';
         width: 100%;
         background: transparent;
         border: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
         padding: 0.75rem 0;
         font-family: 'area-normal', sans-serif;
         font-size: 1rem;
         color: #fff;
         outline: none;
-        transition: border-color 0.2s;
+        transition: border-color 0.3s;
       }
       .contact-input::placeholder {
-        color: rgba(255, 255, 255, 0.35);
+        color: rgba(255, 255, 255, 0.3);
+        transition: color 0.3s;
+      }
+      .contact-input:focus::placeholder {
+        color: rgba(255, 255, 255, 0.1);
       }
       .contact-input:focus {
-        border-color: rgba(255, 255, 255, 0.7);
+        border-color: transparent;
       }
+
+      /* ── Animated focus line (draws from center outward) ── */
+      .input-line {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: #fff;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        pointer-events: none;
+      }
+      .contact-input:focus ~ .input-line {
+        transform: scaleX(1);
+      }
+
       .contact-textarea {
         resize: vertical;
         min-height: 100px;
       }
+
+      /* ── Magnetic submit button ── */
       .contact-submit {
+        position: relative;
         background: transparent;
-        border: none;
-        padding: 0;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 1rem 2.5rem;
         font-family: 'area-normal', sans-serif;
-        font-size: 1rem;
-        text-decoration: underline;
-        text-underline-offset: 6px;
+        font-size: 0.95rem;
+        letter-spacing: 0.04em;
         cursor: pointer;
         color: #fff;
-        opacity: 0.8;
-        transition: opacity 0.2s;
-        margin-top: 0.5rem;
+        border-radius: 40px;
+        margin-top: 0.75rem;
+        overflow: hidden;
+        will-change: transform;
+        transition: border-color 0.4s, background-color 0.4s;
+        align-self: flex-start;
+      }
+      .submit-inner {
+        display: inline-block;
+        position: relative;
+        z-index: 1;
+        will-change: transform;
       }
       .contact-submit:hover:not(:disabled) {
-        opacity: 1;
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.05);
       }
       .contact-submit:disabled {
-        opacity: 0.35;
+        opacity: 0.3;
         cursor: not-allowed;
       }
       .contact-message {
@@ -298,6 +382,8 @@ import { ContactService } from '../../services/contact.service';
         grid-template-columns: 1.5rem 1fr;
         gap: 0.5rem 1rem;
         margin-bottom: 1.5rem;
+        opacity: 0;
+        transform: translateX(30px);
       }
       .contact-label-letter {
         font-family: 'area-normal', sans-serif;
@@ -305,6 +391,13 @@ import { ContactService } from '../../services/contact.service';
         letter-spacing: 0.15em;
         text-transform: uppercase;
         color: rgba(255, 255, 255, 0.4);
+        overflow: hidden;
+        display: inline-block;
+      }
+      .letter-inner {
+        display: inline-block;
+        transform: translateY(110%);
+        will-change: transform;
       }
       .contact-value {
         font-family: 'area-normal', sans-serif;
@@ -393,37 +486,237 @@ export class ContactSectionComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  // ═══════════════════════════════════════════
+  // SCROLL ANIMATIONS
+  // ═══════════════════════════════════════════
   private setupAnimations(): void {
     const host = this.el.nativeElement as HTMLElement;
-    const label = host.querySelector('[data-contact-label]');
-    const headline = host.querySelector('[data-contact-headline]');
-    const grid = host.querySelector('[data-contact-grid]');
 
-    const reveal = (
-      trigger: Element | null,
-      targets: Element | Element[] | null,
-      from: gsap.TweenVars
-    ) => {
-      if (!trigger || !targets) return;
-      const tween = gsap.from(targets, {
-        ...from,
+    // ─── 1. Label reveal ───
+    const label = host.querySelector('[data-contact-label]') as HTMLElement;
+    if (label) {
+      const t = gsap.to(label, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: 'power3.out',
         scrollTrigger: {
-          trigger,
-          start: 'top 88%',
-          end: 'top 55%',
-          scrub: 0.6,
+          trigger: label,
+          start: 'top 90%',
+          toggleActions: 'play none none none',
         },
       });
-      if (tween.scrollTrigger) this.scrollTriggers.push(tween.scrollTrigger);
-    };
+      if (t.scrollTrigger) this.scrollTriggers.push(t.scrollTrigger);
+    }
 
-    reveal(label, label, { y: 24, opacity: 0 });
-    reveal(headline, headline, { y: 40, opacity: 0 });
-    reveal(grid, grid, { y: 50, opacity: 0 });
+    // ─── 2. Split-text headline: word-by-word slide-up reveal ───
+    this.setupSplitHeadline(host);
+
+    // ─── 3. Subhead fade-in ───
+    const subhead = host.querySelector('[data-contact-subhead]') as HTMLElement;
+    if (subhead) {
+      const t = gsap.to(subhead, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: subhead,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+        },
+      });
+      if (t.scrollTrigger) this.scrollTriggers.push(t.scrollTrigger);
+    }
+
+    // ─── 4. Draw-line divider ───
+    const drawLine = host.querySelector('[data-draw-line]') as HTMLElement;
+    if (drawLine) {
+      const t = gsap.to(drawLine, {
+        scaleX: 1,
+        duration: 1.2,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: drawLine,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+      });
+      if (t.scrollTrigger) this.scrollTriggers.push(t.scrollTrigger);
+    }
+
+    // ─── 5. Form fields: staggered slide-up ───
+    const fields = host.querySelectorAll('[data-contact-field]');
+    fields.forEach((field, i) => {
+      const t = gsap.to(field, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        delay: i * 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: field,
+          start: 'top 92%',
+          toggleActions: 'play none none none',
+        },
+      });
+      if (t.scrollTrigger) this.scrollTriggers.push(t.scrollTrigger);
+    });
+
+    // ─── 6. Submit button reveal ───
+    const submitBtn = host.querySelector('[data-magnetic-btn]') as HTMLElement;
+    if (submitBtn) {
+      gsap.set(submitBtn, { opacity: 0, y: 20 });
+      const t = gsap.to(submitBtn, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        delay: 0.4,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: submitBtn,
+          start: 'top 92%',
+          toggleActions: 'play none none none',
+        },
+      });
+      if (t.scrollTrigger) this.scrollTriggers.push(t.scrollTrigger);
+    }
+
+    // ─── 7. Info blocks: staggered slide-in from right ───
+    const blocks = host.querySelectorAll('[data-contact-block]');
+    blocks.forEach((block, i) => {
+      const t = gsap.to(block, {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        delay: i * 0.15,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: block,
+          start: 'top 92%',
+          toggleActions: 'play none none none',
+        },
+      });
+      if (t.scrollTrigger) this.scrollTriggers.push(t.scrollTrigger);
+    });
+
+    // ─── 8. Label letters clip-reveal (N, P, C, S slide up) ───
+    const letterInners = host.querySelectorAll('[data-letter-clip] .letter-inner');
+    letterInners.forEach((letter, i) => {
+      const clip = letter.parentElement!;
+      const t = gsap.to(letter, {
+        y: 0,
+        duration: 0.6,
+        delay: 0.3 + i * 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: clip,
+          start: 'top 92%',
+          toggleActions: 'play none none none',
+        },
+      });
+      if (t.scrollTrigger) this.scrollTriggers.push(t.scrollTrigger);
+    });
 
     ScrollTrigger.refresh();
   }
 
+  // ─── SPLIT HEADLINE INTO WORDS, REVEAL ONE BY ONE ───
+  private setupSplitHeadline(host: HTMLElement): void {
+    const headline = host.querySelector('[data-split-headline]') as HTMLElement;
+    if (!headline) return;
+
+    // Only split text nodes (leave the rotating span intact)
+    const walker = document.createTreeWalker(headline, NodeFilter.SHOW_TEXT, null);
+    const textNodes: Text[] = [];
+    let node: Node | null;
+    while ((node = walker.nextNode())) {
+      if (node.parentElement?.closest('.contact-headline-rotating')) continue;
+      if (node.textContent?.trim()) textNodes.push(node as Text);
+    }
+
+    const wordSpans: HTMLElement[] = [];
+
+    textNodes.forEach((textNode) => {
+      const parent = textNode.parentNode!;
+      const words = textNode.textContent!.split(/(\s+)/);
+      const frag = document.createDocumentFragment();
+
+      words.forEach((word) => {
+        if (!word.trim()) {
+          frag.appendChild(document.createTextNode(word));
+          return;
+        }
+        const outer = document.createElement('span');
+        outer.className = 'headline-word';
+        const inner = document.createElement('span');
+        inner.className = 'headline-word-inner';
+        inner.textContent = word;
+        outer.appendChild(inner);
+        frag.appendChild(outer);
+        wordSpans.push(inner);
+      });
+
+      parent.replaceChild(frag, textNode);
+    });
+
+    // Staggered reveal
+    if (wordSpans.length) {
+      const t = gsap.to(wordSpans, {
+        y: 0,
+        stagger: 0.04,
+        duration: 0.7,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: headline,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+      });
+      if (t.scrollTrigger) this.scrollTriggers.push(t.scrollTrigger);
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  // MAGNETIC BUTTON
+  // ═══════════════════════════════════════════
+  onBtnEnter(_event: MouseEvent): void {}
+
+  onBtnMove(event: MouseEvent): void {
+    const btn = (event.currentTarget as HTMLElement);
+    const inner = btn.querySelector('[data-submit-inner]') as HTMLElement;
+    if (!inner || btn.hasAttribute('disabled')) return;
+
+    const rect = btn.getBoundingClientRect();
+    const x = event.clientX - rect.left - rect.width / 2;
+    const y = event.clientY - rect.top - rect.height / 2;
+
+    gsap.to(btn, {
+      x: x * 0.15,
+      y: y * 0.15,
+      duration: 0.4,
+      ease: 'power2.out',
+    });
+    gsap.to(inner, {
+      x: x * 0.08,
+      y: y * 0.08,
+      duration: 0.4,
+      ease: 'power2.out',
+    });
+  }
+
+  onBtnLeave(event: MouseEvent): void {
+    const btn = event.currentTarget as HTMLElement;
+    const inner = btn.querySelector('[data-submit-inner]') as HTMLElement;
+    gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
+    if (inner) {
+      gsap.to(inner, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  // FLIP TEXT ROTATION
+  // ═══════════════════════════════════════════
   private startTextAnimation(): void {
     let currentIndex = 0;
     const el = this.flipText?.nativeElement;

@@ -11,57 +11,66 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
     <section id="hero" class="hero-section" data-hero-section>
       <app-navbar></app-navbar>
 
-      <div class="hero-content">
-        <!-- Top bar — info row -->
-        <div class="hero-bar" data-hero-bar>
-          <div class="hero-bar-item">
-            <span class="hero-bar-primary">Yentl Nerinckx</span>
-            <span class="hero-bar-secondary">DESIGNER &amp; DEVELOPER</span>
+      <div class="hero-content" data-hero-content>
+        <!-- Top info row -->
+        <div class="hero-top" data-hero-top>
+          <div class="hero-top-group">
+            <span class="hero-top-label">Yentl Nerinckx</span>
+            <span class="hero-top-sub">Designer &amp; Developer</span>
           </div>
-          <div class="hero-bar-item hero-bar-center">
-            <span class="hero-bar-primary">Working at</span>
-            <span class="hero-bar-secondary">YNARCHIVE Studio</span>
-          </div>
-        </div>
-
-        <!-- Massive initials -->
-        <div class="hero-initials">
-          <div class="heading-line-mask">
-            <h1 class="hero-initial" data-hero-heading>Y/</h1>
-          </div>
-          <div class="heading-line-mask heading-right">
-            <h1 class="hero-initial" data-hero-heading>/N</h1>
+          <div class="hero-top-group hero-top-right">
+            <span class="hero-top-label">Available for freelance</span>
+            <span class="hero-top-sub">Based in Belgium</span>
           </div>
         </div>
 
-        <!-- Anchor links row -->
-        <div class="hero-anchors" data-hero-anchors>
-          <div class="anchor-item">
-            <span class="anchor-num">(01)</span>
-            <a href="#work" data-scroll-link class="anchor-link" data-hero-anchor>
-              <span data-btn-chars>Work</span>
-            </a>
+        <!-- Main statement — line-by-line mask reveal -->
+        <div class="hero-statement">
+          <div class="line-mask">
+            <span class="hero-line" data-hero-line>I design &amp; build</span>
           </div>
-          <div class="anchor-item">
-            <span class="anchor-num">(02)</span>
-            <a href="#about" data-scroll-link class="anchor-link" data-hero-anchor>
-              <span data-btn-chars>About</span>
-            </a>
+          <div class="line-mask">
+            <span class="hero-line hero-line--italic" data-hero-line>digital experiences</span>
           </div>
-          <div class="anchor-item">
-            <span class="anchor-num">(03)</span>
-            <a href="#contact" data-scroll-link class="anchor-link" data-hero-anchor>
-              <span data-btn-chars>Contact</span>
-            </a>
+          <div class="line-mask">
+            <span class="hero-line" data-hero-line>that feel <em class="hero-em">alive</em></span>
           </div>
         </div>
 
-        <!-- Bio -->
-        <div class="hero-about" data-hero-bio>
-          <p class="hero-bio-text">
-            I design &amp; develop impactful digital experiences through
-            UI/UX, branding, interactions, and clean engineering.
-          </p>
+        <!-- Bottom row: anchors left, bio right -->
+        <div class="hero-bottom" data-hero-bottom>
+          <div class="hero-bottom-left">
+            <!-- Draw line -->
+            <div class="hero-draw-line" data-hero-draw-line></div>
+            <div class="hero-anchors" data-hero-anchors>
+              <div class="anchor-item" data-hero-anchor-item>
+                <span class="anchor-num">(01)</span>
+                <a href="#work" data-scroll-link class="anchor-link">Work</a>
+              </div>
+              <div class="anchor-item" data-hero-anchor-item>
+                <span class="anchor-num">(02)</span>
+                <a href="#about" data-scroll-link class="anchor-link">About</a>
+              </div>
+              <div class="anchor-item" data-hero-anchor-item>
+                <span class="anchor-num">(03)</span>
+                <a href="#contact" data-scroll-link class="anchor-link">Contact</a>
+              </div>
+            </div>
+          </div>
+          <div class="hero-bottom-right" data-hero-bio>
+            <p class="hero-bio-text">
+              Building brand experiences through digital media — creating
+              interactive, performant &amp; memorable designs.
+            </p>
+          </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="hero-scroll-indicator" data-scroll-indicator>
+          <span class="scroll-label">Scroll</span>
+          <div class="scroll-track">
+            <div class="scroll-progress" data-scroll-progress></div>
+          </div>
         </div>
       </div>
     </section>
@@ -94,97 +103,138 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         margin: 0 auto;
       }
 
-      /* ── Top bar ── */
-      .hero-bar {
+      /* ═══ TOP INFO ═══ */
+      .hero-top {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         padding-top: 5rem;
-        opacity: 0;
       }
-      .hero-bar-item {
+      .hero-top-group {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 3px;
+        opacity: 0;
+        transform: translateY(14px);
       }
-      .hero-bar-center { align-items: center; }
-      .hero-bar-primary {
+      .hero-top-right { align-items: flex-end; }
+      .hero-top-label {
         font-family: 'area-normal', sans-serif;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 500;
-        color: #fff;
+        color: rgba(255,255,255,0.8);
+        letter-spacing: 0.02em;
       }
-      .hero-bar-secondary {
+      .hero-top-sub {
         font-family: 'area-normal', sans-serif;
         font-size: 11px;
         font-weight: 400;
         letter-spacing: 0.06em;
-        color: rgba(255,255,255,0.4);
+        color: rgba(255,255,255,0.3);
         text-transform: uppercase;
       }
 
-      /* ── Initials ── */
-      .hero-initials {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      /* ═══ MAIN STATEMENT ═══ */
+      .hero-statement {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0;
         padding: 2rem 0;
       }
-      .heading-line-mask {
+
+      .line-mask {
         overflow: hidden;
-        line-height: 0.85;
-      }
-      .heading-right { text-align: right; }
-      .hero-initial {
-        margin: 0;
-        font-family: 'area-normal', sans-serif;
-        font-size: clamp(6rem, 22vw, 20rem);
-        font-weight: 800;
-        letter-spacing: -0.04em;
-        line-height: 0.85;
-        color: #fff;
-        will-change: transform, opacity;
-        transform: translateY(110%);
-        opacity: 0;
+        line-height: 1;
       }
 
-      /* ── Anchor links ── */
+      .hero-line {
+        display: block;
+        font-family: 'area-normal', sans-serif;
+        font-size: clamp(2.8rem, 8.5vw, 8rem);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.05;
+        color: #fff;
+        transform: translateY(115%);
+        will-change: transform;
+      }
+
+      .hero-line--italic {
+        font-style: italic;
+        font-weight: 300;
+        color: rgba(255,255,255,0.85);
+      }
+
+      .hero-em {
+        font-style: italic;
+        font-weight: 300;
+        position: relative;
+      }
+
+      /* ═══ BOTTOM ROW ═══ */
+      .hero-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 2rem;
+        padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+      }
+
+      .hero-bottom-left {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1;
+      }
+
+      /* ── Draw line ── */
+      .hero-draw-line {
+        width: 100%;
+        max-width: 400px;
+        height: 1px;
+        background: rgba(255,255,255,0.15);
+        transform: scaleX(0);
+        transform-origin: left center;
+        will-change: transform;
+      }
+
+      /* ── Anchors ── */
       .hero-anchors {
         display: flex;
-        gap: clamp(2rem, 5vw, 4rem);
-        padding-bottom: 1.5rem;
-        opacity: 0;
+        gap: clamp(1.5rem, 4vw, 3rem);
       }
       .anchor-item {
         display: flex;
         align-items: baseline;
         gap: 0.5rem;
+        opacity: 0;
+        transform: translateY(16px);
       }
       .anchor-num {
         font-family: 'area-normal', sans-serif;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 500;
-        color: rgba(255,255,255,0.35);
+        color: rgba(255,255,255,0.3);
       }
       .anchor-link {
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(1rem, 2vw, 1.35rem);
+        font-size: clamp(0.95rem, 1.6vw, 1.2rem);
         font-weight: 500;
         color: #fff;
         text-decoration: none;
         position: relative;
-        overflow: hidden;
         display: inline-block;
       }
       .anchor-link::after {
         content: '';
         position: absolute;
-        bottom: 0;
+        bottom: -2px;
         left: 0;
         width: 100%;
         height: 1px;
-        background: rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.35);
         transform: scaleX(0);
         transform-origin: right;
         transition: transform 0.5s cubic-bezier(0.625, 0.05, 0, 1);
@@ -195,29 +245,72 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       }
 
       /* ── Bio ── */
-      .hero-about {
-        max-width: 480px;
-        padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+      .hero-bottom-right {
+        max-width: 340px;
         opacity: 0;
+        transform: translateY(16px);
       }
       .hero-bio-text {
         font-family: 'area-normal', sans-serif;
-        font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+        font-size: clamp(0.85rem, 1.2vw, 1rem);
         font-weight: 400;
-        line-height: 1.65;
-        color: rgba(255,255,255,0.55);
+        line-height: 1.7;
+        color: rgba(255,255,255,0.45);
         margin: 0;
       }
 
-      /* ── Responsive ── */
+      /* ═══ SCROLL INDICATOR ═══ */
+      .hero-scroll-indicator {
+        position: absolute;
+        bottom: clamp(1.5rem, 3vw, 2.5rem);
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6rem;
+        opacity: 0;
+      }
+      .scroll-label {
+        font-family: 'area-normal', sans-serif;
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.3);
+      }
+      .scroll-track {
+        width: 1px;
+        height: 40px;
+        background: rgba(255,255,255,0.1);
+        position: relative;
+        overflow: hidden;
+        border-radius: 1px;
+      }
+      .scroll-progress {
+        position: absolute;
+        top: -100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.5);
+        will-change: transform;
+      }
+
+      /* ═══ RESPONSIVE ═══ */
       @media (max-width: 768px) {
         .hero-content {
           padding: 1.5rem clamp(1.5rem, 5vw, 2.5rem);
         }
-        .hero-bar { flex-direction: column; gap: 0.75rem; }
-        .hero-bar-center { align-items: flex-start; }
+        .hero-top { flex-direction: column; gap: 0.5rem; }
+        .hero-top-right { align-items: flex-start; }
+        .hero-bottom {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1.5rem;
+        }
+        .hero-bottom-right { max-width: 100%; }
         .hero-anchors { flex-wrap: wrap; gap: 1rem; }
-        .hero-about { max-width: 100%; }
+        .hero-scroll-indicator { display: none; }
       }
     `
   ]
@@ -226,44 +319,92 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly el = inject(ElementRef);
   private tl?: gsap.core.Timeline;
   private scrollTriggers: ScrollTrigger[] = [];
+  private scrollIndicatorAnim?: gsap.core.Tween;
   private rafId?: number;
 
   ngAfterViewInit(): void {
     this.rafId = requestAnimationFrame(() => {
       const host = this.el.nativeElement as HTMLElement;
-      const headings = host.querySelectorAll('[data-hero-heading]');
-      const bar = host.querySelector('[data-hero-bar]');
-      const anchors = host.querySelector('[data-hero-anchors]');
-      const bio = host.querySelector('[data-hero-bio]');
+      const topGroups = host.querySelectorAll('.hero-top-group');
+      const lines = host.querySelectorAll('[data-hero-line]');
+      const drawLine = host.querySelector('[data-hero-draw-line]') as HTMLElement;
+      const anchorItems = host.querySelectorAll('[data-hero-anchor-item]');
+      const bio = host.querySelector('[data-hero-bio]') as HTMLElement;
+      const scrollIndicator = host.querySelector('[data-scroll-indicator]') as HTMLElement;
+      const scrollProgress = host.querySelector('[data-scroll-progress]') as HTMLElement;
       const heroSection = host.querySelector('.hero-section') as HTMLElement;
-      const heroContent = host.querySelector('.hero-content') as HTMLElement;
+      const heroContent = host.querySelector('[data-hero-content]') as HTMLElement;
 
       // ── Entrance timeline ──
       this.tl = gsap.timeline({
         defaults: { ease: 'power4.out' },
       });
 
-      // Bar fades in
-      this.tl.to(bar, { opacity: 1, duration: 0.8 }, 0.2);
-
-      // Initials slide up
-      this.tl.to(headings, {
-        y: 0,
+      // 1. Top info groups fade + slide up
+      this.tl.to(topGroups, {
         opacity: 1,
-        duration: 1.2,
-        stagger: 0.15,
+        y: 0,
+        duration: 0.9,
+        stagger: 0.12,
+      }, 0.1);
+
+      // 2. Statement lines slide up one by one (editorial mask reveal)
+      this.tl.to(lines, {
+        y: 0,
+        duration: 1.3,
+        stagger: 0.1,
+        ease: 'power4.out',
       }, 0.3);
 
-      // Anchors fade in
-      this.tl.to(anchors, { opacity: 1, duration: 0.8 }, '-=0.5');
+      // 3. Draw line extends
+      if (drawLine) {
+        this.tl.to(drawLine, {
+          scaleX: 1,
+          duration: 1,
+          ease: 'power2.inOut',
+        }, '-=0.6');
+      }
 
-      // Bio fades in
-      this.tl.to(bio, { opacity: 1, duration: 0.8 }, '-=0.4');
+      // 4. Anchor items cascade
+      this.tl.to(anchorItems, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.08,
+        ease: 'power3.out',
+      }, '-=0.5');
 
-      // ── Scroll parallax ──
+      // 5. Bio fades in
+      if (bio) {
+        this.tl.to(bio, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+        }, '-=0.4');
+      }
+
+      // 6. Scroll indicator appears + looping animation
+      if (scrollIndicator && scrollProgress) {
+        this.tl.to(scrollIndicator, {
+          opacity: 1,
+          duration: 0.6,
+        }, '-=0.3');
+
+        // Looping scroll progress animation
+        this.scrollIndicatorAnim = gsap.to(scrollProgress, {
+          top: '100%',
+          duration: 1.8,
+          ease: 'power1.inOut',
+          repeat: -1,
+          repeatDelay: 0.4,
+        });
+      }
+
+      // ── Scroll parallax — content drifts up and fades ──
       if (heroContent && heroSection) {
         const contentST = gsap.to(heroContent, {
-          y: -100,
+          y: -120,
           opacity: 0,
           ease: 'none',
           scrollTrigger: {
@@ -275,12 +416,28 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         });
         if (contentST.scrollTrigger) this.scrollTriggers.push(contentST.scrollTrigger);
       }
+
+      // Scroll indicator fades out faster
+      if (scrollIndicator) {
+        const indicatorST = gsap.to(scrollIndicator, {
+          opacity: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: heroSection,
+            start: '50px top',
+            end: '200px top',
+            scrub: 0.3,
+          },
+        });
+        if (indicatorST.scrollTrigger) this.scrollTriggers.push(indicatorST.scrollTrigger);
+      }
     });
   }
 
   ngOnDestroy(): void {
     if (this.rafId) cancelAnimationFrame(this.rafId);
     this.tl?.kill();
+    this.scrollIndicatorAnim?.kill();
     this.scrollTriggers.forEach(st => st.kill());
   }
 }
