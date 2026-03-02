@@ -75,7 +75,7 @@ function toDisciplineTags(item: WorkItem): string[] {
 
       .featured-work {
         position: relative;
-        padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 4vw, 4rem);
+        padding: clamp(3rem, 6vw, 4.5rem) clamp(1.5rem, 4vw, 4rem);
         background: #0a0a0a;
         color: #fff;
       }
@@ -209,7 +209,7 @@ function toDisciplineTags(item: WorkItem): string[] {
       .reveal-card-image-wrap {
         position: relative;
         width: 100%;
-        aspect-ratio: 16 / 9;
+        aspect-ratio: 2 / 1;
         overflow: hidden;
         border-radius: 4px;
       }
@@ -334,12 +334,6 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
             duration: 0.7,
             delay: 0.05 * i,
             ease: 'power3.out',
-            onComplete: () => {
-              // Open first card automatically after entrance
-              if (i === 0 && this.activeIndex < 0) {
-                this.openCard(0);
-              }
-            },
           });
           if (line) {
             gsap.to(line, {
@@ -354,19 +348,22 @@ export class FeaturedWorkComponent implements AfterViewInit, OnDestroy {
       this.triggers.push(entranceSt);
     });
 
-    // ── Hover-based accordion: hover header to expand card ──
+    // ── Click-based accordion: click header to expand/collapse card ──
     this.cardEls.forEach((card, i) => {
       const header = card.querySelector('[data-reveal-header]') as HTMLElement;
       if (!header) return;
 
-      const onEnter = () => {
-        if (this.activeIndex !== i) {
+      const onClick = () => {
+        if (this.activeIndex === i) {
+          this.closeCard(card);
+          this.activeIndex = -1;
+        } else {
           this.openCard(i);
         }
       };
 
-      header.addEventListener('mouseenter', onEnter);
-      this.headerListeners.push(() => header.removeEventListener('mouseenter', onEnter));
+      header.addEventListener('click', onClick);
+      this.headerListeners.push(() => header.removeEventListener('click', onClick));
     });
   }
 
