@@ -145,12 +145,19 @@ function toDisciplineTags(item: WorkItem): string[] {
         line-height: 1.1;
         color: rgba(255,255,255,0.7);
         flex: 1;
-        transition: color 0.4s;
+        transform: translateX(0);
+        transition: color 0.35s, transform 0.35s;
+      }
+
+      .reveal-card-header:hover .reveal-card-title {
+        color: rgba(255,255,255,0.92);
+        transform: translateX(4px);
       }
 
       /* Active card gets full white title */
       .reveal-card.is-active .reveal-card-title {
         color: #fff;
+        transform: translateX(0);
       }
 
       .reveal-card-header-meta {
@@ -164,6 +171,11 @@ function toDisciplineTags(item: WorkItem): string[] {
         font-family: 'area-normal', sans-serif;
         font-size: 12px;
         color: rgba(255,255,255,0.25);
+        transition: color 0.3s;
+      }
+
+      .reveal-card-header:hover .reveal-card-year {
+        color: rgba(255,255,255,0.55);
       }
 
       .reveal-card-tags {
@@ -182,6 +194,12 @@ function toDisciplineTags(item: WorkItem): string[] {
         padding: 2px 6px;
         border: 1px solid rgba(255,255,255,0.1);
         border-radius: 2px;
+        transition: color 0.3s, border-color 0.3s;
+      }
+
+      .reveal-card-header:hover .reveal-card-tag {
+        color: rgba(255,255,255,0.6);
+        border-color: rgba(255,255,255,0.25);
       }
 
       /* ── Body (expandable) ── */

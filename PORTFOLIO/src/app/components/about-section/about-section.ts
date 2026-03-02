@@ -24,8 +24,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         <!-- Large statement — ink bleed word reveal -->
         <div class="about-statement" data-about-statement>
           <p class="statement-text" data-ink-bleed="heavy">
-            Taking everyday ideas and transforming them into tangible
-            digital experiences through design &amp; development.
+            I build modern web products with Angular and Laravel —
+            from polished frontend interfaces to robust backend APIs.
           </p>
         </div>
 
@@ -33,19 +33,18 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         <div class="about-columns" data-about-columns>
           <div class="about-col about-col-left">
             <p class="about-body" data-ink-bleed="light">
-              I design &amp; develop impactful digital experiences through
-              UI/UX, branding, interactions, and clean engineering.
+              My core stack is TypeScript, Angular, Tailwind CSS and GSAP
+              for responsive, interactive frontend experiences.
             </p>
             <p class="about-body" data-ink-bleed="light">
-              Starting my journey as a developer and designer, later
-              specialising in frontend engineering and creative development.
-              Building brand experiences through digital media, creating
-              interactive &amp; performant designs.
+              On the backend I work with Laravel and PHP, building clean
+              REST APIs, database-driven features, and maintainable
+              application architecture.
             </p>
             <p class="about-body" data-ink-bleed="light">
-              In 2025, I started combining deep frontend expertise with design
-              thinking — taking projects from wireframe all the way to
-              deployment.
+              I like shipping complete solutions: performant UI, reliable
+              business logic, and production-ready deployments with a strong
+              focus on code quality and developer experience.
             </p>
           </div>
 
@@ -56,19 +55,19 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
               <div class="stack-list">
                 <div class="stack-group">
                   <span class="stack-label">Frontend</span>
-                  <span class="stack-items">HTML, CSS, Tailwind, JavaScript, TypeScript, Angular, React</span>
+                  <span class="stack-items">Angular, TypeScript, JavaScript, Tailwind CSS, HTML, CSS, GSAP</span>
                 </div>
                 <div class="stack-group">
-                  <span class="stack-label">Backend &amp; data</span>
-                  <span class="stack-items">Python, PHP, Laravel, Node.js, SQL</span>
+                  <span class="stack-label">Backend &amp; APIs</span>
+                  <span class="stack-items">Laravel, PHP, Node.js, REST APIs, SQL, MySQL</span>
                 </div>
                 <div class="stack-group">
-                  <span class="stack-label">Design</span>
-                  <span class="stack-items">Figma, Adobe XD</span>
+                  <span class="stack-label">Design &amp; UI</span>
+                  <span class="stack-items">Figma, UI systems, interaction design</span>
                 </div>
                 <div class="stack-group">
-                  <span class="stack-label">Process</span>
-                  <span class="stack-items">Agile, Scrum, Git</span>
+                  <span class="stack-label">Workflow</span>
+                  <span class="stack-items">Git, GitHub, Agile, Scrum</span>
                 </div>
               </div>
             </div>
@@ -285,12 +284,12 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
       this.initInkBleed(el as HTMLElement, intensity as 'heavy' | 'light');
     });
 
-    // ── Columns container reveal ──
+    // ── Columns container reveal (y-only — ink-bleed handles opacity for left col) ──
     const cols = host.querySelector('[data-about-columns]') as HTMLElement;
     if (cols) {
-      gsap.set(cols, { opacity: 0, y: 40 });
+      gsap.set(cols, { y: 40 });
       gsap.to(cols, {
-        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+        y: 0, duration: 1, ease: 'power3.out',
         scrollTrigger: {
           trigger: cols,
           start: 'top 92%',
@@ -395,44 +394,37 @@ export class AboutSectionComponent implements AfterViewInit, OnDestroy {
     if (!wordSpans.length) return;
 
     const isHeavy = intensity === 'heavy';
-    const blurPx = isHeavy ? 14 : 7;
-    const scaleFactor = isHeavy ? 1.2 : 1.08;
-    const yPx = isHeavy ? 10 : 5;
+    const blurPx = isHeavy ? 18 : 10;
+    const scaleFactor = isHeavy ? 1.24 : 1.1;
+    const yPx = isHeavy ? 12 : 6;
 
-    // Set initial blurred/oversized state
-    wordSpans.forEach((span) => {
-      span.style.opacity = '0.05';
-      span.style.filter = `blur(${blurPx}px)`;
-      span.style.transform = `scale(${scaleFactor}) translateY(${yPx}px)`;
+    // Set initial blurred / oversized state via GSAP
+    gsap.set(wordSpans, {
+      opacity: 0.05,
+      filter: `blur(${blurPx}px)`,
+      scale: scaleFactor,
+      y: yPx,
     });
 
-    // Build a timeline so it can reverse on scroll back
+    // Build a timeline — scrub ties progress directly to scroll position
     const tl = gsap.timeline({
-      paused: true,
       scrollTrigger: {
         trigger: el,
-        start: 'top 88%',
-        end: 'top 40%',
-        toggleActions: 'play none none reverse',
+        start: 'top 85%',
+        end: 'top 10%',
+        scrub: 0.8,
         invalidateOnRefresh: true,
       },
     });
 
-    wordSpans.forEach((span, i) => {
-      const delay = i * (isHeavy ? 0.04 : 0.02);
-      tl.to(span, {
-        duration: isHeavy ? 0.6 : 0.4,
-        ease: 'power2.out',
-        onUpdate: function(this: gsap.core.Tween) {
-          const p = this.progress();
-          const blur = blurPx * (1 - p);
-          const scale = 1 + (scaleFactor - 1) * (1 - p);
-          const y = yPx * (1 - p);
-          span.style.opacity = String(0.05 + 0.95 * p);
-          span.style.filter = `blur(${blur}px)`;
-          span.style.transform = `scale(${scale}) translateY(${y}px)`;
-        },
-      }, delay);
+    tl.to(wordSpans, {
+      opacity: 1,
+      filter: 'blur(0px)',
+      scale: 1,
+      y: 0,
+      duration: isHeavy ? 0.6 : 0.4,
+      stagger: isHeavy ? 0.04 : 0.02,
+      ease: 'power2.out',
     });
   }
 
